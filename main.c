@@ -1,3 +1,8 @@
+#include <stdio.h>
+#include "test_app.h"
+
 int main() {
-  return 0;
+    printf("hey salut :)");
+    
+    return 0;
 }
