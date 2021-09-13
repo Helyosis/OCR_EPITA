@@ -13,5 +13,7 @@ in
             pkgconfig
             SDL2
             SDL2_image
+            SDL2_gfx
+	    opencv
         ];
     }
