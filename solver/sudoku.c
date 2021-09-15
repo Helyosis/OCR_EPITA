@@ -5,22 +5,44 @@
 //@param grid the sudoku grid
 //@return 1 if the grid is valid, 0 if not
 int IsValid(char board[], size_t rows,size_t cols) {
-    int i, j;
+    size_t i, j;
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             if ((board[i * cols + j] > '9' || board[i * cols + j] < '0') && board[i * cols + j] != '.') {
-                return false;
+	      printf("failed with %d\n",board[i*cols+j]);
+              return false;
             }
         }
     }
     return true;
 }
 
+//Clean Will replace all the dots by some 0
+//@param grid the grid of the sudoku
+//@return void
+
+void Clean(char board[], size_t rows, size_t cols){
+  if(!IsValid(board,rows,cols)){
+    printf("Invalid GRID\n");
+    return;
+  }
+  size_t i,j;
+  for (i = 0; i < rows; ++i) {
+    for (j = 0; j < cols; ++j) {
+      if (board[i*cols+j] == '.') {
+	board[i*cols+j] = '0';
+      }
+    }
+  }
+  return;
+  
+}
+
 //IsColumnSolved checks if the column is solved
 //@param grid the sudoku grid
 //@param x the column to check
 //@return 1 if the column is solved, 0 if not
-int IsColumnSolved(char board[], size_t rows, size_t cols, int x) {
+int IsColumnSolved(char board[], size_t cols, int x) {
     char str[cols];
     char eval[] = "123456789";
     for (size_t i = 0; i < cols; i++)
@@ -28,8 +50,8 @@ int IsColumnSolved(char board[], size_t rows, size_t cols, int x) {
         str[i] = board[i * cols + x];
     }
     bool solved = true;
-    int j = 0;
-    int k;
+    size_t j = 0;
+    size_t k;
     while(j < cols && solved) {
         bool found = false;
         k = 0;
@@ -62,8 +84,8 @@ int IsRowSolved(char board[], size_t rows, size_t cols, int y) {
         str[i] = board[y * cols + i];
     }
     bool solved = true;
-    int j = 0;
-    int k;
+    size_t j = 0;
+    size_t k;
     while(j < rows && solved) {
         bool found = false;
         k = 0;
@@ -88,12 +110,12 @@ int IsRowSolved(char board[], size_t rows, size_t cols, int y) {
 //@param x the x coordinate of the square
 //@param y the y coordinate of the square
 //@return 1 if the square is solved, 0 if not
-int IsSquareSolved(char board[], size_t rows, size_t cols, int x, int y) {
+int IsSquareSolved(char board[], size_t cols, int x, int y) {
     char str[9];
     char eval[] = "123456789";
-    for (size_t i = 0; i < x+3; i++)
+    for (int i = x; i < x+3; i++)
     {
-        for (size_t j = 0; j < y+3; j++){
+        for (int j = y; j < y+3; j++){
             str[i * cols + j] = board[i * cols + j];
         }
     }
@@ -125,21 +147,21 @@ int IsSquareSolved(char board[], size_t rows, size_t cols, int x, int y) {
 //@return 1 if the grid is solved, 0 if not
 int IsSolved(char board[], size_t rows, size_t cols) {
     bool result = true;
-    int i, j = 0;
+    size_t i, j = 0;
     while (i < rows && result) {
         result = IsRowSolved(board, rows, cols, i);
         i++;
     }
     while (j < cols && result)
     {
-        result = IsColumnSolved(board, rows, cols, j);
+        result = IsColumnSolved(board, cols, j);
         j++;
     }
     i = 0;
     while (i < rows && result) {
         j = 0;
         while (j < cols && result) {
-            result = IsSquareSolved(board, rows, cols, i, j);
+            result = IsSquareSolved(board, cols, i, j);
             j+=3;
         }
         i+=3;
@@ -155,15 +177,15 @@ int IsSolved(char board[], size_t rows, size_t cols) {
 
 int AlreadyInColumn(char grid[], size_t rows, size_t cols, int x, int val){
     bool result = true;
-    int i = 0;
+    size_t i = 0;
     while (i < rows && result) {
-        if (grid[i * cols + x] == val)
+        if (grid[x * cols + i] == val)
         {
             result = false;
         }
         i++;
     }
-    return result;
+    return !result;
 }
 
 
@@ -172,17 +194,17 @@ int AlreadyInColumn(char grid[], size_t rows, size_t cols, int x, int val){
 //@param y the line to check
 //@param val the number to check
 //@return 1 if the number is already in the line, 0 if not
-int AlreadyInLine(char grid[], size_t rows, size_t cols, int y, int val){
+int AlreadyInLine(char grid[], size_t cols, int y, int val){
     bool result = true;
-    int i = 0;
+    size_t i = 0;
     while (i < cols && result) {
-        if (grid[y * cols + i] == val)
+        if (grid[i * cols + y] == val)
         {
             result = false;
         }
         i++;
     }
-    return result;
+    return !result;
 }
 
 
@@ -192,7 +214,7 @@ int AlreadyInLine(char grid[], size_t rows, size_t cols, int y, int val){
 //@param y the y coordinate of the square
 //@param val the number to check
 //@return 1 if the number is already in the square, 0 if not
-int AlreadyInSquare(char grid[], size_t rows, size_t cols, int x, int y, int val){
+int AlreadyInSquare(char grid[], size_t cols, int x, int y, int val){
     bool result = true;
     int i = x-x%3;
     int j;
@@ -207,7 +229,7 @@ int AlreadyInSquare(char grid[], size_t rows, size_t cols, int x, int y, int val
         }
         i++;
     }
-    return result;
+    return !result;
 }
 
 //SolveRec solves the sudoku grid recursively
@@ -223,10 +245,10 @@ int SolveRec(char grid[], size_t rows, size_t cols, int x, int y) {
     if (y > cols -1){
         return true;
     }
-    if (grid[x * cols + y] != '.'){
-        for (int i = 0; i < rows; i++){
-            if (!AlreadyInColumn(grid, rows, cols, y, i) && !AlreadyInLine(grid, rows, cols, x, i) && !AlreadyInSquare(grid, rows, cols, x, y, i)){
-                grid[x * cols + y] = i + '0';
+    if (grid[x * cols + y] == '.' || grid[x*cols +y] == '0'){
+        for (size_t i = 1; i < rows+1; i++){
+            if (!AlreadyInColumn(grid, rows, cols, x, i) && !AlreadyInLine(grid, cols, y, i) && !AlreadyInSquare(grid, cols, x, y, i)){
+	      grid[x * cols + y] = (char)(i + '0');
                 bool result = SolveRec(grid, rows, cols, x+1, y);
                 if (!result){
                     grid[x * cols + y] = '0';
@@ -247,5 +269,6 @@ int SolveRec(char grid[], size_t rows, size_t cols, int x, int y) {
 //@param grid the sudoku grid
 //@return 1 if the grid is solved, 0 if not
 int Solve(char grid[], size_t rows, size_t cols) {
+    Clean(grid,rows,cols);
     return SolveRec(grid, rows, cols, 0, 0);
 }
