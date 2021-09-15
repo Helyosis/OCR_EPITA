@@ -9,7 +9,7 @@ int IsValid(char board[], size_t rows,size_t cols) {
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             if ((board[i * cols + j] > '9' || board[i * cols + j] < '0') && board[i * cols + j] != '.') {
-	      printf("failed with %d\n",board[i*cols+j]);
+	            printf("failed with %d\n",board[i*cols+j]);
               return false;
             }
         }
@@ -30,7 +30,7 @@ void Clean(char board[], size_t rows, size_t cols){
   for (i = 0; i < rows; ++i) {
     for (j = 0; j < cols; ++j) {
       if (board[i*cols+j] == '.') {
-	board[i*cols+j] = '0';
+	    board[i*cols+j] = '0';
       }
     }
   }
@@ -47,7 +47,7 @@ int IsColumnSolved(char board[], size_t cols, int x) {
     char eval[] = "123456789";
     for (size_t i = 0; i < cols; i++)
     {
-        str[i] = board[i * cols + x];
+        str[i] = board[i * cols + x]+'0';
     }
     bool solved = true;
     size_t j = 0;
@@ -81,7 +81,7 @@ int IsRowSolved(char board[], size_t rows, size_t cols, int y) {
     char eval[] = "123456789";
     for (size_t i = 0; i < rows; i++)
     {
-        str[i] = board[y * cols + i];
+        str[i] = board[y * cols + i] + '0';
     }
     bool solved = true;
     size_t j = 0;
@@ -116,7 +116,7 @@ int IsSquareSolved(char board[], size_t cols, int x, int y) {
     for (int i = x; i < x+3; i++)
     {
         for (int j = y; j < y+3; j++){
-            str[i * cols + j] = board[i * cols + j];
+            str[i * cols + j] = board[i * cols + j] + '0';
         }
     }
     bool solved = true;
@@ -176,12 +176,12 @@ int IsSolved(char board[], size_t rows, size_t cols) {
 //@return 1 if the number is already in the column, 0 if not
 
 int AlreadyInColumn(char grid[], size_t rows, size_t cols, int x, int val){
-    bool result = true;
+    int result = 1;
     size_t i = 0;
     while (i < rows && result) {
-        if (grid[x * cols + i] == val)
+        if (grid[x * cols + i] == val+'0')
         {
-            result = false;
+            result = 0;
         }
         i++;
     }
@@ -195,12 +195,12 @@ int AlreadyInColumn(char grid[], size_t rows, size_t cols, int x, int val){
 //@param val the number to check
 //@return 1 if the number is already in the line, 0 if not
 int AlreadyInLine(char grid[], size_t cols, int y, int val){
-    bool result = true;
+    int result = 1;
     size_t i = 0;
     while (i < cols && result) {
-        if (grid[i * cols + y] == val)
+        if (grid[i * cols + y] == val + '0')
         {
-            result = false;
+            result = 0;
         }
         i++;
     }
@@ -221,7 +221,7 @@ int AlreadyInSquare(char grid[], size_t cols, int x, int y, int val){
     while (i < x+3 - x%3 && result) {
         j = y-y%3;
         while (j < y+3 - y%3 && result) {
-            if (grid[i * cols + j] == val)
+            if (grid[i * cols + j] == val + '0')
             {
                 result = false;
             }
@@ -238,11 +238,11 @@ int AlreadyInSquare(char grid[], size_t cols, int x, int y, int val){
 //@param y the y coordinate of the square
 //@return 1 if the grid is solved, 0 if not
 int SolveRec(char grid[], size_t rows, size_t cols, int x, int y) {
-    if (x > rows -1){
+    if (x > (int)rows -1){
         x = 0;
         y++;
     }
-    if (y > cols -1){
+    if (y > (int)cols -1){
         return true;
     }
     if (grid[x * cols + y] == '.' || grid[x*cols +y] == '0'){
@@ -271,4 +271,31 @@ int SolveRec(char grid[], size_t rows, size_t cols, int x, int y) {
 int Solve(char grid[], size_t rows, size_t cols) {
     Clean(grid,rows,cols);
     return SolveRec(grid, rows, cols, 0, 0);
+}
+
+//PrintGrid prints the sudoku grid
+//@param grid the sudoku grid
+void PrintGrid(char grid[], size_t rows, size_t cols) {
+    char separator[] = "-------------------------";
+    for (size_t i = 0; i < rows; i++) {
+        if(i % 3 == 0) {
+            printf("\n");
+           printf("%s", separator);
+        }
+        printf("\n");
+        for (size_t j = 0; j < cols; j++) {
+            if(j % 3 == 0) {
+                printf("| ");
+            }
+            if (j == cols - 1) 
+            {
+                printf("%c ", grid[i * cols + j]);
+            }
+            else {
+                printf("%c ", grid[i * cols + j]);
+            }
+        }
+        printf("|");
+    }
+    printf("\n%s\n", separator);
 }
