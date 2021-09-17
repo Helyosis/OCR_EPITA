@@ -4,6 +4,7 @@
 #include <err.h>
 #include <stdio.h>
 #include "ImageProcessing/GrayScale.h"
+#include "ImageProcessing/NoiseReduction.h"
 
 int main(int argc, char **argv)
 {
@@ -12,13 +13,14 @@ int main(int argc, char **argv)
 
     bool quit = false;
     SDL_Event event;
+    
     SDL_Init(SDL_INIT_VIDEO);
-    IMG_Init(IMG_INIT_JPG);
-
+    
     SDL_Surface *original_image = IMG_Load(argv[1]);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     SDL_FreeSurface(original_image);
+
     if (!image) { // Loading failed so ptr is null
         printf("[-] IMG_Load: %s\n", SDL_GetError());
         errx(1, "Error");
@@ -27,7 +29,12 @@ int main(int argc, char **argv)
            argv[1], image->w, image->h);
 
     Apply_grayscale_filter(image);
+    printf("[*] Applied grayscale\n");
+    KuwaharaFilter_inPlace(image);
+    printf("[*] Reduced noise\n");
+    SDL_SaveBMP(image, "out.bmp");
 
+    printf("Saved images !\n");
 
     SDL_Window *window =
         SDL_CreateWindow("My GUI lol",
