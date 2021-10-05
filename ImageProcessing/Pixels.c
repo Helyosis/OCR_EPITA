@@ -80,7 +80,7 @@ void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, Uint32 pixel)
 	y = y0; 
 	
 	for ( i = 0; i < length; i += 1) { 
-		putpixel(Screen, x, y, pixel ); 
+		putPixel(Screen, x, y, pixel ); 
 		x += addx; 
 		y += addy; 
 		
