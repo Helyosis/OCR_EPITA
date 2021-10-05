@@ -5,16 +5,17 @@
 #include <stdio.h>
 #include "ImageProcessing/GrayScale.h"
 #include "ImageProcessing/NoiseReduction.h"
+#include "ImageProcessing/BlackAndWhite.h"
 
 int main(int argc, char **argv)
 {
-    if (argc != 2)
-        errx(1, "Please specify a image path");
+    if (argc == 1)
+        errx(1, "Please specify a image path, (optional: with a save path)");
 
     bool quit = false;
     SDL_Event event;
     
-    SDL_Init(SDL_INIT_VIDEO);
+    //SDL_Init(SDL_INIT_VIDEO);
     
     SDL_Surface *original_image = IMG_Load(argv[1]);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
@@ -30,12 +31,15 @@ int main(int argc, char **argv)
 
     Apply_grayscale_filter(image);
     printf("[*] Applied grayscale\n");
-    KuwaharaFilter_inPlace(image);
+    GaussianBlur_inPlace(image);
     printf("[*] Reduced noise\n");
-    SDL_SaveBMP(image, "out.bmp");
+    AdaptiveThresholding_inPlace(image);
+    printf("[*] Applied adaptive threshold (mean - C method)\n");
+    
+    SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
 
     printf("Saved images !\n");
-
+    //errx(0, "Delete me after"); // DELETE ME AFTER TESTS
     SDL_Window *window =
         SDL_CreateWindow("My GUI lol",
                          SDL_WINDOWPOS_UNDEFINED,

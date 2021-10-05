@@ -2,7 +2,7 @@
 
 CPPFLAGS = -MMD 
 CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -O2 `pkg-config --cflags sdl2 SDL2_image`
+CFLAGS = -Wall -Wextra -std=c99 -O2 `pkg-config --cflags sdl2 SDL2_image` -g3
 LDFLAGS =
 LDLIBS = -lm `pkg-config --libs sdl2 SDL2_image`
 
@@ -15,7 +15,6 @@ all: main
 main: ${OBJ}
 
 .PHONY: clean
-
 clean:
 	${RM} ${OBJ}   # remove object files
 	${RM} ${DEP}   # remove dependency files

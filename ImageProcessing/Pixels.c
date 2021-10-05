@@ -68,3 +68,8 @@ void putPixel(SDL_Surface *surface, int x, int y, Uint32 pixel)
         break;
     }
 }
+
+// Returns intensity of the point (x, y) in source
+int I(SDL_Surface *source, int x, int y) {
+    return getPixel(source, x, y) & 0xFF;
+}
