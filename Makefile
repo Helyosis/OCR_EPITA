@@ -6,7 +6,7 @@ CFLAGS = -Wall -Wextra -std=c99 -O2 `pkg-config --cflags sdl2 SDL2_image` -g3
 LDFLAGS =
 LDLIBS = -lm `pkg-config --libs sdl2 SDL2_image`
 
-SRC = main.c ImageProcessing/GrayScale.c ImageProcessing/Pixels.c ImageProcessing/BlackAndWhite.c ImageProcessing/NoiseReduction.c
+SRC = main.c ImageProcessing/GrayScale.c ImageProcessing/Pixels.c ImageProcessing/BlackAndWhite.c ImageProcessing/NoiseReduction.c Utils.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
