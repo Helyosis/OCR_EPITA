@@ -6,6 +6,7 @@
 #include "ImageProcessing/GrayScale.h"
 #include "ImageProcessing/NoiseReduction.h"
 #include "ImageProcessing/BlackAndWhite.h"
+#include "ImageProcessing/HoughTransform.h"
 #include "Utils.h"
 
 void displaySurface(SDL_Renderer* renderer, SDL_Surface* surface) {
@@ -55,10 +56,22 @@ int main(int argc, char **argv)
     GaussianBlur_inPlace(image);
     printf("[*] Reduced noise\n");
 
+    displaySurface(renderer, image);
+    
     wait_for_keypressed();
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
 
+    displaySurface(renderer, image);
+    
+    //wait_for_keypressed();
+    //HoughTransform(image);
+    //printf("[*] Applied Hough Transform\n");
+    printf("[-] Hough Transform is not implemented yet. Ignoring it.\n");
+    printf("[-] Boundaries detection is not implemented yet. Ignoring it.\n");
+    printf("[-] Perspective transform is not implemented yet. Ignoring it.\n");
+
+     
     SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
     printf("Saved images !\n");
     //errx(0, "Delete me after"); // DELETE ME AFTER TESTS
