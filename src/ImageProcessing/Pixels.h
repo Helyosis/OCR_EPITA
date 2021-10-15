@@ -8,6 +8,10 @@ void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, uint32_t pixe
 
 =======
 int I(SDL_Surface *source, int x, int y);
+<<<<<<< HEAD:src/ImageProcessing/Pixels.h
 >>>>>>> 0d24310 (Refactor code):ImageProcessing/Pixels.h
+=======
+void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, uint32_t pixel);
+>>>>>>> 10147ee (Continued thinggsss):ImageProcessing/Pixels.h
 
 #endif
