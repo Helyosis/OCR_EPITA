@@ -147,7 +147,8 @@ int IsSquareSolved(char board[], size_t cols, int x, int y) {
 //@return 1 if the grid is solved, 0 if not
 int IsSolved(char board[], size_t rows, size_t cols) {
     bool result = true;
-    size_t i, j = 0;
+    size_t i = 0;
+    size_t j = 0;
     while (i < rows && result) {
         result = IsRowSolved(board, rows, cols, i);
         i++;

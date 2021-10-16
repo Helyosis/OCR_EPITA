@@ -6,6 +6,7 @@
 #include "ImageProcessing/GrayScale.h"
 #include "ImageProcessing/NoiseReduction.h"
 #include "ImageProcessing/BlackAndWhite.h"
+#include "image-manipulation/manipulation.h"
 
 int main(int argc, char **argv)
 {
@@ -28,15 +29,19 @@ int main(int argc, char **argv)
     }
     printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
            argv[1], image->w, image->h);
-
+    
+    /*
     Apply_grayscale_filter(image);
     printf("[*] Applied grayscale\n");
     GaussianBlur_inPlace(image);
     printf("[*] Reduced noise\n");
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
-    
-    SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
+    */
+   //create a new SDL_surface to store the result
+    double angle  = 45.0;
+    rotation(image, angle);
+    SDL_SaveBMP(image, argc > 2 ? argv[2] : "rotate.bmp");
 
     printf("Saved images !\n");
     //errx(0, "Delete me after"); // DELETE ME AFTER TESTS
