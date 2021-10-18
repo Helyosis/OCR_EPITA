@@ -1,7 +1,7 @@
 #include "SDL2/SDL.h"
 #include <stdlib.h>
 #include <math.h>
-#include "../ImageProcessing/Pixels.h"
+#include "Pixels.h"
 
 // Define Pi
 #define M_PI 3.14159265
@@ -46,21 +46,6 @@ SDL_Surface *rotation(SDL_Surface *image, double angle){
     return rotated_image;
 }
 
-//Shear, calcul the shear of 2 values
-//@param x: the first value
-//@param y: the second value
-//@param angle : the angle to shear by
-//@return: the sheared value
-
-int *Shear(int x, int y, double angle){
-
-
-    //return the sheared values
-    int *result = malloc(2 * sizeof(int));
-    result[0] = new_y;
-    result[1] = new_x;
-    return result;
-}
 
 //Rotation_shearing, rotate an image and shear it
 //@param image: the image to rotate
