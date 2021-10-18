@@ -6,7 +6,7 @@
 #include "ImageProcessing/GrayScale.h"
 #include "ImageProcessing/NoiseReduction.h"
 #include "ImageProcessing/BlackAndWhite.h"
-#include "image-manipulation/manipulation.h"
+#include "ImageProcessing/HoughTransform.h"
 
 int main(int argc, char **argv)
 {
@@ -16,7 +16,7 @@ int main(int argc, char **argv)
     bool quit = false;
     SDL_Event event;
     
-    //SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO);
     
     SDL_Surface *original_image = IMG_Load(argv[1]);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
@@ -29,22 +29,20 @@ int main(int argc, char **argv)
     }
     printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
            argv[1], image->w, image->h);
-    
-    /*
     Apply_grayscale_filter(image);
     printf("[*] Applied grayscale\n");
     GaussianBlur_inPlace(image);
     printf("[*] Reduced noise\n");
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
-    */
-    SDL_Surface *rotated_image= Rotation_shearing(image, 70);
-    SDL_SaveBMP(Rotation_shearing(image,70), argc > 2 ? argv[2] : "rotate.bmp");
-    SDL_FreeSurface(rotated_image);
-    SDL_FreeSurface(image);
-    return EXIT_SUCCESS;
+
+    printf("[-] Hough transform is not implemented yet. Skipping.\n");
+    printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
+
+    SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
+
     printf("Saved images !\n");
-    //errx(0, "Delete me after"); // DELETE ME AFTER TESTS
+
     SDL_Window *window =
         SDL_CreateWindow("My GUI lol",
                          SDL_WINDOWPOS_UNDEFINED,

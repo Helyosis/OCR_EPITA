@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.sage": "python",
+        "grayscale.h": "c",
+        "sdl_image.h": "c",
+        "stdio.h": "c"
+    }
+}
