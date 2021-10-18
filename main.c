@@ -16,7 +16,7 @@ int main(int argc, char **argv)
     bool quit = false;
     SDL_Event event;
     
-    //SDL_Init(SDL_INIT_VIDEO);
+    SDL_Init(SDL_INIT_VIDEO);
     
     SDL_Surface *original_image = IMG_Load(argv[1]);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
@@ -36,15 +36,14 @@ int main(int argc, char **argv)
     printf("[*] Reduced noise\n");
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
-    /*houghTransorm_result *result = HoughTransform(image);
-    printf("[*] Applied houghTransform. Found %d lines\n", result->nbLines);
-    DrawHoughlines(image, result);
-    printf("[*] Hough lines are drawn\n");*/
+
+    printf("[-] Hough transform is not implemented yet. Skipping.\n");
+    printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
 
     SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
 
     printf("Saved images !\n");
-    errx(0, "Delete me after"); // DELETE ME AFTER TESTS
+
     SDL_Window *window =
         SDL_CreateWindow("My GUI lol",
                          SDL_WINDOWPOS_UNDEFINED,
