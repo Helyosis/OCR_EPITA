@@ -30,14 +30,19 @@ int main(int argc, char **argv)
     printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
            argv[1], image->w, image->h);
     
-    
+    /*
     Apply_grayscale_filter(image);
     printf("[*] Applied grayscale\n");
     GaussianBlur_inPlace(image);
     printf("[*] Reduced noise\n");
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
-    
+    */
+    SDL_Surface *rotated_image= Rotation_shearing(image, 70);
+    SDL_SaveBMP(Rotation_shearing(image,70), argc > 2 ? argv[2] : "rotate.bmp");
+    SDL_FreeSurface(rotated_image);
+    SDL_FreeSurface(image);
+    return EXIT_SUCCESS;
     printf("Saved images !\n");
     //errx(0, "Delete me after"); // DELETE ME AFTER TESTS
     SDL_Window *window =
