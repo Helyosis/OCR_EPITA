@@ -17,6 +17,7 @@ int main() {
 #include "ImageProcessing/NoiseReduction.h"
 #include "ImageProcessing/BlackAndWhite.h"
 #include "ImageProcessing/HoughTransform.h"
+#include "ImageProcessing/SquareCutter.h"
 #include "Utils.h"
 
 void displaySurface(SDL_Renderer* renderer, SDL_Surface* surface) {
@@ -35,10 +36,8 @@ int main(int argc, char **argv)
 
     SDL_Init(SDL_INIT_VIDEO);
 
-
-
     SDL_Surface *original_image = IMG_Load(argv[1]);
-    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+    SDL_Surface *image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     SDL_FreeSurface(original_image);
 
@@ -59,7 +58,7 @@ int main(int argc, char **argv)
     wait_for_keypressed();
     Apply_grayscale_filter(image);
     printf("[*] Applied grayscale\n");
-    
+
     displaySurface(renderer, image);
 
     wait_for_keypressed();
@@ -67,13 +66,13 @@ int main(int argc, char **argv)
     printf("[*] Reduced noise\n");
 
     displaySurface(renderer, image);
-    
+
     wait_for_keypressed();
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
 
     displaySurface(renderer, image);
-    
+
     //wait_for_keypressed();
     //HoughTransform(image);
     //printf("[*] Applied Hough Transform\n");
@@ -81,8 +80,16 @@ int main(int argc, char **argv)
     printf("[-] Boundaries detection is not implemented yet. Ignoring it.\n");
     printf("[-] Perspective transform is not implemented yet. Ignoring it.\n");
 
-     
-    SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
+    SDL_Surface** cutSurfaces = cutSudoku(image);
+    char outputPath[] = {'o', 'u', 't', '?', '?', '.', 'b', 'm', 'p', 0};
+    for (int i = 0; i < 81; ++i) {
+        outputPath[3] = (i / 10) + '0';
+        outputPath[4] = (i % 10) + '0';
+        printf("Surface n%d (w=%d, h=%d)\n",
+                   i, cutSurfaces[i]->w, cutSurfaces[i]->h);
+        SDL_SaveBMP(cutSurfaces[i], outputPath);
+    }
+    //SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
     printf("Saved images !\n");
     //errx(0, "Delete me after"); // DELETE ME AFTER TESTS
 
