@@ -6,6 +6,7 @@
 #include "ImageProcessing/GrayScale.h"
 #include "ImageProcessing/NoiseReduction.h"
 #include "ImageProcessing/BlackAndWhite.h"
+#include "ImageProcessing/HoughTransform.h"
 
 int main(int argc, char **argv)
 {
@@ -35,11 +36,15 @@ int main(int argc, char **argv)
     printf("[*] Reduced noise\n");
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
-    
+    /*houghTransorm_result *result = HoughTransform(image);
+    printf("[*] Applied houghTransform. Found %d lines\n", result->nbLines);
+    DrawHoughlines(image, result);
+    printf("[*] Hough lines are drawn\n");*/
+
     SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
 
     printf("Saved images !\n");
-    //errx(0, "Delete me after"); // DELETE ME AFTER TESTS
+    errx(0, "Delete me after"); // DELETE ME AFTER TESTS
     SDL_Window *window =
         SDL_CreateWindow("My GUI lol",
                          SDL_WINDOWPOS_UNDEFINED,
