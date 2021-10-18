@@ -8,6 +8,7 @@
 #include "ImageProcessing/BlackAndWhite.h"
 #include "ImageProcessing/HoughTransform.h"
 #include "Utils.h"
+#include "UserInterface/interface.h"
 
 void displaySurface(SDL_Renderer* renderer, SDL_Surface* surface) {
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
@@ -19,7 +20,7 @@ int main(int argc, char **argv)
 {
     if (argc == 1)
         errx(1, "Please specify a image path, (optional: with a save path)");
-
+    initInterface(argc,argv);
     bool quit = false;
     SDL_Event event;
 

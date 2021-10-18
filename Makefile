@@ -2,7 +2,7 @@
 
 CPPFLAGS = -MMD 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -Wno-type-limits  -std=c99 -O2 `pkg-config --cflags sdl2 SDL2_image` -g3
+CFLAGS = -Wall -Wextra -Werror -Wno-type-limits  -std=c99 -O2 `pkg-config --cflags sdl2 SDL2_image gtk+-3.0` -export-dynamic -g3
 LDFLAGS =
 LDLIBS = -lm `pkg-config --libs sdl2 SDL2_image`
 
