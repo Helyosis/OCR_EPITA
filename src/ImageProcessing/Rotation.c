@@ -73,13 +73,16 @@ SDL_Surface *Rotation_shearing(SDL_Surface *image, double angle){
             double xOff = (x - center_x);
             double yOff = (y - center_y);
             // Compute the coordinates from the image
-            int new_x = round(x - y* tan_angle);
-            int new_y = y;
+            //shear 1
+            int new_x = round(xOff - yOff* tan_angle);
+            int new_y = yOff;
+            //shear 2
             new_y = round(new_x * sin_angle + new_y);
+            //shear 3
             new_x = round(new_x - new_y*tan_angle);
 
-            new_y -= center_y;
-            new_x -= center_x;
+            new_y += center_y;
+            new_x += center_x;
             // Check if the new coordinates are within the image
             if(0 <= new_x && new_x < w && 0 <= new_y && new_y < h){
                 // Copy the pixel from the old image to the new image
