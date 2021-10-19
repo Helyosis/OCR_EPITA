@@ -53,7 +53,7 @@ SDL_Surface *rotation(SDL_Surface *image, double angle){
 //@return: the rotated and sheared image
 
 SDL_Surface *Rotation_shearing(SDL_Surface *image, double angle){
-        //Get the image dimensions
+    //Get the image dimensions
     int w = image->w;
     int h = image->h;
 
@@ -64,24 +64,22 @@ SDL_Surface *Rotation_shearing(SDL_Surface *image, double angle){
     double angle_rad = angle * (M_PI / 180); //convert the angle from degrees to radians
     int center_x = w/2;
     int center_y = h/2;
-    double tangent = tan(angle / 2);
     double cos_angle = cos(angle_rad);
     double sin_angle = sin(angle_rad);
+    double tan_angle = tan(angle_rad/2);
     for(int x = 0; x < w;x++){
         for(int y = 0; y < h; y++){
             // Computes the offsets from the center of the image
-            x = (x - center_x);
-            y = (y - center_y);
+            double xOff = (x - center_x);
+            double yOff = (y - center_y);
             // Compute the coordinates from the image
-            //shear 1
-            int new_x = round(x + y * tangent) + center_x;
+            int new_x = round(x - y* tan_angle);
             int new_y = y;
+            new_y = round(new_x * sin_angle + new_y);
+            new_x = round(new_x - new_y*tan_angle);
 
-            //shear 2
-            new_y= round(new_x*sin_angle+new_y) + center_y;
-
-            //shear 3
-            new_x = round(new_x-new_y*tangent);
+            new_y -= center_y;
+            new_x -= center_x;
             // Check if the new coordinates are within the image
             if(0 <= new_x && new_x < w && 0 <= new_y && new_y < h){
                 // Copy the pixel from the old image to the new image

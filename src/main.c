@@ -7,6 +7,7 @@
 #include "ImageProcessing/NoiseReduction.h"
 #include "ImageProcessing/BlackAndWhite.h"
 #include "ImageProcessing/HoughTransform.h"
+#include "ImageProcessing/Rotation.h"
 
 int main(int argc, char **argv)
 {
@@ -29,7 +30,7 @@ int main(int argc, char **argv)
     }
     printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
            argv[1], image->w, image->h);
-    Apply_grayscale_filter(image);
+    /*Apply_grayscale_filter(image);
     printf("[*] Applied grayscale\n");
     GaussianBlur_inPlace(image);
     printf("[*] Reduced noise\n");
@@ -38,8 +39,9 @@ int main(int argc, char **argv)
 
     printf("[-] Hough transform is not implemented yet. Skipping.\n");
     printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
-
-    SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
+    */
+    SDL_Surface *img = Rotation_shearing(image,45);
+    SDL_SaveBMP(Rotation_shearing(image,45), argc > 2 ? argv[2] : "out.bmp");
 
     printf("Saved images !\n");
 
