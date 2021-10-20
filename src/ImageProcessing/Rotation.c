@@ -64,7 +64,6 @@ SDL_Surface *Rotation_shearing(SDL_Surface *image, double angle){
     double angle_rad = angle * (M_PI / 180); //convert the angle from degrees to radians
     int center_x = w/2;
     int center_y = h/2;
-    double cos_angle = cos(angle_rad);
     double sin_angle = sin(angle_rad);
     double tan_angle = tan(angle_rad/2);
     for(int x = 0; x < w;x++){

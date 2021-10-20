@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <stdbool.h>
+#include <err.h>
 
 //IsValid checks if the sudoku grid is valid
 //@param grid the sudoku grid
@@ -9,12 +9,11 @@ int IsValid(char board[], size_t rows,size_t cols) {
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             if ((board[i * cols + j] > '9' || board[i * cols + j] < '0') && board[i * cols + j] != '.') {
-	            printf("failed with %d\n",board[i*cols+j]);
-              return false;
+	            return 0;
             }
         }
     }
-    return true;
+    return 1;
 }
 
 //Clean Will replace all the dots by some 0
@@ -23,8 +22,7 @@ int IsValid(char board[], size_t rows,size_t cols) {
 
 void Clean(char board[], size_t rows, size_t cols){
   if(!IsValid(board,rows,cols)){
-    printf("Invalid GRID\n");
-    return;
+    errx(1,"Invalid GRID\n");
   }
   size_t i,j;
   for (i = 0; i < rows; ++i) {
@@ -49,23 +47,23 @@ int IsColumnSolved(char board[], size_t cols, int x) {
     {
         str[i] = board[i * cols + x]+'0';
     }
-    bool solved = true;
+    int solved = 1;
     size_t j = 0;
     size_t k;
     while(j < cols && solved) {
-        bool found = false;
+        int found = 0;
         k = 0;
         while (k < cols && !found){
             if (str[j] == eval[k])
             {
-                found = true;
+                found = 1;
             }
             k++;
         }   
 
         if (!found)
         {
-            solved = false;
+            solved = 0;
         }
         j++;
     }
@@ -83,22 +81,22 @@ int IsRowSolved(char board[], size_t rows, size_t cols, int y) {
     {
         str[i] = board[y * cols + i] + '0';
     }
-    bool solved = true;
+    int solved = 1;
     size_t j = 0;
     size_t k;
     while(j < rows && solved) {
-        bool found = false;
+        int found = 0;
         k = 0;
         while (k < rows && !found){
             if (str[j] == eval[k])
             {
-                found = true;
+                found = 1;
             }
             k++;
         }
         if (!found)
         {
-            solved = false;
+            solved = 0;
         }
         j++;
     }
@@ -119,22 +117,22 @@ int IsSquareSolved(char board[], size_t cols, int x, int y) {
             str[i * cols + j] = board[i * cols + j] + '0';
         }
     }
-    bool solved = true;
+    int solved = 1;
     int j = 0;
     int k;
     while(j < 9 && solved) {
-        bool found = false;
+        int found = 0;
         k = 0;
         while (k < 9 && !found){
             if (str[j] == eval[k])
             {
-                found = true;
+                found = 1;
             }
             k++;
         }
         if (!found)
         {
-            solved = false;
+            solved = 0;
         }
         j++;
     }
@@ -146,7 +144,7 @@ int IsSquareSolved(char board[], size_t cols, int x, int y) {
 //@param grid the sudoku grid
 //@return 1 if the grid is solved, 0 if not
 int IsSolved(char board[], size_t rows, size_t cols) {
-    bool result = true;
+    int result = 1;
     size_t i = 0;
     size_t j = 0;
     while (i < rows && result) {
@@ -216,7 +214,7 @@ int AlreadyInLine(char grid[], size_t cols, int y, int val){
 //@param val the number to check
 //@return 1 if the number is already in the square, 0 if not
 int AlreadyInSquare(char grid[], size_t cols, int x, int y, int val){
-    bool result = true;
+    int result = 1;
     int i = x-x%3;
     int j;
     while (i < x+3 - x%3 && result) {
@@ -224,7 +222,7 @@ int AlreadyInSquare(char grid[], size_t cols, int x, int y, int val){
         while (j < y+3 - y%3 && result) {
             if (grid[i * cols + j] == val + '0')
             {
-                result = false;
+                result = 0;
             }
             j++;
         }
@@ -244,18 +242,18 @@ int SolveRec(char grid[], size_t rows, size_t cols, int x, int y) {
         y++;
     }
     if (y > (int)cols -1){
-        return true;
+        return 1;
     }
     if (grid[x * cols + y] == '.' || grid[x*cols +y] == '0'){
         for (size_t i = 1; i < rows+1; i++){
             if (!AlreadyInColumn(grid, rows, cols, x, i) && !AlreadyInLine(grid, cols, y, i) && !AlreadyInSquare(grid, cols, x, y, i)){
 	      grid[x * cols + y] = (char)(i + '0');
-                bool result = SolveRec(grid, rows, cols, x+1, y);
+                int result = SolveRec(grid, rows, cols, x+1, y);
                 if (!result){
                     grid[x * cols + y] = '0';
                 }
                 else {
-                    return true;
+                    return 1;
                 }
             }
         }
@@ -263,7 +261,7 @@ int SolveRec(char grid[], size_t rows, size_t cols, int x, int y) {
     else {
         return SolveRec(grid, rows, cols, x+1, y);
     }
-    return false;
+    return 0;
 }
 
 //Solve solves the sudoku grid

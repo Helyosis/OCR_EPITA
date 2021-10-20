@@ -2,6 +2,8 @@
 # Created by https://www.toptal.com/developers/gitignore/api/c,vs,vim,emacs,clion
 # Edit at https://www.toptal.com/developers/gitignore?templates=c,vs,vim,emacs,clion
 
+test/
+
 ### Images ###
 *.bmp
 ### VSCode ###
