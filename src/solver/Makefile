@@ -1,7 +1,6 @@
 CC = gcc
 
 CFLAGS = -Wall -Wextra -std=c99 -O2
-
 SRC = main.c sudoku.c
 
 OBJ = $(SRC:.c=.o)

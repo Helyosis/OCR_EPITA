@@ -35,7 +35,6 @@ int main(int argc, char **argv)
     }
     fclose(input);
     //solving the grid
-    PrintGrid(grid,9,9);
     int solved = Solve(grid, 9, 9);
     if(solved == 0)
     {
@@ -49,22 +48,21 @@ int main(int argc, char **argv)
     {
         if(i % 3 == 0 && i != 0){
             char *c = " ";
-            fprintf(output, c);
+            fprintf(output,"%s" , c);
         }
         if (i % 9 == 0 && i !=0)
         {
             char *c = "\n";
-            fprintf(output, c);
+            fprintf(output,"%s" , c);
         }
         if (i % 27 == 0 && i != 0)
         {
             char *c = "\n";
-            fprintf(output, c);
+            fprintf(output,"%s" , c);
         }
         fprintf(output, "%c", grid[i]);
     }
     fclose(output);
-    PrintGrid(grid,9,9);
     free(grid);
     return 0;
 }
