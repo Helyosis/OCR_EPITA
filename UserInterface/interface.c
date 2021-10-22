@@ -58,6 +58,21 @@ void initInterface(int argc,char *argv[]){
 	return EXIT_SUCCESS;
 }
 
+//reload img
+void reload_img(char *path[]){
+	int vertical = 60;
+        int horizontal = 20;
+	if(sudoku_img){
+        	gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it
+        	printf("[-] deleting older input\n");
+        }
+
+	sudoku_img = gtk_image_new_from_file(path);
+        gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
+        gtk_widget_show(sudoku_img);
+        gtk_fixed_move (GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set hte img at the right place
+}
+
 void on_button_close(){
 	
 	// check if the img is already loaded
@@ -120,3 +135,16 @@ void on_open_activated(GtkMenuItem *m){
 void on_quit_activated(GtkMenuItem *m){
 	gtk_main_quit();
 }
+//Auto exploit
+void on_button_exploit_activate(){
+
+}
+
+//greyscale
+void on_greyscale_toggled(){
+}
+
+//black and white
+void on_baw_toggled(){
+}
+
