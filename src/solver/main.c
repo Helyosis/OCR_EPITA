@@ -18,7 +18,7 @@ int main(int argc, char **argv)
         return 1;
     }
     //removing the space in the file
-    char *grid = malloc(sizeof(char) * 81);
+    char *grid = calloc(sizeof(char) * 81, sizeof(char));
     int i = 0;
     char c;
     while ((c = fgetc(input)) != EOF)
