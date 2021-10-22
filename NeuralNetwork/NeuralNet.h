@@ -13,7 +13,12 @@ struct NeuralNetwork
   double* hiddenLayerA;
   double* outputLayer;
   double* outputLayerA;
+  double* nablaB2;
+  double* nablaW2;
+  double* nablaB1;
+  double* nablaW1;
 };
+void trainNn(int iterationLimit);
 /*struct NeuralNetwork* initNn();
 void initWB(struct NeuralNetwork* nnPtr);
 void feedForward(struct NeuralNetwork* nnPtr);
