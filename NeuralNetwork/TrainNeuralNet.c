@@ -1,5 +1,22 @@
 #include "NeuralNet.h"
 #include "NeuralNetInit.h"
+#include "MatUtils.h"
+#include <stdlib.h>
+#include <stdio.h>
+
+// Derivative of the activation function
+double activationFDerivative(double x){
+    return activationF(x)*(1-activationF(x));
+}
+
+double* activationFDerivativeL(int height, double* mat){
+    double* result=calloc(height,sizeof(double));
+    for(int iHeight=0;iHeight<height;iHeight++){
+        result[iHeight] = activationFDerivative(mat[iHeight]);
+    }
+    return result;
+}
+
 // Gradient descent, m is the number of training sample
 void gradientDescent(struct NeuralNetwork* nnPtr, double m){
     double stepSize=0.01;
@@ -47,7 +64,7 @@ void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
     nnPtr->nablaB2 = errorOutputLayer; //TODO faire une seconde struct  
     printf("errorOutputL : ");
     printMat(errorOutputLayer,nnPtr->nbNBL[2],1);  
-    matricesMult(errorOutputLayer,nnPtr->hiddenLayerA,outputHeight,1,hiddenLHeight,nnPtr->nablaW2);// matTranspose(hiddenLayerA)
+    matricesMult(errorOutputLayer,nnPtr->hiddenLayerA,outputHeight,1,hiddenLHeight,nnPtr->nablaW2);
     free(r);
 
     // Back propagate the error to the hidden layer
@@ -59,13 +76,12 @@ void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
     double* errorHiddenLayer = hadamardProduct(r,adH,1,hiddenLHeight);
     free(cd); free(adH); free(wT);free(r);
     int inputLHeight=nnPtr->nbNBL[0];
-    //r=calloc(hiddenLHeight*inputLHeight,sizeof(double));
     free(nnPtr->nablaB1);
-    nnPtr->nablaB1 = errorHiddenLayer;//erro use mat add???
+    nnPtr->nablaB1 = errorHiddenLayer;
     printf("errorHiddenL :\n");
     printMat(errorHiddenLayer,nnPtr->nbNBL[2],1);  
 
-    matricesMult(errorHiddenLayer,nnPtr->inputA,hiddenLHeight,1,inputLHeight,nnPtr->nablaW1);// matTranspose(inputA)
+    matricesMult(errorHiddenLayer,nnPtr->inputA,hiddenLHeight,1,inputLHeight,nnPtr->nablaW1);
     printf("nB2:\n");
     printMat(nnPtr->nablaB2,nnPtr->nbNBL[2],1);
     printf("nB1:\n");
@@ -95,10 +111,6 @@ void trainNn(int iterationLimit){
     int nbSample=2;
     double* targetOutput=calloc(1,sizeof(double));
     double* sampleList=creatSample(nbSample);
-    // This is only for testing uses 
-    //----------------------------------------
-    /*double* targetOutput=calloc(1,sizeof(double));
-    targetOutput[0]=1;*/
     int* nbNBL=calloc(3, sizeof(3));
     nbNBL[0] = 2; nbNBL[1] = 2; nbNBL[2] = 1;
     double* input=calloc(2, sizeof(double));
@@ -106,7 +118,6 @@ void trainNn(int iterationLimit){
     input[1] = sampleList[1];
     targetOutput[0]=sampleList[2];
     printf("trainNN nbNBN %p\n",nbNBL);
-    //----------------------------------------
     printf("initNN\n");
     struct NeuralNetwork* nnPtr= initNn(nbNBL,input);
     int iterationNum=0;

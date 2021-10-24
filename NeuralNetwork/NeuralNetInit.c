@@ -1,5 +1,8 @@
 #include <time.h>
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include "NeuralNetInit.h"
 //put this in utils
 double randomDouble(){
     #ifndef RANDOMSEED

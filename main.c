@@ -7,10 +7,10 @@
 #include "ImageProcessing/NoiseReduction.h"
 #include "ImageProcessing/BlackAndWhite.h"
 #include "image-manipulation/manipulation.h"
-#include "NeuralNetwork/NeuralNet.h"
+#include "NeuralNetwork/TrainNeuralNet.h"
 
 int main()
 {
-    trainNn(20000);
+    trainNn(3);
     return 0;
 }

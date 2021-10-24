@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 void printMat(double* mat, int height, int width){
     for (int iHeight = 0; iHeight < height; iHeight++) {
