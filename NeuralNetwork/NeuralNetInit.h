@@ -20,4 +20,5 @@ struct NeuralNetwork
 };
 struct NeuralNetwork* initNn(int* nbNBL,double* input);
 void freeNn(struct NeuralNetwork* nnPtr);
+void initWB(struct NeuralNetwork* nnPtr);
 #endif

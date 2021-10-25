@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "NeuralNetInit.h"
-//put this in utils
+
 double randomDouble(){
     #ifndef RANDOMSEED
     #define RANDOMSEED srand(time(NULL));
@@ -11,16 +11,15 @@ double randomDouble(){
     double x = (double)rand()/(double)(RAND_MAX);
     return x;
 }
+
 // Initialize the weight with uniform distribution and the bias to 0
 void initWB(struct NeuralNetwork* nnPtr) {
-    printf("initW1B1\n");
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[0]; iWidth++) {
             nnPtr->w1[iHeight * nnPtr->nbNBL[0] + iWidth] = randomDouble()/sqrt(nnPtr->nbNBL[0]);
             nnPtr->b1[iHeight] = 0;
         }
     }
-    printf("initW2B2\n");
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[2]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[1]; iWidth++) {
             nnPtr->w2[iHeight * nnPtr->nbNBL[1] + iWidth] = randomDouble()/sqrt(nnPtr->nbNBL[1]);
@@ -29,6 +28,7 @@ void initWB(struct NeuralNetwork* nnPtr) {
     }
 }
 
+// Initialize the neural network
 struct NeuralNetwork* initNn(int* nbNBL,double* input){
     struct NeuralNetwork* nnPtr = malloc(sizeof(struct NeuralNetwork));
     
@@ -57,6 +57,7 @@ struct NeuralNetwork* initNn(int* nbNBL,double* input){
     return nnPtr;
 }
 
+// Free the neural network
 void freeNn(struct NeuralNetwork* nnPtr){
     free(nnPtr->inputA);
     free(nnPtr->w1);

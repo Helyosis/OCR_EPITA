@@ -21,7 +21,7 @@ void feedForward(struct NeuralNetwork* nnPtr){
         nnPtr->hiddenLayerA[iWidth]=activationF(nnPtr->hiddenLayer[iWidth]);
     }
     matricesMult(nnPtr->w2,nnPtr->hiddenLayerA,nnPtr->nbNBL[2],nnPtr->nbNBL[1],1,nnPtr->outputLayer);
-    matricesCAdd(nnPtr->outputLayer,nnPtr->b2,nnPtr->nbNBL[2]);//TODO verifier renvoi un scalaire
+    matricesCAdd(nnPtr->outputLayer,nnPtr->b2,nnPtr->nbNBL[2]);
     for(int iWidth=0;iWidth<nnPtr->nbNBL[2];iWidth++){
         nnPtr->outputLayerA[iWidth]=activationF(nnPtr->outputLayer[iWidth]);
     }
