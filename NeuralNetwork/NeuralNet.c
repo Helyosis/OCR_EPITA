@@ -10,7 +10,7 @@ double activationF(double x){
     return 1/(1+exp(-x));
 }
 
-// Feedforward
+// Feedforward: z(l)=w(l)*a(l)+b(l), a(l)=f(z(l))
 void feedForward(struct NeuralNetwork* nnPtr){
     for(int iWidth=0;iWidth<nnPtr->nbNBL[0];iWidth++){
         nnPtr->inputA[iWidth]=activationF(nnPtr->input[iWidth]);

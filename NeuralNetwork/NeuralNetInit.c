@@ -12,7 +12,8 @@ double randomDouble(){
     return x;
 }
 
-// Initialize the weight with uniform distribution and the bias to 0
+// Initialize the weight with uniform distribution: 
+//(random number)/sqrt(nb neurone of the layer) and the bias to 0
 void initWB(struct NeuralNetwork* nnPtr) {
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[0]; iWidth++) {

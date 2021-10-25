@@ -5,7 +5,7 @@
 #include <stdio.h>
 
 #include <unistd.h>//TODO
-// Derivative of the activation function
+// Derivative of the activation function: sigmoid
 double activationFDerivative(double x){
     return activationF(x)*(1-activationF(x));
 }
@@ -19,6 +19,8 @@ double* activationFDerivativeL(int height, double* mat){
 }
 
 // Gradient descent, m is the number of training sample
+// New weight = old weight-(stepSize/m)*(nabla of the weight)
+// New bias   = old bias-(stepSize/m)*(nabla of the bias)
 void gradientDescent(struct NeuralNetwork* nnPtr, double m){
     double stepSize=0.25;
     for(int iHeight=0;iHeight<nnPtr->nbNBL[1];iHeight++){
@@ -35,7 +37,7 @@ void gradientDescent(struct NeuralNetwork* nnPtr, double m){
     }
 }
 
-// Derivative of the cost
+// Derivative of the cost: y-predicted output
 double* costDerivative(double* targetOutput, double* output, int height){
     double* result = calloc(height,sizeof(double));
     for(int iHeight=0;iHeight<height;iHeight++){
@@ -43,39 +45,49 @@ double* costDerivative(double* targetOutput, double* output, int height){
     }
     return result;
 }
-
-// Back propagation 
-void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
-    // Calculate the output error
+// Calculate the output error: (gradient of the cost function)°f'(z(l))
+double* calculateErrorOutputLayer(struct NeuralNetwork* nnPtr, double* targetOutput){ 
     int outputHeight=nnPtr->nbNBL[2];
     double* adO = activationFDerivativeL(outputHeight,nnPtr->outputLayer);
     double* cd = costDerivative(targetOutput,nnPtr->outputLayerA,outputHeight);  
     double* errorOutputLayer = hadamardProduct(cd,adO,1,outputHeight);
     free(adO);
+    free(cd); 
+    return errorOutputLayer;
+}
+// Propagate the output error to the hidden layer: (weight(l+1)T*errorOutputlayer)°f'(z(l))
+double* calculateErrorHiddenLayer(struct NeuralNetwork* nnPtr, double* errorOutputLayer){
     int hiddenLHeight=nnPtr->nbNBL[1];
-    double* r=calloc(outputHeight*hiddenLHeight,sizeof(double));
-    //free(nnPtr->nablaB2);
-    //nnPtr->nablaB2 = errorOutputLayer;
-    matricesCAdd(nnPtr->nablaB2,errorOutputLayer,outputHeight);
-    free(r);
-    r=calloc(outputHeight*hiddenLHeight,sizeof(double));  
-    matricesMult(errorOutputLayer,nnPtr->hiddenLayerA,outputHeight,1,hiddenLHeight,r);
-    matricesAdd(nnPtr->nablaW2,r,outputHeight,hiddenLHeight);
-    free(r);
-
-    // Back propagate the error to the hidden layer
+    int outputHeight=nnPtr->nbNBL[2];
     double* adH = activationFDerivativeL(hiddenLHeight,nnPtr->hiddenLayer);
-    r = calloc(hiddenLHeight*1,sizeof(double));
+    double* r = calloc(hiddenLHeight*1,sizeof(double));
     double* wT = calloc(hiddenLHeight*outputHeight,sizeof(double));
     matTranspose(nnPtr->w2,wT,outputHeight,hiddenLHeight);
     matricesMult(wT,errorOutputLayer,hiddenLHeight,outputHeight,1,r);
     double* errorHiddenLayer = hadamardProduct(r,adH,1,hiddenLHeight);
-    free(cd); free(adH); free(wT);free(r);
+    free(adH); 
+    free(wT);
+    free(r);
+    return errorHiddenLayer;
+}
+// Back propagation: for each layer propagate the error of the predicted output
+void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
+    int outputHeight=nnPtr->nbNBL[2];
+    int hiddenLHeight=nnPtr->nbNBL[1];
     int inputLHeight=nnPtr->nbNBL[0];
-    //free(nnPtr->nablaB1); 
-    //nnPtr->nablaB1 = errorHiddenLayer; do not free errorH
+    double* errorOutputLayer = calculateErrorOutputLayer(nnPtr,targetOutput);
+    // Calculate nabla B2 and nabla W2
+    // Nabla of a bias(l) += error(l)
+    // Nabla of a weight(l) += error(l)*a(l-1)T
+    matricesCAdd(nnPtr->nablaB2,errorOutputLayer,outputHeight);
+    double* r=calloc(outputHeight*hiddenLHeight,sizeof(double));  
+    matricesMult(errorOutputLayer,nnPtr->hiddenLayerA,outputHeight,1,hiddenLHeight,r);
+    matricesAdd(nnPtr->nablaW2,r,outputHeight,hiddenLHeight);
+    free(r);
+    // Back propagate the error to the hidden layer
+    double* errorHiddenLayer=calculateErrorHiddenLayer(nnPtr,errorOutputLayer);
+    // Update nabla B1 and nabla W1
     matricesCAdd(nnPtr->nablaB1,errorHiddenLayer,hiddenLHeight);
-
     r = calloc(hiddenLHeight*inputLHeight,sizeof(double));
     matricesMult(errorHiddenLayer,nnPtr->inputA,hiddenLHeight,1,inputLHeight,r);
     matricesAdd(nnPtr->nablaW1,r,hiddenLHeight,inputLHeight);
@@ -84,7 +96,7 @@ void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
     free(errorOutputLayer);
 }
 
-// Creat sample
+// Creat sample: two input 0 or 1 and the target output
 double* creatSample(int nbSample){
     double* sampleList=calloc(nbSample*3,sizeof(double));
     for(int i=0;i<nbSample*3;i+=3){
@@ -96,6 +108,7 @@ double* creatSample(int nbSample){
     }
     return sampleList;
 }
+// Initialize nablaW=0 and nablaB=0
 void initNablaWB(struct NeuralNetwork* nnPtr){
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[0]; iWidth++) {

@@ -50,9 +50,9 @@ void matTranspose(double* mat, double* result, int height, int width){
     }
 }
 
-// Hadamard product
+// Hadamard product: result[i][j] = matA[i][j] * matB[i][j]
 double* hadamardProduct(double* matA, double* matB,int width, int height){
-    double* result  = calloc(width*height,sizeof(double));//DO NOT FORGET TO FREE
+    double* result  = calloc(width*height,sizeof(double));
     for(int iHeight=0;iHeight<height;iHeight++){
         for(int iWidth=0; iWidth<width;iWidth++){
             result[iHeight*width+iWidth] = matA[iHeight*width+iWidth] * matB[iHeight*width+iWidth];
