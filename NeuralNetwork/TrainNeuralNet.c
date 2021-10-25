@@ -22,7 +22,7 @@ double* activationFDerivativeL(int height, double* mat){
 // New weight = old weight-(stepSize/m)*(nabla of the weight)
 // New bias   = old bias-(stepSize/m)*(nabla of the bias)
 void gradientDescent(struct NeuralNetwork* nnPtr, double m){
-    double stepSize=0.25;
+    double stepSize=0.5;
     for(int iHeight=0;iHeight<nnPtr->nbNBL[1];iHeight++){
         for(int iWidth=0; iWidth<nnPtr->nbNBL[0];iWidth++){
             nnPtr->w1[iHeight*nnPtr->nbNBL[0]+iWidth]+= -stepSize*((1/m)*nnPtr->nablaW1[iHeight]);
@@ -125,7 +125,7 @@ void initNablaWB(struct NeuralNetwork* nnPtr){
 }
 // Train the neural network
 void trainNn(int iterationLimit){
-    int nbSample=325;
+    int nbSample=1000;//325;
     double* targetOutput=calloc(1,sizeof(double));
     double* sampleList=creatSample(nbSample);
     int* nbNBL=calloc(3, sizeof(3));
@@ -136,10 +136,9 @@ void trainNn(int iterationLimit){
     targetOutput[0]=sampleList[2];
     struct NeuralNetwork* nnPtr= initNn(nbNBL,input);
     int iterationNum=0;
-   
+    double success=0;
     while(iterationNum<iterationLimit){
-
-        double success=0;
+        success=0;
         initNablaWB(nnPtr);
         for(int iSample=0;iSample<nbSample*3;iSample+=3){
 
@@ -152,44 +151,44 @@ void trainNn(int iterationLimit){
             if(nnPtr->outputLayerA[0]>0.5){
                 if((int)targetOutput[0]==1)
                         success++;
-                else
+                /*else
                 {
                     if(iterationNum%500==0)
                         initWB(nnPtr);
-                }
+                }*/
             }
             else{
                 if((int)targetOutput[0]==0)
                         success++;
-                else{
+                /*else{
                     if(iterationNum%500==0)
                         initWB(nnPtr);
-                }
+                }*/
             }
         }
-        printf("nw1:\n");
+        /*printf("nw1:\n");
         printMat(nnPtr->nablaW1,nnPtr->nbNBL[1],nnPtr->nbNBL[0]);
         printf("nb1:\n");
         printMat(nnPtr->nablaB1,nnPtr->nbNBL[1],1);
         printf("nW2:\n");
         printMat(nnPtr->nablaW2,nnPtr->nbNBL[2],nnPtr->nbNBL[1]);
         printf("nb2:\n");
-        printMat(nnPtr->nablaB2,nnPtr->nbNBL[2],1);
+        printMat(nnPtr->nablaB2,nnPtr->nbNBL[2],1);*/
         gradientDescent(nnPtr,nbSample);
-        printf("w1:\n");
+        /*printf("w1:\n");
         printMat(nnPtr->w1,nnPtr->nbNBL[1],nnPtr->nbNBL[0]);
         printf("b1:\n");
         printMat(nnPtr->b1,nnPtr->nbNBL[1],1);
         printf("w2:\n");
         printMat(nnPtr->w2,nnPtr->nbNBL[2],nnPtr->nbNBL[1]);
         printf("b2:\n");
-        printMat(nnPtr->b2,nnPtr->nbNBL[2],1);
-        printf("MOYENNE: %f \n",(success/nbSample)*100);
-        sleep(0.5);
+        printMat(nnPtr->b2,nnPtr->nbNBL[2],1);*/
+        
+        //sleep(0.5);
         
         iterationNum+=1;
     }
-   
+    printf("MOYENNE: %f \n",(success/nbSample)*100);
     free(nbNBL);
     free(input);
     free(targetOutput);
