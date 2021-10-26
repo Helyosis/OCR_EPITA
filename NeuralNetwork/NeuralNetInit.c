@@ -17,14 +17,14 @@ double randomDouble(){
 void initWB(struct NeuralNetwork* nnPtr) {
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[0]; iWidth++) {
-            nnPtr->w1[iHeight * nnPtr->nbNBL[0] + iWidth] = randomDouble()/sqrt(nnPtr->nbNBL[0]);
-            nnPtr->b1[iHeight] = 0;
+            nnPtr->w1[iHeight * nnPtr->nbNBL[0] + iWidth] = (((float) rand() / RAND_MAX) * (1.0-0.5)) + 0.5;//randomDouble()/sqrt(nnPtr->nbNBL[0]);
+            nnPtr->b1[iHeight] = -1;
         }
     }
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[2]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[1]; iWidth++) {
-            nnPtr->w2[iHeight * nnPtr->nbNBL[1] + iWidth] = randomDouble()/sqrt(nnPtr->nbNBL[1]);
-            nnPtr->b2[iHeight] = 0;
+            nnPtr->w2[iHeight * nnPtr->nbNBL[1] + iWidth] = (((float) rand() / RAND_MAX) * (1.0-0.5)) + 0.5;//randomDouble()/sqrt(nnPtr->nbNBL[1]);
+            nnPtr->b2[iHeight] = 1;
         }
     }
 }
