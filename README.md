@@ -1,6 +1,6 @@
 # SUDO.C.R - EPITA S3 Project
 
-![LOGO OCR](Ressources/L.png)
+![LOGO OCR](Ressources/L.png = 400x400)
 
 This is project is an OCR wich could recognize and resolves SUDOKU.
 
