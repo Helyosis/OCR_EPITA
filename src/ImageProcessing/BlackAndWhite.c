@@ -38,9 +38,11 @@ SDL_Surface *AdapativeThresholding(SDL_Surface* surface) {
     for (int x = range; x < surface->w - range; ++x) {
         for (int y = range; y < surface->h - range; ++y) {
             //printf("y = %d, x = %d, ", y, x);
-            uint32_t threshold = AdaptiveThresholding_calculateThreshold(surface, y, x, range);
+            uint32_t threshold = 0;
+            threshold = AdaptiveThresholding_calculateThreshold(surface, y, x, range);
             //printf("threshold = %d\n", threshold);
-            uint32_t pixel_value = I(surface, x, y);
+            uint32_t pixel_value = 0;
+            pixel_value = I(surface, x, y); // To suppress the warning in valgrind ?
             if (pixel_value > threshold) {
                 putPixel(dest, x, y, 0xFF000000);
             }

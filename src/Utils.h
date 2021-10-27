@@ -7,4 +7,14 @@
  */
 int clamp(int value, int min, int max);
 
+/*
+ * Hangs program execution until the user press a key
+ */
+void wait_for_keypressed();
+
+/*
+ * Update the renderer to set the new surface as the only graphics rendered
+ */
+void displaySurface(SDL_Renderer* renderer, SDL_Surface* surface);
+
 #endif
