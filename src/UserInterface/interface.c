@@ -15,7 +15,6 @@
 #include "./utilsUI.h"
 
 // GtK Items
-
 GtkWidget	*main_window;
 GtkWidget	*fixed1;
 GtkWidget	*button_exploit;
@@ -34,6 +33,11 @@ GtkWidget	*kuwahara;
 //GtkWidget	*rotation;
 GtkBuilder	*builder;
 
+//Toggle events
+//int GREYSCALE = 0;
+//int GAUSSIAN = 0;
+//int THRESHOLDING = 0;
+//int KUWAHARA = 0;
 int initInterface(int argc,char *argv[]){
 	gtk_init(&argc, &argv); // init GtK
 	
@@ -168,6 +172,7 @@ void on_greyscale_toggled(){
 	
 	//Saves tmp + actual_img
 	save_image(image,"Image/greyscale.png");
+	
 	reload_img("Image/greyscale.png");
 }
 void on_gaussian_toggled(){
