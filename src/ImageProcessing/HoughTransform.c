@@ -1,5 +1,6 @@
 #include <SDL.h>
 #include <math.h>
+#include <err.h>
 #include "Pixels.h"
 #include "HoughTransform.h"
 #include "../Utils.h"
@@ -12,56 +13,65 @@
 
 
 houghTransorm_result* HoughTransform(SDL_Surface *source) {
-    
-    int x_max = source->w;
-    int y_max = source->h;
+    int Ny = source->h;
+    int Nx = source->w;
 
-    double theta_max = M_PI; 
-    double theta_min = 0f;
+    double rho   = 1.0;
+    double theta = 1.0;
 
-    double r_min = 0f;
-    double r_max = sqrt(x_max * x_max +  y_max * y_max);
+    int Ntheta = 180 / theta;
+    int Nrho   = (int) sqrt(Nx * Nx + Ny * Ny) / rho;
 
-    int r_dim = 200; 
-    int theta_dim = 300;
+    double dtheta = M_PI / Ntheta;
+    double drho   = sqrt(Nx * Nx + Ny * Ny) / Nrho;
 
-    uint32_t* hough_accumulator = calloc(r_dim * theta_dim, sizeof(uint32_t));
+    long* accum = calloc(Ntheta * Nrho, sizeof(*accum));
+    if (accum == NULL) errx(-1, "Wasn't able to allocate accum");
 
-    for (int y = 0; y < y_max; ++y) {
-        for (int x = 0; x < x_max; ++x) {
-            
-            for (int i_theta = 0; i_theta < theta_dim; ++i_theta) {
-                
+    for (int y = 0; y < Ny; ++y) {
+        for (int x = 0; x < Nx; ++x) {
+            int pixelIntensity = I(source, x, y);
+            if (pixelIntensity != 0 && pixelIntensity != 0xFF)
+                warn("pixel at image(y=%d, x=%d) is not black or white",
+                     y, x);
+
+            if (I(source, x, y) == 0xFF) { // White pixel
+                for (int itheta = 0; itheta < Ntheta; ++itheta) {
+                    double theta = itheta * dtheta;
+                    double rho   = x * cos(theta) + (Ny - y) * sin(theta);
+                    int    irho  = rho / drho;
+                    if (irho > 0 && irho < Nrho)
+                        ++accum[itheta * Nrho + irho];
+                }
             }
         }
     }
 
-    // We only save the points with a high enough score.
-    // Each of these saved points will represent one line
-    uint32_t threshold = 130;
-    int nbLines = 0;
-    for (int i = 0; i < Ntheta * Nrho; ++i) {
-        if (hough_accumulator[i] < threshold) {
-            hough_accumulator[i] = 0;
+    // We only keep the highest values
+    int threshold = 600;
+    long nbLines = 0;
+    for (int i = 0; i  < Ntheta * Nrho; i += 5) {
+        if (accum[i] < threshold) {
+            accum[i] = 0;
         } else {
-            nbLines++;
+            ++nbLines;
         }
     }
 
-    rho_theta_tuple* lines = calloc(nbLines * sizeof(rho_theta_tuple), sizeof(rho_theta_tuple));
-    rho_theta_tuple* i = lines;
-    for (int i_theta = 0; i_theta < Ntheta; ++i_theta) {
-        for (int i_rho = 0; i_rho < Nrho; ++i_rho) {
-            if (hough_accumulator[Ntheta * i_theta + i_rho]) {
-                i->theta = i_theta * dtheta;
-                i->rho = i_rho * drho;
-                ++i;;
+    rho_theta_tuple* lines = calloc(nbLines, sizeof(*lines));
+    if (lines == NULL) errx(-1, "Wasn't able to allocate lines");
+    int lineIndex = 0;
+    for (int itheta = 0; itheta < Ntheta; ++itheta) {
+        for (int irho = 0; irho < Nrho; ++irho) {
+            if (accum[itheta * Nrho + irho] != 0) {
+                lines[lineIndex].rho = irho * drho;
+                lines[lineIndex++].theta = itheta * dtheta;
             }
         }
     }
-
-    free(hough_accumulator);
-    houghTransorm_result* result = calloc(1, sizeof(result));
+    
+    houghTransorm_result* result = malloc(sizeof(*result));
+    if (result == NULL) errx(-1, "Wasn't able to allocate houghTransorm_result");
     result->values = lines;
     result->nbLines = nbLines;
     return result;
