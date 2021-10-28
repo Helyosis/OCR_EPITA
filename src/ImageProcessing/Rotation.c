@@ -1,6 +1,10 @@
-#include "SDL2/SDL.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#include <SDL2/SDL.h>
 #include <stdlib.h>
 #include <math.h>
+#pragma GCC diagnostic pop
+
 #include "Pixels.h"
 
 // Define Pi

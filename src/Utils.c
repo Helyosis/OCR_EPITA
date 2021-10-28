@@ -1,4 +1,7 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <SDL2/SDL.h>
+#pragma GCC diagnostic pop
 
 int clamp(int value, int min, int max) {
     if (value < min) return min;

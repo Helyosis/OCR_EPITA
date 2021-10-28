@@ -1,6 +1,10 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <SDL.h>
 #include <math.h>
 #include <err.h>
+#pragma GCC diagnostic pop
+
 #include "Pixels.h"
 #include "HoughTransform.h"
 #include "../Utils.h"
@@ -11,8 +15,12 @@
 
 #define RAD(A)  (M_PI*((double)(A))/180.0)
 
+void free_houghTransform_result(houghTransform_result *to_free) {
+    free(to_free->values);
+    free(to_free);
+}
 
-houghTransorm_result* HoughTransform(SDL_Surface *source) {
+houghTransform_result* HoughTransform(SDL_Surface *source) {
     int Ny = source->h;
     int Nx = source->w;
 
@@ -22,7 +30,7 @@ houghTransorm_result* HoughTransform(SDL_Surface *source) {
     int Ntheta = 180 / theta;
     int Nrho   = (int) sqrt(Nx * Nx + Ny * Ny) / rho;
 
-    double dtheta = M_PI / Ntheta;
+    double dtheta = M_PI / (double)Ntheta;
     double drho   = sqrt(Nx * Nx + Ny * Ny) / Nrho;
 
     long* accum = calloc(Ntheta * Nrho, sizeof(*accum));
@@ -50,7 +58,7 @@ houghTransorm_result* HoughTransform(SDL_Surface *source) {
     // We only keep the highest values
     int threshold = 600;
     long nbLines = 0;
-    for (int i = 0; i  < Ntheta * Nrho; i += 5) {
+    for (int i = 0; i  < Ntheta * Nrho; i += 1) {
         if (accum[i] < threshold) {
             accum[i] = 0;
         } else {
@@ -69,15 +77,18 @@ houghTransorm_result* HoughTransform(SDL_Surface *source) {
             }
         }
     }
-    
-    houghTransorm_result* result = malloc(sizeof(*result));
+
+    houghTransform_result* result = malloc(sizeof(*result));
     if (result == NULL) errx(-1, "Wasn't able to allocate houghTransorm_result");
     result->values = lines;
     result->nbLines = nbLines;
+
+    free(accum);
+
     return result;
 }
 
-void DrawHoughlines(SDL_Surface *source, houghTransorm_result *parameters) {
+void DrawHoughlines(SDL_Surface *source, houghTransform_result *parameters) {
     int nbLines = parameters->nbLines;
     rho_theta_tuple *lines = parameters->values;
 
@@ -86,7 +97,7 @@ void DrawHoughlines(SDL_Surface *source, houghTransorm_result *parameters) {
         double theta = lines->theta;
         lines++; // Next element
 
-        printf("Lines with rho=%f and theta=%f", rho, theta);
+        printf("Lines with rho=%f and theta=%f\n", rho, theta);
 
         double a = cos(theta);
         double b = sin(theta);

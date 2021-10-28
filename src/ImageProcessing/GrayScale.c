@@ -1,4 +1,7 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <SDL2/SDL.h>
+#pragma GCC diagnostic pop
 #include <SDL2/SDL_image.h>
 #include <err.h>
 #include <stdint.h>

@@ -1,15 +1,21 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <math.h>
 #include <stdint.h>
+#pragma GCC diagnostic pop
 #include "Pixels.h"
 
 #define KUWAHARA_RANGE 4
 
-#define GAUSSIAN_RANGE 2
+#define GAUSSIAN_RANGE 5
 #define GAUSSIAN_BLUR_SIGMA 1.4
 
+#ifndef M_PI
 #define M_PI  3.14159265358979323846
+#endif
+
 // Utility function to convert grayscale value to adequate ARGB pixel
 uint32_t insensityToARGB(unsigned char v) {
     return (uint32_t) (0xFF << 24 | v << 16 | v << 8 | v);
@@ -119,7 +125,7 @@ double** Build_GaussianKernel(int ksize) {
     #ifdef GAUSSIAN_BLUR_SIGMA
     double sigma = GAUSSIAN_BLUR_SIGMA;
     #else
-    double sigma = ((double) ksize) / 2 < 1 ? ((double) ksize) / 2 : 1;
+    double sigma = 0.3 * (((double) ksize - 1) * 0.5 - 1) + 0.8;
     #endif
     int kernelWidth = 2 * ksize + 1;
 
@@ -190,6 +196,11 @@ SDL_Surface* GaussianBlur(SDL_Surface *source) {
         }
     }
 
+    for (int i = 0; i < 2 * GAUSSIAN_RANGE + 1; ++i) {
+        free(kernel[i]);
+    }
+    free(kernel);
+    
     return dest;
 }
 

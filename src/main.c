@@ -1,4 +1,8 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <SDL2/SDL.h>
+#pragma GCC diagnostic pop
+
 #include <SDL2/SDL_image.h>
 #include <stdbool.h>
 #include <err.h>
@@ -48,14 +52,17 @@ int main(int argc, char **argv)
     displaySurface(renderer, image);
     printf("[*] Reduced noise\n");
 
-    displaySurface(renderer, image);
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
-
-    wait_for_keypressed();
-    DrawHoughlines(image, HoughTransform(image));
-
     displaySurface(renderer, image);
+    
+    wait_for_keypressed();
+    houghTransform_result* res = HoughTransform(image);
+    DrawHoughlines(image, res);
+
+
+     displaySurface(renderer, image);
+     free_houghTransform_result(res);
 
     printf("[+] Drew Hough lines\n");
 //printf("[-] Hough transform is not implemented yet. Skipping.\n");
@@ -81,6 +88,8 @@ int main(int argc, char **argv)
         }
     }
 
+    SDL_FreeSurface(image);
+    
     SDL_Quit();
     IMG_Quit();*/
     return 0;

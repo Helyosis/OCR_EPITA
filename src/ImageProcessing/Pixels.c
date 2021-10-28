@@ -1,7 +1,8 @@
-#include <SDL.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 #include <SDL_image.h>
 #include <math.h>
-
+#pragma GCC diagnostic pop
 
 Uint32 getPixel(SDL_Surface *surface, int x, int y)
 {
@@ -76,12 +77,11 @@ void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, uint32_t pixe
     double length = sqrt( x*x + y*y );
     double addx = x / length;
     double addy = y / length;
-        x = x0;
-        y = y0;
-
-        for ( i = 0; i < length; i += 1) {
-            putPixel(Screen, x, y, pixel );
+    x = x0;
+    y = y0;
+    for (i = 0; i < length; ++i) {
+        putPixel(Screen, x, y, pixel );
         x += addx;
         y += addy;
-        }
+    }
 }
