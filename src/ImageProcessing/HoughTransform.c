@@ -1,7 +1,8 @@
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <math.h>
-#include "Pixels.h"
 #include <err.h>
+#include "Pixels.h"
+#include "HoughTransform.h"
 #include "../Utils.h"
 
 #ifndef M_PI
@@ -10,72 +11,93 @@
 
 #define RAD(A)  (M_PI*((double)(A))/180.0)
 
-typedef struct {
-    double rho;
-    double theta;
-} rho_theta_tuple;
 
-void HoughTransform(SDL_Surface *source) {
-    double rho = 1.0;
+houghTransorm_result* HoughTransform(SDL_Surface *source) {
+    int Ny = source->h;
+    int Nx = source->w;
+
+    double rho   = 1.0;
     double theta = 1.0;
 
-    int Ntheta = floor(180.0 / theta);
-    int Nrho   = floor(sqrt(source->w * source->w + source->h * source->h)) / rho;
+    int Ntheta = 180 / theta;
+    int Nrho   = (int) sqrt(Nx * Nx + Ny * Ny) / rho;
 
     double dtheta = M_PI / Ntheta;
-    double drho   = sqrt(source->w * source->w + source->h * source->h) / Nrho;
+    double drho   = sqrt(Nx * Nx + Ny * Ny) / Nrho;
 
-    uint32_t* hough_accumulator = malloc(Ntheta * Nrho);
+    long* accum = calloc(Ntheta * Nrho, sizeof(*accum));
+    if (accum == NULL) errx(-1, "Wasn't able to allocate accum");
 
-    for (int y = 0; y < source->h; ++y) {
-        for (int x = 0; x < source->w; ++x){
-            if (I(source, x, y)) { // Not a white pixel (so a black pixel, i.e. an edge)
-                for (int i_theta = 0; i_theta < Ntheta; ++i_theta) {
-                    theta = i_theta * dtheta;
-                    rho = i_theta * cos(theta) + (source->h - y) * sin(theta);
+    for (int y = 0; y < Ny; ++y) {
+        for (int x = 0; x < Nx; ++x) {
+            int pixelIntensity = I(source, x, y);
+            if (pixelIntensity != 0 && pixelIntensity != 0xFF)
+                warn("pixel at image(y=%d, x=%d) is not black or white",
+                     y, x);
 
-                    int i_rho = floor(rho / drho);
-
-                    if (i_rho > 0 && i_rho < Nrho)
-                        hough_accumulator[Ntheta * i_theta + i_rho]++;
+            if (I(source, x, y) == 0xFF) { // White pixel
+                for (int itheta = 0; itheta < Ntheta; ++itheta) {
+                    double theta = itheta * dtheta;
+                    double rho   = x * cos(theta) + (Ny - y) * sin(theta);
+                    int    irho  = rho / drho;
+                    if (irho > 0 && irho < Nrho)
+                        ++accum[itheta * Nrho + irho];
                 }
             }
         }
     }
 
-    // We only save the points with a high enough score.
-    // Each of these saved points will represent one line
-    uint32_t threshold = 1000000;
-    for (int i = 0; i < Ntheta * Nrho; ++i) {
-        if (hough_accumulator[i] < threshold) hough_accumulator[i] = 0;
-    }
-
-    rho_theta_tuple* lines = malloc(Ntheta * Nrho * sizeof(rho_theta_tuple));
-    if (lines == NULL)
-        errx(1, "Cannot alocate memory.");
-    int line_index = 0;
-    for (int i_theta = 0; i_theta < Ntheta; ++i_theta) {
-        for (int i_rho = 0; i_rho < Nrho; ++i_rho) {
-            if (hough_accumulator[Ntheta * i_theta + i_rho]) {
-                lines[line_index].theta = i_theta * dtheta;
-                lines[line_index].rho = i_rho * drho;
-                ++line_index;;
-            }
+    // We only keep the highest values
+    int threshold = 600;
+    long nbLines = 0;
+    for (int i = 0; i  < Ntheta * Nrho; i += 5) {
+        if (accum[i] < threshold) {
+            accum[i] = 0;
+        } else {
+            ++nbLines;
         }
     }
 
-    for(int i = 0; i < line_index; ++i) {
-        double theta = lines[i].theta;
-        double rho   = lines[i].rho;
+    rho_theta_tuple* lines = calloc(nbLines, sizeof(*lines));
+    if (lines == NULL) errx(-1, "Wasn't able to allocate lines");
+    int lineIndex = 0;
+    for (int itheta = 0; itheta < Ntheta; ++itheta) {
+        for (int irho = 0; irho < Nrho; ++irho) {
+            if (accum[itheta * Nrho + irho] != 0) {
+                lines[lineIndex].rho = irho * drho;
+                lines[lineIndex++].theta = itheta * dtheta;
+            }
+        }
+    }
+    
+    houghTransorm_result* result = malloc(sizeof(*result));
+    if (result == NULL) errx(-1, "Wasn't able to allocate houghTransorm_result");
+    result->values = lines;
+    result->nbLines = nbLines;
+    return result;
+}
+
+void DrawHoughlines(SDL_Surface *source, houghTransorm_result *parameters) {
+    int nbLines = parameters->nbLines;
+    rho_theta_tuple *lines = parameters->values;
+
+    for (int i = 0; i < nbLines; ++i) {
+        double rho   = lines->rho;
+        double theta = lines->theta;
+        lines++; // Next element
+
+        printf("Lines with rho=%f and theta=%f", rho, theta);
+
         double a = cos(theta);
         double b = sin(theta);
-        double x0 = a*rho;
-        double y0 = b*rho;
-        int x1 = clamp(x0 + 1000*(-b), 0, source->w - 1);
-        int y1 = clamp(y0 + 1000*(a),  0, source->h - 1);
-        int x2 = clamp(x0 - 1000*(-b), 0, source->w - 1);
-        int y2 = clamp(y0 - 1000*(a),  0, source->h - 1);
 
-        drawLine(source, x1, y1, x2, y2, 0xff00ffff);
+        int x0 = floor(a * rho);
+        int y0 = floor(b * rho);
+        int x1 = clamp(floor(x0 + 1000 * (-b)), 0, source->w - 1);
+        int y1 = clamp(floor(y0 + 1000 * a)   , 0, source->h - 1);
+        int x2 = clamp(floor(x0 - 1000 * (-b)), 0, source->h - 1);
+        int y2 = clamp(floor(y0 - 1000 * a)   , 0, source->h - 1);
+
+        drawLine(source, x1, y1, x2, y2, 0xFF00FFFF);
     }
 }
