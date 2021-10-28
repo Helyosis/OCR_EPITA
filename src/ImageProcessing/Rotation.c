@@ -43,6 +43,7 @@ SDL_Surface *rotation(SDL_Surface *image, double angle){
             }
         }
     }
+    SDL_FreeSurface(image);
     return rotated_image;
 }
 

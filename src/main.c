@@ -31,7 +31,7 @@ int main(int argc, char **argv)
     }
 
     SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window *window = SDL_CreateWindow("My GUI lol",
+    /*SDL_Window *window = SDL_CreateWindow("My GUI lol",
                                           SDL_WINDOWPOS_UNDEFINED,
                                           SDL_WINDOWPOS_UNDEFINED,
                                           image->w, image->h, 0);
@@ -59,13 +59,13 @@ int main(int argc, char **argv)
 
     printf("[+] Drew Hough lines\n");
 //printf("[-] Hough transform is not implemented yet. Skipping.\n");
-    printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
+    printf("[-] Perspective transformation is not implemented yet. Skipping.\n");*/
 
     image = Rotation_shearing(image,105);
     SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
-    
+    SDL_FreeSurface(image);
 
-    printf("Saved images !\n");
+    /*printf("Saved images !\n");
 
 
 
@@ -82,6 +82,6 @@ int main(int argc, char **argv)
     }
 
     SDL_Quit();
-    IMG_Quit();
+    IMG_Quit();*/
     return 0;
 }
