@@ -98,7 +98,7 @@ void DrawHoughlines(SDL_Surface *source, houghTransform_result *parameters) {
         double theta = lines->theta;
         lines++; // Next element
 
-        printf("Lines with rho=%f and theta=%f\n", rho, theta);
+        //printf("Lines with rho=%f and theta=%f\n", rho, theta);
 
         double a = cos(theta);
         double b = sin(theta);
