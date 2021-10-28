@@ -1,10 +1,16 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#include <stdlib.h>
+#include <stdio.h>
+#include <unistd.h>
+#pragma GCC diagnostic pop
+
 #include "NeuralNet.h"
 #include "NeuralNetInit.h"
 #include "MatUtils.h"
-#include <stdlib.h>
-#include <stdio.h>
 
-#include <unistd.h>//TODO
+//TODO
 // Gradient descent, m is the number of training sample
 // New weight  =  old weight-(stepSize/m)*(nabla of the weight)
 // New bias    =  old bias-(stepSize/m)*(nabla of the bias)
@@ -67,7 +73,7 @@ double* creatSample(int nbSample){
     return sampleList;
 }
 // Train the neural network
-void trainNn(int iterationLimit){
+void trainNn(int iterationLimit, char* filename){
     int nbSample = 4;
     double* targetOutput = calloc(1,sizeof(double));
     double* sampleList = creatSample(nbSample);
@@ -93,7 +99,7 @@ void trainNn(int iterationLimit){
         }
         iterationNum += 1;
     }
-    saveNn("test1",nnPtr);
+    saveNn(filename,nnPtr);
     free(nbNBL);
     free(input);
     free(targetOutput);
