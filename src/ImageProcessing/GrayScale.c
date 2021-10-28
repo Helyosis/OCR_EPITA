@@ -1,11 +1,13 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <SDL2/SDL.h>
-#pragma GCC diagnostic pop
 #include <SDL2/SDL_image.h>
 #include <err.h>
 #include <stdint.h>
 #include <stdio.h>
+#pragma GCC diagnostic pop
+
 #include "Pixels.h"
 
 uint32_t TransformPixel_Grayscale(uint32_t pixel) {
