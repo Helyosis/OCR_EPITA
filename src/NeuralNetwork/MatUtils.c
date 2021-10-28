@@ -1,5 +1,9 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <stdio.h>
 #include <stdlib.h>
+#pragma GCC diagnostic pop
 
 void printMat(double* mat, int height, int width){
     for (int iHeight = 0; iHeight < height; iHeight++) {

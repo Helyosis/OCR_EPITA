@@ -1,7 +1,12 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <time.h>
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#pragma GCC diagnostic pop
+
 #include "NeuralNetInit.h"
 
 double randomDouble(){

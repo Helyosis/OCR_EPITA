@@ -1,5 +1,6 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <SDL_image.h>
 #include <math.h>
 #pragma GCC diagnostic pop

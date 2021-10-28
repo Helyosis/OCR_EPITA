@@ -1,7 +1,11 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#pragma GCC diagnostic pop
 #include "NeuralNetInit.h"
 #include "MatUtils.h"
 
