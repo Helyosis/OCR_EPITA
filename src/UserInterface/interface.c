@@ -32,6 +32,7 @@ GtkWidget	*thresholding;
 GtkWidget	*kuwahara;
 //GtkWidget	*rotation;
 GtkBuilder	*builder;
+GtkWidget	*hough;
 
 //Toggle events
 //int GREYSCALE = 0;
@@ -62,6 +63,7 @@ int initInterface(int argc,char *argv[]){
         gaussian = GTK_WIDGET(gtk_builder_get_object(builder, "gaussian"));
 	thresholding = GTK_WIDGET(gtk_builder_get_object(builder,"Thresholding"));
 	kuwahara = GTK_WIDGET(gtk_builder_get_object(builder, "Kuwahara"));
+	hough = GTK_WIDGET(gtk_builder_get_object(builder, "Hough"));
 	//rotation = GTK_WIDGET(gtk_builder_get_object(builder, "Rotation"));	
 	gtk_widget_show(main_window);
 	
@@ -117,11 +119,11 @@ void on_img_chooser_file_set(GtkFileChooserButton *f){
 }
 
 
-void on_new_activated(GtkMenuItem *m){
+void on_new_activated(){
 	on_button_close();
 }
 
-void on_open_activated(GtkMenuItem *m){
+void on_open_activated(){
 	GtkWidget *dialog;
 	dialog = gtk_file_chooser_dialog_new("Choose a file",GTK_WINDOW(main_window),GTK_FILE_CHOOSER_ACTION_OPEN,
 			GTK_STOCK_OK,GTK_RESPONSE_OK,GTK_STOCK_CANCEL,GTK_RESPONSE_CANCEL,NULL);
@@ -152,7 +154,7 @@ void on_open_activated(GtkMenuItem *m){
 	}
 }
 
-void on_quit_activated(GtkMenuItem *m){
+void on_quit_activated(){
 	gtk_main_quit();
 }
 //Auto exploit
@@ -219,3 +221,26 @@ void on_Kuwahara_toggled(){
         save_image(image,"Image/Kuwahara.png");
         reload_img("Image/Kuwahara.png");
 }
+void on_hough_toggled(){
+        printf("[+] HoughTransform\n");
+	FILE *file;
+    	file = fopen("Image/thresholding.png", "r");
+	if(1)
+    	{
+        	printf("BBBBBB");
+		SDL_Surface *original_image = IMG_Load("Image/thresholding.png");
+		SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        	original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    		//apply filter
+        	DrawHoughlines(image,HoughTransform(image));
+		printf("AAAAA");
+        	//Saves tmp + set actual_img
+        	save_image(image,"Image/Hough.png");
+        	reload_img("Image/Hough.png");
+		//fclose(file);
+	}
+	else
+		errx(1,"You need to apply thresholding first");
+
+}
+

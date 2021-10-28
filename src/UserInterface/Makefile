@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -Wall -Wextra -std=c99 -O2 -lm `pkg-config --cflags --libs sdl2 SDL2_image gtk+-3.0` -export-dynamic
+CFLAGS= -g3 -Wall -Wextra -std=c99 -O2 -lm `pkg-config --cflags --libs sdl2 SDL2_image gtk+-3.0` -export-dynamic
 LDFLAGS = -lm `pkg-config --libs sdl2 SDL2_image gtk+-3.0`
 
 

@@ -2,6 +2,8 @@
 #include "SDL/SDL.h"
 #include "SDL/SDL_image.h"
 #include <err.h>
+#include <gtk/gtk.h>
+#include <gtk/gtkx.h>
 
 SDL_Surface* load_image(char *path)
 {
