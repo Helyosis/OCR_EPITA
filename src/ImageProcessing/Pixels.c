@@ -68,12 +68,8 @@ int I(SDL_Surface *source, int x, int y) {
     return getPixel(source, x, y) & 0xFF;
 }
 
-<<<<<<< HEAD
-void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, Uint32 pixel) {
-=======
 void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, uint32_t pixel) {
 
->>>>>>> 1af53c7d8e5a92a1a25ffbe6a21d02d1fbc91ccb
     int i;
     double x = x1 - x0;
     double y = y1 - y0;
@@ -89,7 +85,3 @@ void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, uint32_t pixe
         y += addy;
         }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 1af53c7d8e5a92a1a25ffbe6a21d02d1fbc91ccb

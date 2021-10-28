@@ -21,8 +21,7 @@ int main(int argc, char **argv)
     SDL_Event event;
 
     SDL_Surface *original_image = IMG_Load(argv[1]);
-
-
+    
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     SDL_FreeSurface(original_image);
@@ -62,9 +61,9 @@ int main(int argc, char **argv)
 //printf("[-] Hough transform is not implemented yet. Skipping.\n");
     printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
 
-    /*SDL_Surface *img = Rotation_shearing(image,90);
-    SDL_SaveBMP(Rotation_shearing(image,90), argc > 2 ? argv[2] : "out.bmp");
-    */
+    image = Rotation_shearing(image,105);
+    SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
+    
 
     printf("Saved images !\n");
 

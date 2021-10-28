@@ -56,10 +56,9 @@ SDL_Surface *Rotation_shearing(SDL_Surface *image, double angle){
     //Get the image dimensions
     int w = image->w;
     int h = image->h;
-
     //Create a new surface to hold the rotated image
     SDL_Surface *rotated_image; 
-    rotated_image = SDL_CreateRGBSurfaceWithFormat(0, image->w, image->h, image->format->BitsPerPixel, image->format->format);
+    rotated_image = SDL_CreateRGBSurface(0, w, h, 32,0,0,0,0);
 
     double angle_rad = angle * (M_PI / 180); //convert the angle from degrees to radians
     int center_x = w/2;
