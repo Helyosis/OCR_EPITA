@@ -18,9 +18,6 @@
 #include "Utils.h"
 
 int processImage(char* in_filename, char* out_filename) {
-    bool quit = false;
-    SDL_Event event;
-
     SDL_Surface *original_image = IMG_Load(in_filename);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
