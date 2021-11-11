@@ -37,16 +37,16 @@ double* Hysteresis(double* img, int h, int w) {
 
     for (int y = 1; y < h - 1; ++y) {
         for (int x = 1; x < w - 1; ++x) {
-            if (img[y * w +x] == WeakValue) {
-                if (img[(y - 1) * w + x - 1] == StrongValue ||
-                    img[(y - 1) * w + x] == StrongValue ||
-                    img[(y - 1) * w + x + 1] == StrongValue ||
-                    img[y * w + x - 1] == StrongValue ||
-                    img[y * w + x] == StrongValue ||
-                    img[y * w + x + 1] == StrongValue ||
-                    img[(y + 1) * w + x - 1] == StrongValue ||
-                    img[(y + 1) * w + x] == StrongValue ||
-                    img[(y + 1) * w + x + 1] == StrongValue) {
+            if (result[y * w +x] == WeakValue) {
+                if (result[(y - 1) * w + x - 1] == StrongValue ||
+                    result[(y - 1) * w + x] == StrongValue ||
+                    result[(y - 1) * w + x + 1] == StrongValue ||
+                    result[y * w + x - 1] == StrongValue ||
+                    result[y * w + x] == StrongValue ||
+                    result[y * w + x + 1] == StrongValue ||
+                    result[(y + 1) * w + x - 1] == StrongValue ||
+                    result[(y + 1) * w + x] == StrongValue ||
+                    result[(y + 1) * w + x + 1] == StrongValue) {
                     // The pixel is near at least one strong one, so it is strong too
                     result[y * w + x] = StrongValue;
                 } else {
