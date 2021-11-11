@@ -10,7 +10,7 @@
 
 #define KUWAHARA_RANGE 4
 
-#define GAUSSIAN_RANGE 5
+#define GAUSSIAN_RANGE 2
 #define GAUSSIAN_BLUR_SIGMA 1.4
 
 #ifndef M_PI
