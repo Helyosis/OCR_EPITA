@@ -15,6 +15,7 @@
 #include "ImageProcessing/HoughTransform.h"
 #include "ImageProcessing/Rotation.h"
 #include "ImageProcessing/HoughTransform.h"
+#include "ImageProcessing/Morphology.h"
 #include "Utils.h"
 
 int processImage(char* in_filename, char* out_filename) {
@@ -48,6 +49,22 @@ int processImage(char* in_filename, char* out_filename) {
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
     displaySurface(renderer, image);
+
+    wait_for_keypressed();
+    erode_in_place(image);
+    dilate_in_place(image);
+    dilate_in_place(image);
+    erode_in_place(image);
+    displaySurface(renderer, image);
+    printf("[*] Applied Noise Reduction2\n");
+
+    wait_for_keypressed();
+    erode_in_place(image);
+    dilate_in_place(image);
+    dilate_in_place(image);
+    erode_in_place(image);
+    displaySurface(renderer, image);
+    printf("[*] Applied smoothen\n");
 
     wait_for_keypressed();
     houghTransform_result* res = HoughTransform(image);
