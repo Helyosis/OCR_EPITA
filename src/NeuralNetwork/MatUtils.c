@@ -43,12 +43,12 @@ void matricesCSub(double* matA, double* matB, int heightA) {
 // Add matA + matB
 void matricesAdd(double* matA, double* matB, int height,int width){
     for(int iHeight = 0; iHeight < height; ++iHeight)
-	{
-		for(int iWidth=0; iWidth < width; ++iWidth)
-		{
-			matA[iHeight*width+iWidth] = matA[iHeight*width+iWidth] + matB[iHeight*width+iWidth];
-		}
-	}
+    {
+        for(int iWidth=0; iWidth < width; ++iWidth)
+        {
+            matA[iHeight*width+iWidth] = matA[iHeight*width+iWidth] + matB[iHeight*width+iWidth];
+        }
+    }
 }
 
 // Tranpose a mat

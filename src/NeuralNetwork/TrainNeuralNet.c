@@ -29,30 +29,22 @@ void gradientDescent(struct NeuralNetwork* nnPtr){
         }
     }
 }
-
+double* sigmoidPrime(double* h, int height){
+    double* result=malloc(sizeof(double)*height);
+    for(int i=0;i<)
+}
 // Calculate the output error
-double calculateGradErrorOutputLayer(double y, double error){ 
-    return y*(1-y)*error;
+void gradErrorL(double* y, double* error, NeuralNetwork* nnPtr){
+    matricesCSub(error,y,nnPtr->nbNBL[2]);
 }
 // Propagate the output error to the hidden layer
-double calculateGardErrorHiddenLayer(double y, double errorGradOutputLayer, double w){
+void gradErrorH(double* matGradErrorL, double* w, ){
     return y*(1-y)*errorGradOutputLayer*w;
 }
 // Back propagation: for each layer propagate the error of the predicted output
 void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
-    double errorOutputLayer  =  targetOutput[0]-nnPtr->outputLayerA[0];
-    double gradErrorOutputLayer  =  calculateGradErrorOutputLayer(nnPtr->outputLayerA[0],errorOutputLayer);
-    nnPtr->nablaW2[0] = nnPtr->hiddenLayerA[0]*gradErrorOutputLayer;
-    nnPtr->nablaW2[1] = nnPtr->hiddenLayerA[1]*gradErrorOutputLayer;
-    double errorGradHiddenLayer1 = calculateGardErrorHiddenLayer(nnPtr->hiddenLayerA[0],errorOutputLayer,nnPtr->w2[0]);
-    double errorGradHiddenLayer2 = calculateGardErrorHiddenLayer(nnPtr->hiddenLayerA[1],errorOutputLayer,nnPtr->w2[1]);
-    nnPtr->nablaB2[0] = errorGradHiddenLayer1;
-    nnPtr->nablaW1[0] = nnPtr->input[0]*errorGradHiddenLayer1;
-    nnPtr->nablaW1[1] = nnPtr->input[1]*errorGradHiddenLayer1;
-    nnPtr->nablaW1[2] = nnPtr->input[0]*errorGradHiddenLayer2;
-    nnPtr->nablaW1[3] = nnPtr->input[1]*errorGradHiddenLayer2;
-    nnPtr->nablaB1[0] = errorGradHiddenLayer1;
-    nnPtr->nablaB1[1] = errorGradHiddenLayer2;
+    double* matGradErrorL  =  gradErrorL(nnPtr->outputLayerA[0],errorOutputLayer);
+    double errorGradHiddenLayer = calculateGardErrorHiddenLayer();
 }
 
 // Creat sample: two inputs 0 or 1 and the target output
