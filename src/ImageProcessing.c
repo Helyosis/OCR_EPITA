@@ -41,19 +41,22 @@ int processImage(char* in_filename, char* out_filename) {
     Apply_grayscale_filter(image);
     displaySurface(renderer, image);
     printf("[*] Applied grayscale\n");
-    GaussianBlur_inPlace(image);
 
+    wait_for_keypressed();
+    GaussianBlur_inPlace(image);
+    displaySurface(renderer, image);
+wait_for_keypressed();
     displaySurface(renderer, image);
     printf("[*] Reduced noise\n");
 
-    CannyFilter_inPlace(image);
-    //AdaptiveThresholding_inPlace(image);
-    //printf("[*] Applied adaptive threshold (mean - C method)\n");
+    //CannyFilter_inPlace(image);
+    AdaptiveThresholding_inPlace(image);
+    printf("[*] Applied adaptive threshold (mean - C method)\n");
     
     displaySurface(renderer, image);
 
     wait_for_keypressed();
-        
+    return 1;
     houghTransform_result* res = HoughTransform(image);
     DrawHoughlines(image, res);
 
