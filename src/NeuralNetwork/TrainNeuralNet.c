@@ -43,20 +43,27 @@ void gradErrorL(double* y, double* error, NeuralNetwork* nnPtr){
 }
 // Propagate the output error to the hidden layer
 void gradErrorH(double* matGradErrorL, double* w, struct NeuralNetwork* nnPtr){
-    double* r = malloc(sizeof(double)*);
-    double* wT=malloc(sizeof(double)*);
-    matTranspose(w,wT,,);
-    matMult(matGradErrorL,wT,r,,);
-    return hadamardProduct(r,sigmoidPrime(nnPtr->hiddenLayerA,nnPtr->nbNBL[1]),,);
+    double* r = malloc(sizeof(double)*nnPtr->nbNBL[2]*nnPtr->nbNBL[1]);//TODO
+    double* wT = malloc(sizeof(double)*nnPtr->nbNBL[2]*nnPtr->nbNBL[1]);
+    matTranspose(w,wT,nnPtr->nbNBL[1],nnPtr->nbNBL[2]);
+    matMult(matGradErrorL,wT,r,nnPtr->nbNBL[2],1,nnPtr->nbNBL[1]);
+    return hadamardProduct(r,sigmoidPrime(nnPtr->hiddenLayerA,nnPtr->nbNBL[1]),nnPtr->nbNBL[1],1);
 }
 // Back propagation: for each layer propagate the error of the predicted output
 void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
     double* matGradErrorL  =  gradErrorL(nnPtr->outputLayerA[0],errorOutputLayer);
-    double errorGradHiddenLayer = calculateGardErrorHiddenLayer(,);
-    double* H = nnPtr->hiddenLayerA;
+    double* matGradErrorHL = calculateGardErrorHiddenLayer(matGradErrorL,nnPtr->w2,nnPtr);
+    double* h = nnPtr->hiddenLayerA;
     double* r = malloc(sizeof(double)*nnPtr->nbNBL[2]*nnPtr->nbNBL[1]);
-    nnPtr->nablaW2 = matMult(matGradErrorL,H,nnPtr->nbNBL[2],1,nnPtr->nbNBL[1],r);//TODO
+    matMult(matGradErrorL,h,nnPtr->nbNBL[2],1,nnPtr->nbNBL[1],r);//TODO
+    nnPtr->nablaW2 = r;
     nnPtr->nablaB2 = matGradErrorL;
+    free(r);
+    double* u = nnPtr->inputLayer;
+    r = malloc(sizeof(double)*nnPtr->nbNBL[1]*nnPtr->nbNBL[0]);
+    r = matMult(matGradErrorHL,u,nnPtr->nbNBL[],1,nnPtr->nbNBL[0],r);
+    nnPtr->nablaW1 = r;
+    nnPtr->nablaB1 = matGradEroorHL;
 }
 
 // Creat sample: two inputs 0 or 1 and the target output
