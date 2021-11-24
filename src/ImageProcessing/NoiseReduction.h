@@ -3,8 +3,6 @@
 
 #include <SDL.h>
 
-double** Build_GaussianKernel(int ksize);
-
 SDL_Surface* KuwaharaFilter(SDL_Surface *source);
 void KuwaharaFilter_inPlace(SDL_Surface *source);
 
