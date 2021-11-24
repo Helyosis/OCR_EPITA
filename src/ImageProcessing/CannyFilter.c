@@ -9,6 +9,7 @@
 #include "GradientCalculation.h"
 #include "NonMaxSuppression.h"
 #include "DoubleThreshold.h"
+#include "../Utils.h"
 
 SDL_Surface* CannyFilter(SDL_Surface* source) {
     SDL_Surface *dest;
@@ -20,29 +21,25 @@ SDL_Surface* CannyFilter(SDL_Surface* source) {
         errx(1, SDL_GetError());
     }
 
-    double** result = SobelFilters(source);
-    double* nonmax = NonMaxSuppression(result[0],result[1],source->h,source->w);
+    double** sobel = SobelFilters(source);
+    double* nonmax = NonMaxSuppression(sobel[0],sobel[1],source->h,source->w);
     double* thresholded = DoubleThreshold(nonmax, source->w * source->h);
     double* hysteresised = Hysteresis(thresholded, source->h, source->w);
-    
+
     for (int i = 0; i < source->w; ++i) {
         for (int j = 0; j < source->h; ++j) {
             int intensity = hysteresised[j * source->w + i];
-            uint32_t pixel = 0xff000000;
-            pixel |= intensity << 16;
-            pixel |= intensity << 8;
-            pixel |= intensity;
-            putPixel(dest, i, j, pixel);
+            putPixel(dest, i, j, intensityToARGB(intensity));
         }
     }
 
-    free(result[0]);
-    free(result[1]);
-    free(result);
+    free(sobel[0]);
+    free(sobel[1]);
+    free(sobel);
     free(nonmax);
     free(thresholded);
     free(hysteresised);
-    
+
     return dest;
 }
 
