@@ -51,20 +51,10 @@ int processImage(char* in_filename, char* out_filename) {
     displaySurface(renderer, image);
 
     wait_for_keypressed();
-    erode_in_place(image);
-    dilate_in_place(image);
-    dilate_in_place(image);
-    erode_in_place(image);
+    MorphologyOpen(image);
+    MorphologyClose(image);
     displaySurface(renderer, image);
     printf("[*] Applied Noise Reduction2\n");
-
-    wait_for_keypressed();
-    erode_in_place(image);
-    dilate_in_place(image);
-    dilate_in_place(image);
-    erode_in_place(image);
-    displaySurface(renderer, image);
-    printf("[*] Applied smoothen\n");
 
     wait_for_keypressed();
     houghTransform_result* res = HoughTransform(image);

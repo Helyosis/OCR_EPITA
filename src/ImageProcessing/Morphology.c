@@ -114,3 +114,12 @@ void erode_in_place(SDL_Surface* image) {
     }
 }
 
+void MorphologyClose(SDL_Surface* image) {
+    dilate_in_place(image);
+    erode_in_place(image);
+}
+
+void MorphologyOpen(SDL_Surface* image) {
+    erode_in_place(image);
+    dilate_in_place(image);
+}
