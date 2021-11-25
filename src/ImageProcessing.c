@@ -49,8 +49,8 @@ wait_for_keypressed();
     displaySurface(renderer, image);
     printf("[*] Reduced noise\n");
 
-    //CannyFilter_inPlace(image);
-    AdaptiveThresholding_inPlace(image);
+    CannyFilter_inPlace(image);
+    //AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
     
     displaySurface(renderer, image);
