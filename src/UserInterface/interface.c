@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <gtk/gtk.h>
-#include <gtk/gtkx.h>
 #include <math.h>
 #include <ctype.h>
 //#include "SDL/SDL.h"
@@ -76,17 +75,23 @@ int initInterface(int argc,char *argv[]){
 int main(int argc, char **argv){
 	initInterface(argc,argv);
 }
+
 //reload img
 void reload_img(char *path){
+	GdkPixbuf *pb;
 	int vertical = 60;
         int horizontal = 20;
 	if(sudoku_img){
         	gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it
         	printf("[-] deleting older input\n");
         }
+	image = gtk_image_new_from_file(path);
 
-	sudoku_img = gtk_image_new_from_file(path);
-        gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
+	pb = gdk_pixbuf_new_from_file(path, NULL);
+	pb = gdk_pixbuf_scale_simple(pb,400,400,GDK_INTERP_BILINEAR);
+        sudoku_img = gtk_image_set_from_pixbuf(GTK_IMAGE(GTK_IMAGE(image), pb)
+
+	gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
         gtk_widget_show(sudoku_img);
         gtk_fixed_move (GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set hte img at the right place
 }

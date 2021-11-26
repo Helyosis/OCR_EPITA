@@ -169,7 +169,7 @@
           </object>
           <packing>
             <property name="x">850</property>
-            <property name="y">5</property>
+            <property name="y">403</property>
           </packing>
         </child>
         <child>
@@ -185,7 +185,7 @@
           </object>
           <packing>
             <property name="x">870</property>
-            <property name="y">110</property>
+            <property name="y">260</property>
           </packing>
         </child>
         <child>
@@ -201,7 +201,7 @@
           </object>
           <packing>
             <property name="x">870</property>
-            <property name="y">140</property>
+            <property name="y">290</property>
           </packing>
         </child>
         <child>
@@ -217,7 +217,7 @@
           </object>
           <packing>
             <property name="x">870</property>
-            <property name="y">170</property>
+            <property name="y">320</property>
           </packing>
         </child>
         <child>
@@ -246,7 +246,32 @@
           </object>
           <packing>
             <property name="x">870</property>
-            <property name="y">200</property>
+            <property name="y">350</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="logo">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="pixbuf">../../Ressources/L_Low.png</property>
+          </object>
+          <packing>
+            <property name="x">813</property>
+            <property name="y">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator">
+            <property name="width_request">223</property>
+            <property name="height_request">276</property>
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+          </object>
+          <packing>
+            <property name="x">808</property>
+            <property name="y">204</property>
           </packing>
         </child>
       </object>
