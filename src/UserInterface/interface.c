@@ -2,7 +2,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <gtk/gtk.h>
-#include <gtk/gtkx.h>
 #include <math.h>
 #include <ctype.h>
 //#include "SDL/SDL.h"
@@ -222,21 +221,18 @@ void on_Kuwahara_toggled(){
         reload_img("Image/Kuwahara.png");
 }
 void on_hough_toggled(){
-        printf("[+] HoughTransform\n");
-	FILE *file;
-    	file = fopen("Image/thresholding.png", "r");
-	if(1)
-    	{
-        	printf("BBBBBB");
+    printf("[+] HoughTransform\n");
+	if(1){
+        printf("BBBBBB");
 		SDL_Surface *original_image = IMG_Load("Image/thresholding.png");
-		SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
-        	original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-    		//apply filter
-        	DrawHoughlines(image,HoughTransform(image));
+	    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+    	original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    	//apply filter
+        DrawHoughlines(image,HoughTransform(image));
 		printf("AAAAA");
-        	//Saves tmp + set actual_img
-        	save_image(image,"Image/Hough.png");
-        	reload_img("Image/Hough.png");
+        //Saves tmp + set actual_img
+        save_image(image,"Image/Hough.png");
+        reload_img("Image/Hough.png");
 		//fclose(file);
 	}
 	else
