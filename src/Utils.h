@@ -17,4 +17,9 @@ void wait_for_keypressed();
  */
 void displaySurface(SDL_Renderer* renderer, SDL_Surface* surface);
 
+/*
+ * Build a 2D Gaussian Kernel using the parameters provided
+ */
+double* Build2DGaussianKernel(size_t kernelRadius, double sigma);
+
 #endif

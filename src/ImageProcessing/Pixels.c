@@ -5,6 +5,17 @@
 #include <math.h>
 #pragma GCC diagnostic pop
 
+
+// Utility function to convert grayscale value to adequate ARGB pixel
+uint32_t intensityToARGB(unsigned char v) {
+    return (uint32_t) (0xFF << 24 | v << 16 | v << 8 | v);
+}
+
+// Returns the distance between the points (i, j) and the point (k, l)
+double distance(int i, int j, int k, int l) {
+    return sqrt((k - i) * (k - i) + (j - l) * (j - l));
+}
+
 Uint32 getPixel(SDL_Surface *surface, int x, int y)
 {
     int bpp = surface->format->BytesPerPixel;
