@@ -10,22 +10,27 @@
 #include "MatUtils.h"
 
 // Activation function: sigmoid
-double activationF(double x){
+double sigmoidF(double x){
     return 1/(1+exp(-x));
+}
+
+void sigmoid(double** mA, double* m, int width){
+    for(int iWidth=0;iWidth<width;iWidth++){
+        *mA[iWidth]=sigmoidF(m[iWidth]);
+    }
 }
 
 // Feedforward: z(l)=w(l)*a(l)+b(l), a(l)=f(z(l))
 void feedForward(struct NeuralNetwork* nnPtr){
-    matricesMult(nnPtr->w1,nnPtr->input,nnPtr->nbNBL[1],nnPtr->nbNBL[0],1,nnPtr->hiddenLayer);
-    matricesCSub(nnPtr->hiddenLayer,nnPtr->b1,nnPtr->nbNBL[1]);
-    for(int iWidth=0;iWidth<nnPtr->nbNBL[1];iWidth++){
-        nnPtr->hiddenLayerA[iWidth]=activationF(nnPtr->hiddenLayer[iWidth]);
-    }
-    matricesMult(nnPtr->w2,nnPtr->hiddenLayerA,nnPtr->nbNBL[2],nnPtr->nbNBL[1],1,nnPtr->outputLayer);
-    matricesCSub(nnPtr->outputLayer,nnPtr->b2,nnPtr->nbNBL[2]);
-    for(int iWidth=0;iWidth<nnPtr->nbNBL[2];iWidth++){
-        nnPtr->outputLayerA[iWidth]=activationF(nnPtr->outputLayer[iWidth]);
-    }
+    int d=nnPtr->nbNBL[0];
+    int l=nnPtr->nbNBL[1];
+    int k=nnPtr->nbNBL[2];
+    matMult(nnPtr->input,nnPtr->wh,1,d,l,nnPtr->h);
+    matAdd(nnPtr->h,nnPtr->bh,1,l);
+    sigmoid(&(nnPtr->hA), nnPtr->h,l);
+    matMult(nnPtr->hA,nnPtr->wy,1,l,k,nnPtr->y);
+    matAdd(nnPtr->y,nnPtr->by,1,k);
+    sigmoid(&(nnPtr->yA),nnPtr->y,k);//TODO SM
 }
 
 void writeMat(int height, int width,FILE* fptr,double* l){
@@ -48,10 +53,10 @@ void saveNn(char* fileName, struct NeuralNetwork* nnPtr){
     int inputH=nnPtr->nbNBL[0];
     int hiddenH=nnPtr->nbNBL[1];
     int outputH=nnPtr->nbNBL[2];
-    writeMat(hiddenH,inputH,fptr,nnPtr->w1);
-    writeMat(hiddenH,1,fptr,nnPtr->b1);
-    writeMat(outputH,hiddenH,fptr,nnPtr->w2);
-    writeMat(outputH,1,fptr,nnPtr->b2);
+    writeMat(hiddenH,inputH,fptr,nnPtr->wh);
+    writeMat(hiddenH,1,fptr,nnPtr->bh);
+    writeMat(outputH,hiddenH,fptr,nnPtr->wy);
+    writeMat(outputH,1,fptr,nnPtr->by);
     fclose(fptr);
 }
 
@@ -69,10 +74,10 @@ void saveNn(char* fileName, struct NeuralNetwork* nnPtr){
         fscanf(fptr, "%f", &i);
     }
     nnPtr->nbNBL;
-    nnPtr->w1;
-    nnPtr->w2;
-    nnPtr->b1;
-    nnPtr->b2;
+    nnPtr->wh;
+    nnPtr->wy;
+    nnPtr->bh;
+    nnPtr->by;
     fclose(fptr);
 }*/
 // Predict
@@ -83,7 +88,7 @@ void saveNn(char* fileName, struct NeuralNetwork* nnPtr){
     loadNn(fileName,nnPtr);
     feedForward(nnPtr);
     free(nnPtr);
-    return nnPtr->outputLayerA;
+    return nnPtr->yA;
 }*/
 
 

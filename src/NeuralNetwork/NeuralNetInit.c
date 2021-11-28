@@ -20,16 +20,16 @@ double randomDouble(){
 // Initialize the weight with uniform distribution: 
 //(random number)/sqrt(nb neurone of the layer) and the bias to 0
 void initWB(struct NeuralNetwork* nnPtr) {
-    for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
-        for (int iWidth = 0; iWidth < nnPtr->nbNBL[0]; iWidth++) {
-            nnPtr->w1[iHeight * nnPtr->nbNBL[0] + iWidth] = randomDouble()/sqrt(nnPtr->nbNBL[1]);
-            nnPtr->b1[iHeight] = randomDouble()/sqrt(nnPtr->nbNBL[1]);
+    for (int iHeight = 0; iHeight < nnPtr->nbNBL[0]; iHeight++) {
+        for (int iWidth = 0; iWidth < nnPtr->nbNBL[1]; iWidth++) {
+            nnPtr->wh[iHeight * nnPtr->nbNBL[1] + iWidth] = randomDouble()/sqrt(nnPtr->nbNBL[1]);
+            nnPtr->bh[iWidth] = 0;
         }
     }
-    for (int iHeight = 0; iHeight < nnPtr->nbNBL[2]; iHeight++) {
-        for (int iWidth = 0; iWidth < nnPtr->nbNBL[1]; iWidth++) {
-            nnPtr->w2[iHeight * nnPtr->nbNBL[1] + iWidth] = randomDouble()/sqrt(nnPtr->nbNBL[1]);
-            nnPtr->b2[iHeight] =  randomDouble()/sqrt(nnPtr->nbNBL[1]);
+    for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
+        for (int iWidth = 0; iWidth < nnPtr->nbNBL[2]; iWidth++) {
+            nnPtr->wy[iHeight * nnPtr->nbNBL[2] + iWidth] = randomDouble()/sqrt(nnPtr->nbNBL[2]);
+            nnPtr->by[iWidth] =  0;
         }
     }
 }
@@ -41,22 +41,22 @@ struct NeuralNetwork* initNn(int* nbNBL,double* input){
     nnPtr->input = input;
     
     nnPtr->nbNBL = nbNBL;
-    nnPtr->w1 = calloc(nnPtr->nbNBL[1]*nnPtr->nbNBL[0],sizeof(double));
-    nnPtr->w2 = calloc(nnPtr->nbNBL[2]*nnPtr->nbNBL[1],sizeof(double));
+    nnPtr->wh = malloc(nnPtr->nbNBL[0]*nnPtr->nbNBL[1]*sizeof(double));
+    nnPtr->wy = malloc(nnPtr->nbNBL[1]*nnPtr->nbNBL[2]*sizeof(double));
 
-    nnPtr->b1 = calloc(nnPtr->nbNBL[1],sizeof(double));
-    nnPtr->b2 = calloc(nnPtr->nbNBL[2],sizeof(double));
+    nnPtr->bh = malloc(nnPtr->nbNBL[1]*sizeof(double));
+    nnPtr->by = malloc(nnPtr->nbNBL[2]*sizeof(double));
 
-    nnPtr->outputLayer = calloc(nnPtr->nbNBL[2],sizeof(double));
-    nnPtr->hiddenLayer = calloc(nnPtr->nbNBL[1],sizeof(double));
+    nnPtr->y = malloc(nnPtr->nbNBL[2]*sizeof(double));
+    nnPtr->h = malloc(nnPtr->nbNBL[1]*sizeof(double));
 
-    nnPtr->hiddenLayerA = calloc(nnPtr->nbNBL[1],sizeof(double));
-    nnPtr->outputLayerA = calloc(nnPtr->nbNBL[2],sizeof(double));
+    nnPtr->hA = malloc(nnPtr->nbNBL[1]*sizeof(double));
+    nnPtr->yA = malloc(nnPtr->nbNBL[2]*sizeof(double));
 
-    nnPtr->nablaB2=calloc(nbNBL[2],sizeof(double));
-    nnPtr->nablaW2=calloc(nbNBL[2]*nbNBL[1],sizeof(double));
-    nnPtr->nablaB1=calloc(nbNBL[1],sizeof(double));
-    nnPtr->nablaW1=calloc(nbNBL[1]*nbNBL[0],sizeof(double));
+    nnPtr->nablaBy = malloc(nnPtr->nbNBL[2]*sizeof(double));
+    nnPtr->nablaWy = malloc(nnPtr->nbNBL[1]*nbNBL[2]*sizeof(double));
+    nnPtr->nablaBh = malloc(nnPtr->nbNBL[1]*sizeof(double));
+    nnPtr->nablaWh = malloc(nnPtr->nbNBL[0]*nbNBL[1]*sizeof(double));
 
     initWB(nnPtr);
     return nnPtr;
@@ -64,16 +64,16 @@ struct NeuralNetwork* initNn(int* nbNBL,double* input){
 
 // Free the neural network
 void freeNn(struct NeuralNetwork* nnPtr){
-    free(nnPtr->w1);
-    free(nnPtr->w2);
-    free(nnPtr->b1);
-    free(nnPtr->b2);
-    free(nnPtr->outputLayer);
-    free(nnPtr->hiddenLayer);
-    free(nnPtr->hiddenLayerA);
-    free(nnPtr->outputLayerA);
-    free(nnPtr->nablaB2);
-    free(nnPtr->nablaW2);
-    free(nnPtr->nablaB1);
-    free(nnPtr->nablaW1);
+    free(nnPtr->wh);
+    free(nnPtr->wy);
+    free(nnPtr->bh);
+    free(nnPtr->by);
+    free(nnPtr->y);
+    free(nnPtr->h);
+    free(nnPtr->hA);
+    free(nnPtr->yA);
+    free(nnPtr->nablaBy);
+    free(nnPtr->nablaWy);
+    free(nnPtr->nablaBh);
+    free(nnPtr->nablaWh);
 }
