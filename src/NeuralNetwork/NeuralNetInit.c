@@ -5,13 +5,15 @@
 #include <math.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #pragma GCC diagnostic pop
 
 #include "NeuralNetInit.h"
 
 double randomDouble(){
     #ifndef RANDOMSEED
-    #define RANDOMSEED srand(time(NULL));
+    #define RANDOMSEED 
+    srand(time(NULL));
     #endif
     double x = (double)rand()/(double)(RAND_MAX);
     return x;
@@ -41,22 +43,22 @@ struct NeuralNetwork* initNn(int* nbNBL,double* input){
     nnPtr->input = input;
     
     nnPtr->nbNBL = nbNBL;
-    nnPtr->wh = malloc(nnPtr->nbNBL[0]*nnPtr->nbNBL[1]*sizeof(double));
-    nnPtr->wy = malloc(nnPtr->nbNBL[1]*nnPtr->nbNBL[2]*sizeof(double));
+    nnPtr->wh = calloc(nnPtr->nbNBL[0]*nnPtr->nbNBL[1],sizeof(double));
+    nnPtr->wy = calloc(nnPtr->nbNBL[1]*nnPtr->nbNBL[2],sizeof(double));
 
-    nnPtr->bh = malloc(nnPtr->nbNBL[1]*sizeof(double));
-    nnPtr->by = malloc(nnPtr->nbNBL[2]*sizeof(double));
+    nnPtr->bh = calloc(nnPtr->nbNBL[1],sizeof(double));
+    nnPtr->by = calloc(nnPtr->nbNBL[2],sizeof(double));
 
-    nnPtr->y = malloc(nnPtr->nbNBL[2]*sizeof(double));
-    nnPtr->h = malloc(nnPtr->nbNBL[1]*sizeof(double));
+    nnPtr->y = calloc(nnPtr->nbNBL[2],sizeof(double));
+    nnPtr->h = calloc(nnPtr->nbNBL[1],sizeof(double));
 
-    nnPtr->hA = malloc(nnPtr->nbNBL[1]*sizeof(double));
-    nnPtr->yA = malloc(nnPtr->nbNBL[2]*sizeof(double));
+    nnPtr->hA = calloc(nnPtr->nbNBL[1],sizeof(double));
+    nnPtr->yA = calloc(nnPtr->nbNBL[2],sizeof(double));
 
-    nnPtr->nablaBy = malloc(nnPtr->nbNBL[2]*sizeof(double));
-    nnPtr->nablaWy = malloc(nnPtr->nbNBL[1]*nbNBL[2]*sizeof(double));
-    nnPtr->nablaBh = malloc(nnPtr->nbNBL[1]*sizeof(double));
-    nnPtr->nablaWh = malloc(nnPtr->nbNBL[0]*nbNBL[1]*sizeof(double));
+    nnPtr->nablaBy = calloc(nnPtr->nbNBL[2],sizeof(double));
+    nnPtr->nablaWy = calloc(nnPtr->nbNBL[1]*nbNBL[2],sizeof(double));
+    nnPtr->nablaBh = calloc(nnPtr->nbNBL[1],sizeof(double));
+    nnPtr->nablaWh = calloc(nnPtr->nbNBL[0]*nbNBL[1],sizeof(double));
 
     initWB(nnPtr);
     return nnPtr;

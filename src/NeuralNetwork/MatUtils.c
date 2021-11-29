@@ -3,6 +3,7 @@
 #pragma GCC diagnostic ignored "-Wtype-limits"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #pragma GCC diagnostic pop
 
 void printMat(double* mat, int height, int width){
@@ -26,7 +27,7 @@ void matMult(double* matA, double* matB,int heightA,int widthA, int widthB, doub
             }
             result[iHeightA*widthB+iWidthB] = sum;
         }   
-    } 
+    }
 }
 
 // Substract: matC = matA - matB
@@ -67,5 +68,6 @@ double* hadamardProduct(double* matA, double* matB, int height, int width){
             result[iHeight*width+iWidth] = matA[iHeight*width+iWidth] * matB[iHeight*width+iWidth];
         }
     }
+    free(matA);
     return result;
 }
