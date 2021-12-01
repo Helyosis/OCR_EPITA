@@ -40,6 +40,13 @@ GtkWidget	*hough;
 //int GAUSSIAN = 0;
 //int THRESHOLDING = 0;
 //int KUWAHARA = 0;
+
+//Angle for rotation
+int ACC_ANGLE = 0;
+//Last file 
+char *last_file = "";
+
+
 int initInterface(int argc,char *argv[]){
 	gtk_init(&argc, &argv); // init GtK
 	
@@ -115,10 +122,13 @@ void on_img_chooser_file_set(GtkFileChooserButton *f){
 		gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it and put the new one
 		printf("[-] deleting older input\n");
 	}
+    puts((gtk_file_chooser_get_filename( GTK_FILE_CHOOSER(f))));
 	sudoku_img = gtk_image_new_from_file(gtk_file_chooser_get_filename( GTK_FILE_CHOOSER(f)));
 	gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
 	gtk_widget_show(sudoku_img);
 	gtk_fixed_move (GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set hte img at the right place
+    last_file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(f));
+    puts(last_file);
 }
 
 
@@ -147,6 +157,8 @@ void on_open_activated(){
         	gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set the img at the right place
 		gtk_widget_destroy(dialog);
 		
+        last_file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+        //puts(last_file);
 		//SDL_Surface *image = load_image(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
 		//save_image(image,"Image/gaussian.png");
 	}
@@ -168,7 +180,7 @@ void on_button_exploit_activate(){
 //greyscale
 void on_greyscale_toggled(){
 	printf("[+] Greyscale\n");
-	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+	SDL_Surface *original_image = IMG_Load(last_file);
 	SDL_Surface *image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 	
@@ -179,11 +191,12 @@ void on_greyscale_toggled(){
 	save_image(image,"Image/greyscale.png");
 	
 	reload_img("Image/greyscale.png");
+    last_file = "Image/greyscale.png";
 }
 void on_gaussian_toggled(){
 	printf("[+] GaussianBlur\n");
         
-	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+	SDL_Surface *original_image = IMG_Load(last_file);
 	SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
         
@@ -192,14 +205,16 @@ void on_gaussian_toggled(){
         
 	//Saves tmp + actual_img
 	save_image(image,"Image/gaussian.png");
-        reload_img("Image/gaussian.png");
+    reload_img("Image/gaussian.png");
+
+    last_file = "Image/gaussian.png";
 }
 //Thresholding
 void on_th_toggled(){
 	printf("[+] Thresholding\n");
 
-        SDL_Surface *original_image = IMG_Load("Image/actual.png");
-        SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+    SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
         
 	//apply filter
@@ -208,12 +223,14 @@ void on_th_toggled(){
 	//Saves tmp + set actual_img
 	save_image(image,"Image/thresholding.png");
         reload_img("Image/thresholding.png");
+    
+    last_file = "Image/thresholding.png";
 }
 
 void on_Kuwahara_toggled(){
         printf("[+] Kuwahara\n");
 
-        SDL_Surface *original_image = IMG_Load("Image/actual.png");
+        SDL_Surface *original_image = IMG_Load(last_file);
         SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 
@@ -223,6 +240,8 @@ void on_Kuwahara_toggled(){
         //Saves tmp + set actual_img
         save_image(image,"Image/Kuwahara.png");
         reload_img("Image/Kuwahara.png");
+
+        last_file = "Image/Kuwahara.png";
 }
 void on_houg_toggled(){
     printf("[+] HoughTransform\n");
@@ -240,48 +259,37 @@ void on_houg_toggled(){
     reload_img("Image/Hough.png");
 }
 void on_rot_l_clicked(){
-	printf("[+] Rotate Image Left");
+	printf("[+] Rotate Image Left\n");
     
-	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+	SDL_Surface *original_image = IMG_Load(last_file);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-    FILE *file;
-    file = fopen("Image/tmpimg.png","rw"); 	
-    if(!file)
-        save_image(image,"Image/tmpimg.png");
-  	
-    SDL_Surface *img = image = SDL_ConvertSurfaceFormat(
-        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-	double angle = -5;
-	img = Rotation_shearing(img,angle);
-	save_image(img,"Image/actual.png");
-	reload_img("Image/actual.png");
+  	ACC_ANGLE--;
+	double angle = (ACC_ANGLE * 2) % 360;
+	image = Rotation_shearing(image,angle);
+	save_image(image,"Image/actualrot.png");
+	reload_img("Image/actualrot.png");
+
+    //last_file = "Image/actualrot.png";
 }
 
 void on_rot_r_clicked(){
-	printf("[+] Rotate Image Right"); 
+	printf("[+] Rotate Image Right\n"); 
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    ACC_ANGLE++; 
+	double angle =(ACC_ANGLE* 2) % 360 ;
+	image = Rotation_shearing(image,angle);
+	save_image(image,"Image/actualrot.png");
+	reload_img("Image/actualrot.png");
+}
+void on_reset_rot(){
+    ACC_ANGLE = 0;    
+    reload_img(last_file);
+    	
 	SDL_Surface *original_image = IMG_Load("Image/actual.png");
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-    
-    FILE *file;
-    file = fopen("Image/tmpimg.png","rw"); 	
-    if(!file)
-        save_image(image,"Image/tmpimg.png");
-  	
-    SDL_Surface *img = SDL_ConvertSurfaceFormat(
-        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-	double angle = 5;
-	img = Rotation_shearing(img,angle);
-	save_image(img,"Image/actual.png");
-	reload_img("Image/actual.png");
-}
-void on_reset_rot(){
-        
-	SDL_Surface *original_image = IMG_Load("Image/tmpimg.png");
-    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
-        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-    save_image(image,"Image/actual.png");
-    reload_img("Image/actual.png");
-  	
+    save_image(image,"Image/actualrot.png");
 }
