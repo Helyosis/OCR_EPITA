@@ -12,6 +12,7 @@
 #include "ImageProcessing/GrayScale.h"
 #include "ImageProcessing/NoiseReduction.h"
 #include "ImageProcessing/BlackAndWhite.h"
+#include "ImageProcessing/CannyFilter.h"
 #include "ImageProcessing/HoughTransform.h"
 #include "ImageProcessing/Rotation.h"
 #include "ImageProcessing/HoughTransform.h"
@@ -46,8 +47,10 @@ int processImage(char* in_filename, char* out_filename) {
     displaySurface(renderer, image);
     printf("[*] Reduced noise\n");
 
-    AdaptiveThresholding_inPlace(image);
-    printf("[*] Applied adaptive threshold (mean - C method)\n");
+    CannyFilter_inPlace(image);
+    //AdaptiveThresholding_inPlace(image);
+    //printf("[*] Applied adaptive threshold (mean - C method)\n");
+    
     displaySurface(renderer, image);
 
     wait_for_keypressed();
