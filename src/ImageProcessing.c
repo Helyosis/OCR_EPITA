@@ -17,7 +17,9 @@
 #include "ImageProcessing/Rotation.h"
 #include "ImageProcessing/HoughTransform.h"
 #include "ImageProcessing/Morphology.h"
-#include "ImageProcessing/FloodFill.h"
+#include "ImageProcessing/BlobDetection.h"
+#include "ImageProcessing/OrderPoints.h"
+#include "ImageProcessing/Pixels.h"
 #include "Utils.h"
 
 int processImage(char* in_filename, char* out_filename) {
@@ -54,42 +56,49 @@ int processImage(char* in_filename, char* out_filename) {
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
 
-    MorphologyOpen(image);
-    MorphologyClose(image);
+    dilate_in_place(image);
+    
+    //MorphologyOpen(image);
+    //MorphologyClose(image);
 
     printf("[*] Applied Noise Reduction2\n");
 
-    MorphologyOpen(image);
-    MorphologyClose(image);
+    //MorphologyOpen(image);
+    //MorphologyClose(image);
 
-    displaySurface(renderer, image);
+    //wait_for_keypressed();
+
+    BiggestBlob_result bb_res = findBiggestBlob(image);
+
+    SDL_Surface* result = bb_res.res;
+    
+    erode_in_place(result);
+    displaySurface(renderer, result);
     wait_for_keypressed();
+    //return 1;
 
-    Point point = {0, 0};
-    int nbPoints = floodFill(image, point, getPixel(image, point.x, point.y), 0xff00ffff);
-    printf("[*] Applied flood filled with %d results\n", nbPoints);
-    displaySurface(renderer, image);
-    wait_for_keypressed();
-    return 1;
-    houghTransform_result* res = HoughTransform(image);
-    DrawHoughlines(image, res);
+    orderedPoints points = orderPoints(result);
 
-
-    displaySurface(renderer, image);
-    free_houghTransform_result(res);
+    /*
+    putPixel(result, points.ul.x, points.ul.y, 0xff0000ff);
+    putPixel(result, points.lr.x, points.lr.y, 0xff00ff00);
+    putPixel(result, points.ll.x, points.ll.y, 0xffff0000);
+    putPixel(result, points.ur.x, points.ur.y, 0xff00ffff);
+    */
+    displaySurface(renderer, result);
+    
 
     printf("[+] Drew Hough lines\n");
 
     printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
 
     wait_for_keypressed();
-    image = Rotation_shearing(image,105);
-    displaySurface(renderer, image);
-    SDL_SaveBMP(image, out_filename);
+
+    SDL_SaveBMP(result, out_filename);
 
     printf("Saved images !\n");
 
-    wait_for_keypressed();
+    //wait_for_keypressed();
 
     SDL_FreeSurface(image);
 

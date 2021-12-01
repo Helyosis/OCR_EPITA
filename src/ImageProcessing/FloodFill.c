@@ -28,27 +28,31 @@ size_t floodFill(SDL_Surface* src, Point seed,
         int y = p->point.y;
 
         // Invalid point, we ignore
-        if (x < 0 || x >= src->w || y < 0 || y >= src->h)
+        if (x < 0 || x >= src->w || y < 0 || y >= src->h) {
             continue;
-
+        }
         if (getPixel(src, x, y) == oldColor) {
             putPixel(src, x, y, newColor);
             ++nbPoint;
 
             p = malloc(sizeof(*p));
-            p->point = (struct Point) {x - 1, y};
+            p->point.x = x - 1;
+            p->point.y = y;
             SLIST_INSERT_HEAD(&head, p, next);
 
             p = malloc(sizeof(*p));
-            p->point = (struct Point) {x + 1, y};
+            p->point.x = x + 1;
+            p->point.y = y;
             SLIST_INSERT_HEAD(&head, p, next);
 
             p = malloc(sizeof(*p));
-            p->point = (struct Point) {x, y - 1};
+            p->point.x = x;
+            p->point.y = y - 1;
             SLIST_INSERT_HEAD(&head, p, next);
 
             p = malloc(sizeof(*p));
-            p->point = (struct Point) {x, y + 1};
+            p->point.x = x;
+            p->point.y = y + 1;
             SLIST_INSERT_HEAD(&head, p, next);
         }
     }
