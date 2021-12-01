@@ -30,7 +30,8 @@ GtkWidget	*greyscale;
 GtkWidget	*gaussian;
 GtkWidget	*thresholding;
 GtkWidget	*kuwahara;
-GtkWidget	*rota;
+GtkWidget	*rotl;
+GtkWidget	*rotr;
 GtkBuilder	*builder;
 GtkWidget	*hough;
 
@@ -63,9 +64,10 @@ int initInterface(int argc,char *argv[]){
     gaussian = GTK_WIDGET(gtk_builder_get_object(builder, "gaussian"));
 	thresholding = GTK_WIDGET(gtk_builder_get_object(builder,"Thresholding"));
 	kuwahara = GTK_WIDGET(gtk_builder_get_object(builder, "Kuwahara"));
-	hough = GTK_WIDGET(gtk_builder_get_object(builder, "Hough"));
-	rota = GTK_WIDGET(gtk_builder_get_object(builder, "Rotation_Slider"));	
-	gtk_widget_show(main_window);
+	hough = GTK_WIDGET(gtk_builder_get_object(builder, "hough"));
+	rotr = GTK_WIDGET(gtk_builder_get_object(builder, "rot_r"));		
+	rotl = GTK_WIDGET(gtk_builder_get_object(builder, "rot_l"));	
+    gtk_widget_show(main_window);
 	
 	//Init Sudoku_img
 	sudoku_img = NULL; 
@@ -222,37 +224,64 @@ void on_Kuwahara_toggled(){
         save_image(image,"Image/Kuwahara.png");
         reload_img("Image/Kuwahara.png");
 }
-void on_hough_toggled(){
+void on_houg_toggled(){
     printf("[+] HoughTransform\n");
-	FILE *file;
-    file = fopen("Image/thresholding.png", "r");
-	if(file)
-    	{
-        	printf("BBBBBB");
-		SDL_Surface *original_image = IMG_Load("Image/thresholding.png");
-		SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
-        	original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-    		//apply filter
-        	DrawHoughlines(image,HoughTransform(image));
-		printf("AAAAA");
-        	//Saves tmp + set actual_img
-        	save_image(image,"Image/Hough.png");
-        	reload_img("Image/Hough.png");
-		//fclose(file);
-	}
-	else
-		errx(1,"You need to apply thresholding first");
-
-}
-void on_Rotation_change(){
-	printf("[+] Rotate Image");
+    
 	SDL_Surface *original_image = IMG_Load("Image/actual.png");
-        SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+
+    Apply_grayscale_filter(image);
+    GaussianBlur_inPlace(image);
+    AdaptiveThresholding_inPlace(image);
+    DrawHoughlines(image, HoughTransform(image));
+    
+    save_image(image,"Image/Hough.png");
+    reload_img("Image/Hough.png");
+}
+void on_rot_l_clicked(){
+	printf("[+] Rotate Image Left");
+    
+	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    FILE *file;
+    file = fopen("Image/tmpimg.png","rw"); 	
+    if(!file)
+        save_image(image,"Image/tmpimg.png");
   	
-	double angle = 0;
-	rotation(image,angle);
-	save_image(image,"Image/actual_rot.png");
-	reload_img("Image/actual_rot.png");
+    SDL_Surface *img = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+	double angle = -5;
+	img = Rotation_shearing(img,angle);
+	save_image(img,"Image/actual.png");
+	reload_img("Image/actual.png");
 }
 
+void on_rot_r_clicked(){
+	printf("[+] Rotate Image Right"); 
+	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    
+    FILE *file;
+    file = fopen("Image/tmpimg.png","rw"); 	
+    if(!file)
+        save_image(image,"Image/tmpimg.png");
+  	
+    SDL_Surface *img = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+	double angle = 5;
+	img = Rotation_shearing(img,angle);
+	save_image(img,"Image/actual.png");
+	reload_img("Image/actual.png");
+}
+void on_reset_rot(){
+        
+	SDL_Surface *original_image = IMG_Load("Image/tmpimg.png");
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    save_image(image,"Image/actual.png");
+    reload_img("Image/actual.png");
+  	
+}
