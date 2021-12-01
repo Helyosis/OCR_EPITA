@@ -17,6 +17,7 @@
 #include "ImageProcessing/Rotation.h"
 #include "ImageProcessing/HoughTransform.h"
 #include "ImageProcessing/Morphology.h"
+#include "ImageProcessing/FloodFill.h"
 #include "Utils.h"
 
 int processImage(char* in_filename, char* out_filename) {
@@ -36,6 +37,7 @@ int processImage(char* in_filename, char* out_filename) {
                                           image->w, image->h, 0);
     SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
 
+
     printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
            in_filename, image->w, image->h);
     displaySurface(renderer, image);
@@ -52,19 +54,20 @@ int processImage(char* in_filename, char* out_filename) {
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
 
-    wait_for_keypressed();
     MorphologyOpen(image);
     MorphologyClose(image);
 
-    displaySurface(renderer, image);
     printf("[*] Applied Noise Reduction2\n");
 
-    displaySurface(renderer, image);
-    wait_for_keypressed();
-
     MorphologyOpen(image);
     MorphologyClose(image);
 
+    displaySurface(renderer, image);
+    wait_for_keypressed();
+
+    Point point = {0, 0};
+    int nbPoints = floodFill(image, point, getPixel(image, point.x, point.y), 0xff00ffff);
+    printf("[*] Applied flood filled with %d results\n", nbPoints);
     displaySurface(renderer, image);
     wait_for_keypressed();
     return 1;

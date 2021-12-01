@@ -4,9 +4,9 @@
 #include <sys/queue.h>
 
 typedef struct Point {
-    size_t x;
-    size_t y;
-} Point
+    int x;
+    int y;
+} Point;
 
 uint32_t intensityToARGB(unsigned char v);
 
