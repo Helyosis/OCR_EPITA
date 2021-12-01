@@ -43,25 +43,40 @@ int processImage(char* in_filename, char* out_filename) {
     displaySurface(renderer, image);
     printf("[*] Applied grayscale\n");
 
-    wait_for_keypressed();
+    //wait_for_keypressed();
     GaussianBlur_inPlace(image);
     displaySurface(renderer, image);
+<<<<<<< Updated upstream
 wait_for_keypressed();
+=======
+
+    displaySurface(renderer, image);
+    printf("[*] Morphology open and close\n");
+    //wait_for_keypressed();
+>>>>>>> Stashed changes
     displaySurface(renderer, image);
     printf("[*] Reduced noise\n");
 
-    CannyFilter_inPlace(image);
-    //AdaptiveThresholding_inPlace(image);
+    //CannyFilter_inPlace(image);
+    AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
-    
-    displaySurface(renderer, image);
 
+<<<<<<< Updated upstream
     wait_for_keypressed();
     MorphologyOpen(image);
     MorphologyClose(image);
     displaySurface(renderer, image);
     printf("[*] Applied Noise Reduction2\n");
 
+=======
+    displaySurface(renderer, image);
+    wait_for_keypressed();
+    
+    MorphologyOpen(image);
+    MorphologyClose(image);
+    
+    displaySurface(renderer, image);
+>>>>>>> Stashed changes
     wait_for_keypressed();
     return 1;
     houghTransform_result* res = HoughTransform(image);

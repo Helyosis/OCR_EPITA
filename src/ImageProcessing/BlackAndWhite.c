@@ -26,7 +26,7 @@ uint32_t AdaptiveThresholding_calculateThreshold(
             for (int dx = -range; dx < range; ++dx) {
                 if (0 <= x + dx && x + dx < surface->w) {
                     sum += (double) I(surface, x + dx, y + dy)
-                        * kernel[dy * (2 * range + 1) + dx];
+                        * 1 + 0 * kernel[0];
                     nb_pixels++;
                 }
             }
