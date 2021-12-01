@@ -59,8 +59,8 @@ int initInterface(int argc,char *argv[]){
 	menu_save = GTK_WIDGET(gtk_builder_get_object(builder,"menu_save"));
 	menu_save_as = GTK_WIDGET(gtk_builder_get_object(builder, "menu_save_as"));
 	menu_quit = GTK_WIDGET(gtk_builder_get_object(builder, "menu_quit"));
-        greyscale = GTK_WIDGET(gtk_builder_get_object(builder, "greyscale"));
-        gaussian = GTK_WIDGET(gtk_builder_get_object(builder, "gaussian"));
+    greyscale = GTK_WIDGET(gtk_builder_get_object(builder, "greyscale"));
+    gaussian = GTK_WIDGET(gtk_builder_get_object(builder, "gaussian"));
 	thresholding = GTK_WIDGET(gtk_builder_get_object(builder,"Thresholding"));
 	kuwahara = GTK_WIDGET(gtk_builder_get_object(builder, "Kuwahara"));
 	hough = GTK_WIDGET(gtk_builder_get_object(builder, "Hough"));
@@ -79,22 +79,17 @@ int main(int argc, char **argv){
 
 //reload img
 void reload_img(char *path){
-	//GdkPixbuf *pb;
 	int vertical = 60;
-        int horizontal = 20;
+    int horizontal = 20;
 	if(sudoku_img){
         	gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it
         	printf("[-] deleting older input\n");
         }
-	sudoku_img = gtk_image_new_from_file(path);
-
-	//pb = gdk_pixbuf_new_from_file(path, NULL);
-	//pb = gdk_pixbuf_scale_simple(pb,400,400,GDK_INTERP_BILINEAR);
-        //sudoku_img = gtk_image_set_from_file(GTK_IMAGE(GTK_IMAGE(image), pb)
-
+    sudoku_img = gtk_image_new_from_file(path);
 	gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
-        gtk_widget_show(sudoku_img);
-        gtk_fixed_move (GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set hte img at the right place
+    gtk_widget_show(sudoku_img);
+    gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical);
+    //set hte img at the right place
 }
 
 void on_button_close(){
@@ -228,10 +223,10 @@ void on_Kuwahara_toggled(){
         reload_img("Image/Kuwahara.png");
 }
 void on_hough_toggled(){
-        printf("[+] HoughTransform\n");
+    printf("[+] HoughTransform\n");
 	FILE *file;
-    	file = fopen("Image/thresholding.png", "r");
-	if(1)
+    file = fopen("Image/thresholding.png", "r");
+	if(file)
     	{
         	printf("BBBBBB");
 		SDL_Surface *original_image = IMG_Load("Image/thresholding.png");
