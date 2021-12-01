@@ -12,6 +12,7 @@
 #include "../ImageProcessing/BlackAndWhite.h"
 #include "../ImageProcessing/HoughTransform.h"
 #include "./utilsUI.h"
+#include "../ImageProcessing/Rotation.h"
 
 // GtK Items
 GtkWidget	*main_window;
@@ -29,7 +30,7 @@ GtkWidget	*greyscale;
 GtkWidget	*gaussian;
 GtkWidget	*thresholding;
 GtkWidget	*kuwahara;
-//GtkWidget	*rotation;
+GtkWidget	*rota;
 GtkBuilder	*builder;
 GtkWidget	*hough;
 
@@ -63,7 +64,7 @@ int initInterface(int argc,char *argv[]){
 	thresholding = GTK_WIDGET(gtk_builder_get_object(builder,"Thresholding"));
 	kuwahara = GTK_WIDGET(gtk_builder_get_object(builder, "Kuwahara"));
 	hough = GTK_WIDGET(gtk_builder_get_object(builder, "Hough"));
-	//rotation = GTK_WIDGET(gtk_builder_get_object(builder, "Rotation"));	
+	rota = GTK_WIDGET(gtk_builder_get_object(builder, "Rotation_Slider"));	
 	gtk_widget_show(main_window);
 	
 	//Init Sudoku_img
@@ -78,18 +79,18 @@ int main(int argc, char **argv){
 
 //reload img
 void reload_img(char *path){
-	GdkPixbuf *pb;
+	//GdkPixbuf *pb;
 	int vertical = 60;
         int horizontal = 20;
 	if(sudoku_img){
         	gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it
         	printf("[-] deleting older input\n");
         }
-	image = gtk_image_new_from_file(path);
+	sudoku_img = gtk_image_new_from_file(path);
 
-	pb = gdk_pixbuf_new_from_file(path, NULL);
-	pb = gdk_pixbuf_scale_simple(pb,400,400,GDK_INTERP_BILINEAR);
-        sudoku_img = gtk_image_set_from_pixbuf(GTK_IMAGE(GTK_IMAGE(image), pb)
+	//pb = gdk_pixbuf_new_from_file(path, NULL);
+	//pb = gdk_pixbuf_scale_simple(pb,400,400,GDK_INTERP_BILINEAR);
+        //sudoku_img = gtk_image_set_from_file(GTK_IMAGE(GTK_IMAGE(image), pb)
 
 	gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
         gtk_widget_show(sudoku_img);
@@ -247,5 +248,16 @@ void on_hough_toggled(){
 	else
 		errx(1,"You need to apply thresholding first");
 
+}
+void on_Rotation_change(){
+	printf("[+] Rotate Image");
+	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+        SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+  	
+	double angle = 0;
+	rotation(image,angle);
+	save_image(image,"Image/actual_rot.png");
+	reload_img("Image/actual_rot.png");
 }
 

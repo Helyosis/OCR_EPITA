@@ -274,6 +274,40 @@
             <property name="y">204</property>
           </packing>
         </child>
+        <child>
+          <object class="GtkScaleButton" id="Rotation_Slider">
+            <property name="width_request">100</property>
+            <property name="height_request">80</property>
+            <property name="visible">True</property>
+            <property name="can_focus">True</property>
+            <property name="focus_on_click">False</property>
+            <property name="receives_default">True</property>
+            <property name="relief">none</property>
+            <property name="value">1</property>
+            <child internal-child="plus_button">
+              <object class="GtkButton">
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="relief">none</property>
+              </object>
+            </child>
+            <child internal-child="minus_button">
+              <object class="GtkButton">
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="halign">center</property>
+                <property name="valign">center</property>
+                <property name="relief">none</property>
+              </object>
+            </child>
+          </object>
+          <packing>
+            <property name="x">85</property>
+            <property name="y">391</property>
+          </packing>
+        </child>
       </object>
     </child>
   </object>
