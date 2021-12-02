@@ -44,7 +44,7 @@ GtkWidget	*hough;
 //Angle for rotation
 int ACC_ANGLE = 0;
 //Last file 
-char *last_file = "";
+char *last_file = "Image/actual.png";
 
 
 int initInterface(int argc,char *argv[]){
@@ -153,11 +153,10 @@ void on_open_activated(){
 		}
 		sudoku_img = gtk_image_new_from_file(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
 		gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
-        	gtk_widget_show(sudoku_img);
-        	gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set the img at the right place
+        gtk_widget_show(sudoku_img);
+        gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set the img at the right place
 		gtk_widget_destroy(dialog);
-		
-        last_file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+        //last_file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
         //puts(last_file);
 		//SDL_Surface *image = load_image(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
 		//save_image(image,"Image/gaussian.png");
@@ -180,7 +179,8 @@ void on_button_exploit_activate(){
 //greyscale
 void on_greyscale_toggled(){
 	printf("[+] Greyscale\n");
-	SDL_Surface *original_image = IMG_Load(last_file);
+	puts(last_file);
+    SDL_Surface *original_image = IMG_Load(last_file);
 	SDL_Surface *image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 	
@@ -191,6 +191,7 @@ void on_greyscale_toggled(){
 	save_image(image,"Image/greyscale.png");
 	
 	reload_img("Image/greyscale.png");
+    printf("LAST FILE");
     last_file = "Image/greyscale.png";
 }
 void on_gaussian_toggled(){
