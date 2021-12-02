@@ -1,87 +1,32 @@
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
-#include <stdbool.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <err.h>
-#include <stdio.h>
-#include "ImageProcessing/GrayScale.h"
-#include "ImageProcessing/NoiseReduction.h"
-#include "ImageProcessing/BlackAndWhite.h"
-#include "ImageProcessing/HoughTransform.h"
-#include "ImageProcessing/Rotation.h"
-#include "ImageProcessing/HoughTransform.h"
-#include "Utils.h"
+#include <string.h>
+#pragma GCC diagnostic pop
 
+#include "ImageProcessing.h"
+#include "NeuralNetwork/TrainNeuralNet.h"
 
 int main(int argc, char **argv)
 {
     if (argc == 1)
-        errx(1, "Please specify a image path, (optional: with a save path)");
+        errx(1, "Please specify a mode to use.");
 
-    bool quit = false;
-    SDL_Event event;
-
-    SDL_Surface *original_image = IMG_Load(argv[1]);
-    
-    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
-        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-    SDL_FreeSurface(original_image);
-    if (!image) { // Loading failed so ptr is null
-        printf("[-] IMG_Load: %s\n", SDL_GetError());
-        errx(1, "Error");
+    if (!strcmp(argv[1], "train")) {
+        char* filename = argc == 3 ? argv[2] : "neuralnetwork_save.txt";
+        trainNn(20000, filename);
+    }
+    else if (!strcmp(argv[1], "image")) {
+        char* in_filename = argc == 3 ?  argv[2] : "../Images/image_01.jpg";
+        char* out_filename = argc == 4 ? argv[3] : "out.bmp";
+        return processImage(in_filename, out_filename);
+    }
+    else {
+        errx(1, "Unrecognized parameters: \"%s\"", argv[1]);
     }
 
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window *window = SDL_CreateWindow("My GUI lol",
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          image->w, image->h, 0);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
-
-    printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
-           argv[1], image->w, image->h);
-    displaySurface(renderer, image);
-    Apply_grayscale_filter(image);
-    displaySurface(renderer, image);
-    printf("[*] Applied grayscale\n");
-    GaussianBlur_inPlace(image);
-
-    displaySurface(renderer, image);
-    printf("[*] Reduced noise\n");
-
-    displaySurface(renderer, image);
-    AdaptiveThresholding_inPlace(image);
-    printf("[*] Applied adaptive threshold (mean - C method)\n");
-
-    wait_for_keypressed();
-    DrawHoughlines(image, HoughTransform(image));
-
-    displaySurface(renderer, image);
-
-    printf("[+] Drew Hough lines\n");
-//printf("[-] Hough transform is not implemented yet. Skipping.\n");
-    printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
-
-    image = Rotation_shearing(image,105);
-    SDL_SaveBMP(image, argc > 2 ? argv[2] : "out.bmp");
-    
-
-    printf("Saved images !\n");
-
-
-
-    while (!quit)
-    {
-        SDL_WaitEvent(&event);
-
-        switch (event.type)
-        {
-        case SDL_QUIT:
-            quit = true;
-            break;
-        }
-    }
-
-    SDL_Quit();
-    IMG_Quit();
-    return 0;
+    return -1;
 }
+
+

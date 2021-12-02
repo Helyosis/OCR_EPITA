@@ -1,6 +1,10 @@
 #ifndef PIXELS_H
 #define PIXELS_H
 
+uint32_t intensityToARGB(unsigned char v);
+
+double distance(int i, int j, int k, int l);
+
 Uint32 getPixel(SDL_Surface *surface, int x, int y);
 
 void putPixel(SDL_Surface *surface, int x, int y, Uint32 pixel);

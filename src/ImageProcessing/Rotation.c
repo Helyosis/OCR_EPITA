@@ -1,6 +1,11 @@
-#include "SDL2/SDL.h"
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#include <SDL2/SDL.h>
 #include <stdlib.h>
 #include <math.h>
+#pragma GCC diagnostic pop
+
 #include "Pixels.h"
 
 // Define Pi
@@ -43,6 +48,7 @@ SDL_Surface *rotation(SDL_Surface *image, double angle){
             }
         }
     }
+    SDL_FreeSurface(image);
     return rotated_image;
 }
 

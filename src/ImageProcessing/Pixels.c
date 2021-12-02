@@ -1,7 +1,20 @@
-#include <SDL.h>
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <SDL_image.h>
 #include <math.h>
+#pragma GCC diagnostic pop
 
+
+// Utility function to convert grayscale value to adequate ARGB pixel
+uint32_t intensityToARGB(unsigned char v) {
+    return (uint32_t) (0xFF << 24 | v << 16 | v << 8 | v);
+}
+
+// Returns the distance between the points (i, j) and the point (k, l)
+double distance(int i, int j, int k, int l) {
+    return sqrt((k - i) * (k - i) + (j - l) * (j - l));
+}
 
 Uint32 getPixel(SDL_Surface *surface, int x, int y)
 {
@@ -76,12 +89,11 @@ void drawLine(SDL_Surface *Screen, int x0, int y0, int x1, int y1, uint32_t pixe
     double length = sqrt( x*x + y*y );
     double addx = x / length;
     double addy = y / length;
-        x = x0;
-        y = y0;
-
-        for ( i = 0; i < length; i += 1) {
-            putPixel(Screen, x, y, pixel );
+    x = x0;
+    y = y0;
+    for (i = 0; i < length; ++i) {
+        putPixel(Screen, x, y, pixel );
         x += addx;
         y += addy;
-        }
+    }
 }
