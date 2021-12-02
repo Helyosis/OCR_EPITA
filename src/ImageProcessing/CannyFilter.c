@@ -18,7 +18,7 @@ SDL_Surface* CannyFilter(SDL_Surface* source) {
                                  source->format->Rmask, source->format->Gmask,
                                  source->format->Bmask, source->format->Amask);
     if (dest == NULL) {
-        errx(1, SDL_GetError());
+        errx(1, "Coudln't create surface");
     }
 
     double** sobel = SobelFilters(source);

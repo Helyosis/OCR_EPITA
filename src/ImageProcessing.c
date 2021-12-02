@@ -43,7 +43,9 @@ int processImage(char* in_filename, char* out_filename) {
     printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
            in_filename, image->w, image->h);
     displaySurface(renderer, image);
+
     Apply_grayscale_filter(image);
+    wait_for_keypressed();
     displaySurface(renderer, image);
     printf("[*] Applied grayscale\n");
 
@@ -52,6 +54,7 @@ int processImage(char* in_filename, char* out_filename) {
     displaySurface(renderer, image);
     printf("[*] Reduced noise\n");
 
+    wait_for_keypressed();
     //CannyFilter_inPlace(image);
     AdaptiveThresholding_inPlace(image);
     printf("[*] Applied adaptive threshold (mean - C method)\n");
@@ -66,7 +69,7 @@ int processImage(char* in_filename, char* out_filename) {
     //MorphologyOpen(image);
     //MorphologyClose(image);
 
-    //wait_for_keypressed();
+    wait_for_keypressed();
 
     BiggestBlob_result bb_res = findBiggestBlob(image);
 
@@ -79,12 +82,12 @@ int processImage(char* in_filename, char* out_filename) {
 
     orderedPoints points = orderPoints(result);
 
-    /*
+    
     putPixel(result, points.ul.x, points.ul.y, 0xff0000ff);
     putPixel(result, points.lr.x, points.lr.y, 0xff00ff00);
-    putPixel(result, points.ll.x, points.ll.y, 0xffff0000);
+    putPixel(result, points.ll.x, points.ll.y, 0xffffff00);
     putPixel(result, points.ur.x, points.ur.y, 0xff00ffff);
-    */
+    
     displaySurface(renderer, result);
     
 
