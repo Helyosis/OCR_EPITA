@@ -1,8 +1,11 @@
 #ifndef BLOBDETECTION_H
 #define BLOBDETECTION_H
 
+#include "Pixels.h"
+
 typedef struct {
     SDL_Surface* res;
+    Point point;
     size_t size;
 } BiggestBlob_result;
 
