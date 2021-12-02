@@ -1,6 +1,13 @@
 #ifndef PIXELS_H
 #define PIXELS_H
 
+#include <sys/queue.h>
+
+typedef struct Point {
+    int x;
+    int y;
+} Point;
+
 uint32_t intensityToARGB(unsigned char v);
 
 double distance(int i, int j, int k, int l);
