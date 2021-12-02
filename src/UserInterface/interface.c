@@ -13,6 +13,7 @@
 #include "../ImageProcessing/HoughTransform.h"
 #include "./utilsUI.h"
 #include "../ImageProcessing/Rotation.h"
+#include "../ImageProcessing.h"
 
 // GtK Items
 GtkWidget	*main_window;
@@ -223,7 +224,7 @@ void on_th_toggled(){
         
 	//Saves tmp + set actual_img
 	save_image(image,"Image/thresholding.png");
-        reload_img("Image/thresholding.png");
+    reload_img("Image/thresholding.png");
     
     last_file = "Image/thresholding.png";
 }
@@ -293,4 +294,14 @@ void on_reset_rot(){
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     save_image(image,"Image/actualrot.png");
+}
+void on_autosolve(){
+	printf("[+] AutoSolve\n"); 
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+
+    processImage(last_file,"Image/output.png");
+    
+
 }

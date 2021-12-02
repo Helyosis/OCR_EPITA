@@ -3,7 +3,7 @@ CFLAGS= -g3 -Wall -Wextra -std=c99 -O2 -lm `pkg-config --cflags --libs sdl2 SDL2
 LDFLAGS = -lm `pkg-config --libs sdl2 SDL2_image gtk+-3.0`
 
 
-SRC = interface.c ../ImageProcessing/Rotation.c ../ImageProcessing/GrayScale.c ../ImageProcessing/Pixels.c ../ImageProcessing/BlackAndWhite.c ../ImageProcessing/NoiseReduction.c ../ImageProcessing/HoughTransform.c utilsUI.c ../Utils.c 
+SRC = interface.c ../ImageProcessing/Rotation.c ../ImageProcessing/GrayScale.c ../ImageProcessing/Pixels.c ../ImageProcessing/BlackAndWhite.c ../ImageProcessing/NoiseReduction.c ../ImageProcessing/HoughTransform.c utilsUI.c ../Utils.c ../ImageProcessing.c  
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 TMP = main.glade~ Image/gaussian.png Image/greyscale.png Image/thresholding.png Image/Kuwahara.png Image/Hough.png Image/actual.png Image/tmpimg.png Image/actualrot.png
