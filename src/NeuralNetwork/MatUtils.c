@@ -18,7 +18,7 @@ void printMat(double* mat, int height, int width){
 
 /* Multiply matA * matB 
 @param the height of the matA, the width of matA, the width of matB, the result mat */
-void matMult(double* matA, double* matB,int heightA,int widthA, int widthB, double* result) {
+void matMult(double* matA, double* matB,int heightA, int widthA, int widthB, double* result) {
     for(int iHeightA=0;iHeightA<heightA;iHeightA++){
         for(int iWidthB=0;iWidthB<widthB;iWidthB++){
             double sum=0;
@@ -28,6 +28,19 @@ void matMult(double* matA, double* matB,int heightA,int widthA, int widthB, doub
             result[iHeightA*widthB+iWidthB] = sum;
         }   
     }
+    /*double sum=0;
+    for ( size_t c = 0 ; c < heightA ; c++ )
+        {
+            for (size_t d = 0 ; d < widthB ; d++ )
+            {
+                for ( size_t k = 0 ; k < widthA ; k++ )
+                {
+                    sum = sum + matA[c*widthA+k]*matB[k*widthB+d];
+                }
+                result[c*widthB+d] = sum;
+                sum = 0;
+            }
+        }*/
 }
 
 // Substract: matC = matA - matB

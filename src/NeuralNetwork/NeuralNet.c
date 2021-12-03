@@ -14,9 +14,19 @@ double sigmoidF(double x){
     return 1/(1+exp(-x));
 }
 
-void sigmoid(double** mA, double* m, int width){
+void sigmoid(double* mA, double* m, int width){
     for(int iWidth=0;iWidth<width;iWidth++){
-        *mA[iWidth]=sigmoidF(m[iWidth]);
+        mA[iWidth]=sigmoidF(m[iWidth]);
+    }
+}
+
+void softMax(double* mA, double* m, int width){
+    double sum=0;
+    for(int iWidth=0;iWidth<width;iWidth++){
+        sum+=exp(m[iWidth]);
+    } 
+    for(int iWidth=0;iWidth<width;iWidth++){
+        mA[iWidth]=exp(m[iWidth])/sum;
     }
 }
 
@@ -27,10 +37,11 @@ void feedForward(struct NeuralNetwork* nnPtr){
     int k=nnPtr->nbNBL[2];
     matMult(nnPtr->input,nnPtr->wh,1,d,l,nnPtr->h);
     matAdd(nnPtr->h,nnPtr->bh,1,l);
-    sigmoid(&(nnPtr->hA), nnPtr->h,l);
+    sigmoid(nnPtr->hA, nnPtr->h,l);
     matMult(nnPtr->hA,nnPtr->wy,1,l,k,nnPtr->y);
     matAdd(nnPtr->y,nnPtr->by,1,k);
-    sigmoid(&(nnPtr->yA),nnPtr->y,k);//TODO SM
+    //softMax(nnPtr->yA,nnPtr->y,k);
+    sigmoid(nnPtr->yA,nnPtr->y,k);
 }
 
 void writeMat(int height, int width,FILE* fptr,double* l){
