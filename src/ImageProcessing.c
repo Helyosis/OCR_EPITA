@@ -77,7 +77,7 @@ int processImage(char* in_filename, char* out_filename) {
     wait_for_keypressed();
     //return 1;
 
-    orderedPoints points = orderPoints(result);
+    //orderedPoints points = orderPoints(result);
 
     /*
     putPixel(result, points.ul.x, points.ul.y, 0xff0000ff);

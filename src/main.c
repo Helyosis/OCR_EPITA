@@ -3,13 +3,18 @@
 #pragma GCC diagnostic ignored "-Wtype-limits"
 #include <err.h>
 #include <string.h>
+#include <stdio.h>
+#include <stdlib.h>
 #pragma GCC diagnostic pop
 
 #include "ImageProcessing.h"
 #include "NeuralNetwork/TrainNeuralNet.h"
+#include "NeuralNetwork/MatUtils.h"
 
+//int main(int argc, char **argv)
 int main(int argc, char **argv)
 {
+    
     if (argc == 1)
         errx(1, "Please specify a mode to use.");
 
