@@ -20,6 +20,7 @@
 #include "ImageProcessing/BlobDetection.h"
 #include "ImageProcessing/OrderPoints.h"
 #include "ImageProcessing/Pixels.h"
+#include "ImageProcessing/HomographicTransphorm.h"
 #include "Utils.h"
 #include "Verbose.h"
 
@@ -76,7 +77,11 @@ int processImage(t_options options) {
     MorphologyClose(image);
     MorphologyOpen(image);
     log_s("Applied Morphology operations");
-    
+    double *coefs = Fill_matrix(points);
+    for (int i = 0; i < 9; i++) {
+        printf("%f ", coefs[i]);
+    }
+    printf("\n");
     warn_s("Perspective transformation is not implemented yet. Skipping.");
 
     if (options.showImage) {}

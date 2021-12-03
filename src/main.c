@@ -40,7 +40,7 @@ static const char* ARGS_HELP =
     "[ General options ]\n"
     "   -v: Increase the verbose level (default 0), can be used up to 3 times\n"
     "   --mode mode: Specify the mode to use. Can be one of IMAGE/TRAIN/GUI (default is GUI)\n"
-    "   -h / --help: Show this help and quit"
+    "   -h / --help: Show this help and \n"
     ;
 
 

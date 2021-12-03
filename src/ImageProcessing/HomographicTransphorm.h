@@ -4,5 +4,5 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #pragma GCC diagnostic pop
-
+double *Fill_matrix(orderedPoints points);
 #include "Pixels.h"
