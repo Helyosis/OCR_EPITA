@@ -85,38 +85,8 @@ int processImage(t_options options) {
         drawLine(image, points.lr.x, points.lr.y, points.ll.x, points.ll.y, 0xff00ffff);
         drawLine(image, points.ll.x, points.ll.y, points.ul.x, points.ul.y, 0xff00ffff);
     
-<<<<<<< HEAD
-    erode_in_place(result);
-    displaySurface(renderer, result);
-    wait_for_keypressed();
-    //return 1;
-
-    //orderedPoints points = orderPoints(result);
-
-    /*
-    putPixel(result, points.ul.x, points.ul.y, 0xff0000ff);
-    putPixel(result, points.lr.x, points.lr.y, 0xff00ff00);
-    putPixel(result, points.ll.x, points.ll.y, 0xffff0000);
-    putPixel(result, points.ur.x, points.ur.y, 0xff00ffff);
-    */
-    displaySurface(renderer, result);
-    
-
-    printf("[+] Drew Hough lines\n");
-
-    printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
-
-    wait_for_keypressed();
-
-    SDL_SaveBMP(result, out_filename);
-
-    printf("Saved images !\n");
-
-    //wait_for_keypressed();
-=======
     SDL_SaveBMP(image, options.outputFile);
     info_s("Saved image under filename %s", options.outputFile);
->>>>>>> 25b9e7b99825274987f455889dfeeb626eff9fe7
 
     SDL_FreeSurface(image);
 

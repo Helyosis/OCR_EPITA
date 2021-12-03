@@ -16,9 +16,6 @@
 #include "Verbose.h"
 #include "ImageProcessing.h"
 #include "NeuralNetwork/TrainNeuralNet.h"
-<<<<<<< HEAD
-#include "NeuralNetwork/MatUtils.h"
-=======
 #include "Utils.h"
 
 // Macros used to transform enum to string
@@ -49,19 +46,12 @@ static const char* ARGS_HELP =
 
 
 void usage(char* progname, int exit_code);
->>>>>>> 25b9e7b99825274987f455889dfeeb626eff9fe7
 
 //int main(int argc, char **argv)
 int main(int argc, char **argv)
 {
-<<<<<<< HEAD
-    
-    if (argc == 1)
-        errx(1, "Please specify a mode to use.");
-=======
     int c;
     char* progname = argv[0];
->>>>>>> 25b9e7b99825274987f455889dfeeb626eff9fe7
 
     t_options options = {
         NULL,
