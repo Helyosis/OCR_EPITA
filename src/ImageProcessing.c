@@ -21,57 +21,71 @@
 #include "ImageProcessing/OrderPoints.h"
 #include "ImageProcessing/Pixels.h"
 #include "Utils.h"
+#include "Verbose.h"
 
-int processImage(char* in_filename, char* out_filename) {
-    SDL_Surface *original_image = IMG_Load(in_filename);
+orderedPoints findGridCorner(SDL_Surface* image, SDL_Renderer* renderer, t_options options);
+
+int processImage(t_options options) {
+    info_s("Running processImage with inputFile = %s", options.inputFile);
+    SDL_Surface *original_image = IMG_Load(options.inputFile);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     SDL_FreeSurface(original_image);
     if (!image) { // Loading failed so ptr is null
-        printf("[-] IMG_Load: %s\n", SDL_GetError());
-        errx(1, "Error");
+        error_s("Failed to load image: %s", SDL_GetError());
     }
 
-    SDL_Init(SDL_INIT_VIDEO);
-    SDL_Window *window = SDL_CreateWindow("My GUI lol",
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          SDL_WINDOWPOS_UNDEFINED,
-                                          image->w, image->h, 0);
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1, 0);
+    SDL_Window *window;
+    SDL_Renderer *renderer;
+    if (options.showImage) {
+        SDL_Init(SDL_INIT_VIDEO);
+        window = SDL_CreateWindow("My GUI lol",
+                                              SDL_WINDOWPOS_UNDEFINED,
+                                              SDL_WINDOWPOS_UNDEFINED,
+                                              image->w, image->h, 0);
+        renderer = SDL_CreateRenderer(window, -1, 0);
+    }
+
+    log_s("Successfully loaded %s (w=%d, h=%d)",
+           options.inputFile, image->w, image->h);
 
 
-    printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
-           in_filename, image->w, image->h);
-    displaySurface(renderer, image);
     Apply_grayscale_filter(image);
-    displaySurface(renderer, image);
-    printf("[*] Applied grayscale\n");
+    log_s("Applied grayscale");
 
-    //wait_for_keypressed();
+    if (options.showImage) {
+        displaySurface(renderer, image);
+        wait_for_keypressed();
+    }
+
     GaussianBlur_inPlace(image);
-    displaySurface(renderer, image);
-    printf("[*] Reduced noise\n");
 
-    //CannyFilter_inPlace(image);
+    log_s("Reduced noise");
+
+    if (options.showImage) {
+        displaySurface(renderer, image);
+        wait_for_keypressed();
+    }
+
+    orderedPoints points = findGridCorner(image, renderer, options);
+    log_s("Found corner with ul(x = %d, y = %d)", points.ul.x, points.ul.y);
+
     AdaptiveThresholding_inPlace(image);
-    printf("[*] Applied adaptive threshold (mean - C method)\n");
+    log_s("Applied adaptive threshold (mean - C method)");
 
-    dilate_in_place(image);
+    MorphologyClose(image);
+    MorphologyOpen(image);
+    log_s("Applied Morphology operations");
     
-    //MorphologyOpen(image);
-    //MorphologyClose(image);
+    warn_s("Perspective transformation is not implemented yet. Skipping.");
 
-    printf("[*] Applied Noise Reduction2\n");
-
-    //MorphologyOpen(image);
-    //MorphologyClose(image);
-
-    //wait_for_keypressed();
-
-    BiggestBlob_result bb_res = findBiggestBlob(image);
-
-    SDL_Surface* result = bb_res.res;
+    if (options.showImage) {}
+        drawLine(image, points.ul.x, points.ul.y, points.ur.x, points.ur.y, 0xff00ffff);
+        drawLine(image, points.ur.x, points.ur.y, points.lr.x, points.lr.y, 0xff00ffff);
+        drawLine(image, points.lr.x, points.lr.y, points.ll.x, points.ll.y, 0xff00ffff);
+        drawLine(image, points.ll.x, points.ll.y, points.ul.x, points.ul.y, 0xff00ffff);
     
+<<<<<<< HEAD
     erode_in_place(result);
     displaySurface(renderer, result);
     wait_for_keypressed();
@@ -99,10 +113,41 @@ int processImage(char* in_filename, char* out_filename) {
     printf("Saved images !\n");
 
     //wait_for_keypressed();
+=======
+    SDL_SaveBMP(image, options.outputFile);
+    info_s("Saved image under filename %s", options.outputFile);
+>>>>>>> 25b9e7b99825274987f455889dfeeb626eff9fe7
 
     SDL_FreeSurface(image);
 
     SDL_Quit();
     IMG_Quit();
     return 0;
+}
+
+orderedPoints findGridCorner(SDL_Surface* image, SDL_Renderer* renderer, t_options options) {
+    //TODO: Try to fix CannyFilter()
+    SDL_Surface* lineImage = AdaptiveThresholding(image);
+    
+    dilate_in_place(image);
+
+    BiggestBlob_result bb_res = findBiggestBlob(lineImage);
+    log_s("Found the biggest blob starting at x = %d, y = %d, of size %d",
+            bb_res.point.x, bb_res.point.y, bb_res.size);
+    SDL_SaveBMP(bb_res.res, "out2.bmp");
+    SDL_FreeSurface(lineImage);
+
+    SDL_Surface* result = bb_res.res;
+
+    erode_in_place(result);
+    
+    orderedPoints points = orderPoints(result);
+
+    if (options.showImage) {
+        displaySurface(renderer, result);
+        wait_for_keypressed();
+    }
+    SDL_FreeSurface(result);
+
+    return points;
 }

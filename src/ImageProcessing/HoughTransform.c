@@ -29,7 +29,7 @@ houghTransform_result* HoughTransform(SDL_Surface *source) {
     double theta = 1.0;
 
     int Ntheta = 180 / theta;
-    int Nrho   = (int) sqrt(Nx * Nx + Ny * Ny) / rho;
+    int Nrho   = sqrt(Nx * Nx + Ny * Ny) / rho;
 
     double dtheta = M_PI / (double)Ntheta;
     double drho   = sqrt(Nx * Nx + Ny * Ny) / Nrho;
@@ -59,7 +59,7 @@ houghTransform_result* HoughTransform(SDL_Surface *source) {
     // We only keep the highest values
     int threshold = 600;
     long nbLines = 0;
-    for (int i = 0; i  < Ntheta * Nrho; i += 1) {
+    for (int i = 0; i  < Ntheta * Nrho; ++i) {
         if (accum[i] < threshold) {
             accum[i] = 0;
         } else {

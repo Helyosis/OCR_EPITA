@@ -16,10 +16,10 @@ orderedPoints orderPoints(SDL_Surface* src) {
     Point lr;
 
     int minDiff = src->w > src->h ? src->w : src->h;
-    Point ur;
+    Point ll;
 
     int maxDiff = -1 * minDiff;
-    Point ll;
+    Point ur;
 
     for (int y = 0; y < src->h; ++y) {
         for (int x = 0; x < src->w; ++x) {
@@ -41,16 +41,16 @@ orderedPoints orderPoints(SDL_Surface* src) {
 
             if (diff < minDiff) {
                 minDiff = diff;
-                ur.x = x; ur.y = y;
+                ll.x = x; ll.y = y;
             }
 
             if (diff > maxDiff) {
                 maxDiff = diff;
-                ll.x = x; ll.y = y;
+                ur.x = x; ur.y = y;
             }
         }
     }
-
+    
     orderedPoints result;
     result.ul = ul;
     result.lr = lr;

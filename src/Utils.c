@@ -61,3 +61,11 @@ double* Build2DGaussianKernel(size_t kernelRadius, double sigma) {
 
     return kernel;
 }
+
+void strtoupper(char* s) {
+  while (*s) {
+    *s = toupper((unsigned char) *s);
+    s++;
+  }
+
+}

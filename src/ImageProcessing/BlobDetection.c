@@ -43,10 +43,8 @@ BiggestBlob_result findBiggestBlob(SDL_Surface* src) {
         }
     }
 
-    printf("[*] Found the biggest blob starting at x = %d and y = %d, of size %ld\n",
-           maxPoint.x, maxPoint.y, max);
     floodFill(dest, maxPoint, BLUE, WHITE);
-    
+
     for (int y = 0; y < src->h; ++y) {
         for (int x = 0; x < src->w; ++x) {
             Point seed = {x, y};
@@ -57,5 +55,5 @@ BiggestBlob_result findBiggestBlob(SDL_Surface* src) {
         }
     }
 
-    return (BiggestBlob_result) {dest, max};
+    return (BiggestBlob_result) {dest, maxPoint, max};
 }

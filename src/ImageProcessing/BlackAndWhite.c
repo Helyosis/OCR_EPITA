@@ -46,7 +46,7 @@ uint32_t AdaptiveThresholding_calculateThreshold(
 }
 
 
-SDL_Surface *AdapativeThresholding(SDL_Surface* surface) {
+SDL_Surface *AdaptiveThresholding(SDL_Surface* surface) {
     SDL_Surface *dest;
     dest = SDL_CreateRGBSurface(0,
                                 surface->w,
@@ -82,7 +82,7 @@ SDL_Surface *AdapativeThresholding(SDL_Surface* surface) {
 
 void AdaptiveThresholding_inPlace(SDL_Surface *source) {
     SDL_Surface *dest;
-    dest = AdapativeThresholding(source);
+    dest = AdaptiveThresholding(source);
 
     for (int x = 0; x < source->w; ++x) {
         for (int y = 0; y < source->h; ++y) {
