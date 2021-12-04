@@ -28,13 +28,16 @@ void gradientDescent(struct NeuralNetwork* nnPtr){
         }
     }
 }
+
 double* sigmoidPrime(double* h, int width){
     double* res = calloc(width,sizeof(double));
     for(int i = 0;i<width;i++){
         res[i] = 1;
     }
     matSub(res, h, res, 1, width);
-    return hadamardProduct(res, h, 1, width);
+    double* res2=hadamardProduct(res, h, 1, width);
+    free(res);
+    return res2;
 }
 // Calculate the output error: error =  y-y*
 void gradErrorL(double* y, double* tO, double* res, int k){
@@ -47,7 +50,11 @@ double* gradErrorH(double* error, double* w, struct NeuralNetwork* nnPtr){
     matTranspose(w, wT, nnPtr->nbNBL[1], nnPtr->nbNBL[2]);
     matMult(error, wT, 1, nnPtr->nbNBL[2], nnPtr->nbNBL[1], r);
     free(wT);
-    return hadamardProduct(r, sigmoidPrime(nnPtr->hA, nnPtr->nbNBL[1]), 1, nnPtr->nbNBL[1]);
+    double* hAP = sigmoidPrime(nnPtr->hA, nnPtr->nbNBL[1]);
+    double* result = hadamardProduct(r, hAP, 1, nnPtr->nbNBL[1]);
+    free(hAP);
+    free(r);
+    return result;
 }
 // Back propagation: for each layer propagate the error of the predicted output
 void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
@@ -61,7 +68,7 @@ void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
     free(nnPtr->nablaWy);
     nnPtr->nablaWy = r;
     nnPtr->nablaBy = error;
-    double* uT = nnPtr->input;//TODO activate input?
+    double* uT = nnPtr->input;
     double* r1 = calloc(nnPtr->nbNBL[0]*nnPtr->nbNBL[1],sizeof(double));
     matMult(uT, errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], r1);
     free(nnPtr->nablaBh);
@@ -108,19 +115,19 @@ void trainNn(int iterationLimit, char* filename){
             }
             feedForward(nnPtr);
 	        backPropagation(nnPtr, targetOutput);
-            gradientDescent(nnPtr);
-            printf("I1 = %d, I2 = %d, T = %d, 0 = %f\n\n",
-            (int)nnPtr->input[0], (int)nnPtr->input[1], 
-            (int)sampleList[iSample+2], nnPtr->yA[0]);
+            //gradientDescent(nnPtr);
+            if(iterationNum==iterationLimit-1)
+            {
+                printf("I1 = %d, I2 = %d, T = %d, 0 = %f\n\n",
+                (int)nnPtr->input[0], (int)nnPtr->input[1], 
+                (int)sampleList[iSample+2], nnPtr->yA[0]);
+            }
         }
-        saveNn(filename, nnPtr);
         iterationNum +=  1;
     }
     saveNn(filename, nnPtr);
-    free(nbNBL);
-    free(input);
     free(targetOutput);
+    free(sampleList);
     freeNn(nnPtr);
     free(nnPtr);
-    free(sampleList);
 }

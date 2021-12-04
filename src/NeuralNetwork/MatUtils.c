@@ -28,19 +28,6 @@ void matMult(double* matA, double* matB,int heightA, int widthA, int widthB, dou
             result[iHeightA*widthB+iWidthB] = sum;
         }   
     }
-    /*double sum=0;
-    for ( size_t c = 0 ; c < heightA ; c++ )
-        {
-            for (size_t d = 0 ; d < widthB ; d++ )
-            {
-                for ( size_t k = 0 ; k < widthA ; k++ )
-                {
-                    sum = sum + matA[c*widthA+k]*matB[k*widthB+d];
-                }
-                result[c*widthB+d] = sum;
-                sum = 0;
-            }
-        }*/
 }
 
 // Substract: matC = matA - matB
@@ -81,6 +68,5 @@ double* hadamardProduct(double* matA, double* matB, int height, int width){
             result[iHeight*width+iWidth] = matA[iHeight*width+iWidth] * matB[iHeight*width+iWidth];
         }
     }
-    free(matA);
     return result;
 }
