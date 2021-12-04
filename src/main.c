@@ -47,7 +47,7 @@ static const char* ARGS_HELP =
 
 void usage(char* progname, int exit_code);
 
-//int main(int argc, char **argv)
+
 int main(int argc, char **argv)
 {
     int c;
