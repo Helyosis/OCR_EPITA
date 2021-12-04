@@ -78,9 +78,10 @@ int processImage(t_options options) {
     MorphologyOpen(image);
     log_s("Applied Morphology operations");
     double *coefs = Fill_matrix(points);
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 8; i++) {
         printf("%f ", coefs[i]);
     }
+    free(coefs);
     printf("\n");
     warn_s("Perspective transformation is not implemented yet. Skipping.");
 

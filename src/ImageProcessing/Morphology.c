@@ -32,7 +32,7 @@ SDL_Surface* dilate(SDL_Surface* surface) {
                     dy++;
                 }
                 if (x+dx>=0 && y+dy>=0 && x+dx<surface->w && y+dy<surface->h){
-                    if (I(surface, x+dx, y+dy) > maxPix && DILATION_MATRIX[dx+dy*3])
+                    if (I(surface, x+dx, y+dy) > maxPix)
                     {
                         if(DILATION_MATRIX[i])
                             maxPix = I(surface, x+dx, y+dy);
@@ -59,6 +59,7 @@ void dilate_in_place(SDL_Surface* image) {
             putPixel(image, i, j, pixel);
         }
     }
+    free(dest);
 }
 
 SDL_Surface* erode(SDL_Surface* surface) {
@@ -112,6 +113,7 @@ void erode_in_place(SDL_Surface* image) {
             putPixel(image, i, j, pixel);
         }
     }
+    free(dest);
 }
 
 void MorphologyClose(SDL_Surface* image) {

@@ -4,12 +4,37 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <err.h>
+// TODO : remove the STDIO.H
+#include <stdio.h>
 #pragma GCC diagnostic pop
 
 #include "Pixels.h"
 #include "OrderPoints.h"
 #include "../Verbose.h"
 #include "../NeuralNetwork/MatUtils.h"
+
+
+//Function : MatrixTransphorm
+//Description : Transpose a matrix
+//Arguments :   - matrix : the matrix to transpose
+//              - transpose : the transposed matrix
+//              - rows : the number of rows of the matrix
+//              - cols : the number of columns of the matrix
+//Return Value : Void
+
+void MatrixTransphorm(double *matrix, double *transpose, int rows, int cols)
+{
+    int i, j;
+    for (i = 0; i < rows; i++)
+    {
+        for (j = 0; j < cols; j++)
+        {
+            transpose[j * rows + i] = matrix[i * cols + j];
+        }
+    }
+}
+
+
 
 
 // Function : Fill_matrix
@@ -24,11 +49,11 @@ double *Fill_matrix(orderedPoints points)
         err(1, "Fill_matrix : Malloc failed");
     }
     ordered->ul = (Point){0,0};
-    ordered->ur = (Point){0, 480};
-    ordered->ll = (Point){640, 0};
+    ordered->ll = (Point){0, 480};
+    ordered->ur = (Point){640, 0};
     ordered->lr = (Point){640, 480};
     double *mat = calloc(8*8,sizeof(double));
-    for(int i = 0; i < 4; i++){
+    for(int i = 0; i < 8; i+=2){
         Point sp;
         Point ap;
         switch (i)
@@ -37,15 +62,15 @@ double *Fill_matrix(orderedPoints points)
             sp = points.ul;
             ap = ordered->ul;
             break;
-        case 1:
+        case 2:
             sp = points.ur;
             ap = ordered->ur;
             break;
-        case 2:
+        case 4:
             sp = points.ll;
             ap = ordered->ll;
             break;
-        case 3:
+        case 6:
             sp = points.lr;
             ap = ordered->lr;
             break;
@@ -53,22 +78,22 @@ double *Fill_matrix(orderedPoints points)
                 errx(1, "Undefined point");
             break;
         }
-        mat[i * 16 + 0] = ap.x;
-        mat[i * 16 + 1] = ap.y;
-        mat[i * 16 + 2] = 1;
-        mat[i * 16 + 3] = 0;
-        mat[i * 16 + 4] = 0;
-        mat[i * 16 + 5] = 0;
-        mat[i * 16 + 6] = -sp.x * ap.x;
-        mat[i * 16 + 7] = -sp.x * ap.y;
-        mat[i+1 * 16 + 0] = 0;
-        mat[i+1 * 16 + 1] = 0;
-        mat[i+1 * 16 + 2] = 0;
-        mat[i+1 * 16 + 3] = ap.x;
-        mat[i+1 * 16 + 4] = ap.y;
-        mat[i+1 * 16 + 5] = 1;
-        mat[i+1 * 16 + 6] = -sp.y * ap.x;
-        mat[i+1 * 16 + 7] = -sp.y * ap.y;
+        mat[i * 8 + 0] = ap.x;
+        mat[i * 8 + 1] = ap.y;
+        mat[i * 8 + 2] = 1;
+        mat[i * 8 + 3] = 0;
+        mat[i * 8 + 4] = 0;
+        mat[i * 8 + 5] = 0;
+        mat[i * 8 + 6] = -sp.x * ap.x;
+        mat[i * 8 + 7] = -sp.x * ap.y;
+        mat[(i+1) * 8 + 0] = 0;
+        mat[(i+1) * 8 + 1] = 0;
+        mat[(i+1) * 8 + 2] = 0;
+        mat[(i+1) * 8 + 3] = ap.x;
+        mat[(i+1) * 8 + 4] = ap.y;
+        mat[(i+1) * 8 + 5] = 1;
+        mat[(i+1) * 8 + 6] = -sp.y * ap.x;
+        mat[(i+1) * 8 + 7] = -sp.y * ap.y;
     }
     double *res = calloc(8,sizeof(double));
     double b[] = {
@@ -82,15 +107,12 @@ double *Fill_matrix(orderedPoints points)
         points.lr.y
     };
     free(ordered);
-
     // Create a Matrix to store the transpose of the matrix mat
     double *mat_transpose = calloc(8*8,sizeof(double));
-    matTranspose(mat,mat_transpose, 8,8);
-
+    MatrixTransphorm(mat,mat_transpose, 8,8);
     // Create a Matrix to store the multiplication of the matrix mat_transpose and mat
     double *res_mult = calloc(8*8,sizeof(double));
     matricesMult(mat_transpose, mat, 8,8,8, res_mult);
-    
     // Free mat we don't need it anymore
     free(mat);
 
@@ -103,12 +125,12 @@ double *Fill_matrix(orderedPoints points)
             res_inv[i*16+j] = res_mult[i*8+j];
         }
     }
-    inverse_matrix(res_inv,8,16);
     
+    inverse_matrix(res_inv,8,16);
     // Copy the left part of the inverse in the matrix res_mult
     for(int i = 0; i < 8; i++){
         for(int j = 8; j < 16; j++){
-            res_mult[i*8+j] = res_inv[i*16+j];
+            res_mult[i*8+(j-8)] = res_inv[i*16+j];
         }
     }
     free(res_inv);
