@@ -72,61 +72,122 @@ double* hadamardProduct(double* matA, double* matB,int width, int height){
 }
 
 
-
-// Function : swap_rows
-// Description : Swap two rows of a matrix
-// input : double *matrix the matrix
-//         int cols the number of columns
-//         int row1 the first row to swap
-//         int row2 the second row to swap
-// return : void
-
-void swap_rows(double *matrix, int cols,int row1, int row2){
-    double temp;
-    for(int i = 0; i < cols; i++){
-        temp = matrix[row1 * cols + i];
-        matrix[row1 * cols + i] = matrix[row2 * cols + i];
-        matrix[row2 * cols + i] = temp;
-    }
-}
-
-// Function : inverse_matrix
-// Description : Inverse a matrix using Gauss-Jordan elimination
-// input : double *matrix the matrix
-//         int order the order of the matrix
-// return : void
-
-void inverse_matrix(double *matrix, int rows, int cols){
-    double temp;
-
-    for(int i = 0; i < rows; i++){
-        for(int j = rows; j < cols; j++){
-            if((j-rows) == i){
-                matrix[i*cols+j] = 1;
-            }
-        }
-    }
-    for(int i = rows - 1; i > 0; i--){
-        if(matrix[i-1] < matrix[i]){
-            swap_rows(matrix, cols, i, i-1);
-        }
-    }
-    for(int i = 0; i < rows; i++){
-        for(int j = 0; j < rows; j++){
-            if(i != j){
-                temp = matrix[j*cols+i] / matrix[i*cols+i];
-                for(int k = 0; k < cols; k++){
-                    matrix[j*cols+k] -= matrix[i*cols+k] * temp;
+void getCofactor(double *A, double *temp, int p, int q, int n, int cols)
+{
+    int i = 0, j = 0;
+ 
+    // Looping for each element of the matrix
+    for (int row = 0; row < n; row++)
+    {
+        for (int col = 0; col < n; col++)
+        {
+            //  Copying into temporary matrix only those element
+            //  which are not in given row and column
+            if (row != p && col != q)
+            {
+                temp[i*cols+j++] = A[row*cols+col];
+                
+                // Row is filled, so increase row index and
+                // reset col index
+                if (j == n - 1)
+                {
+                    j = 0;
+                    i++;
                 }
             }
         }
     }
-    for(int i = 0; i < rows; i++){
-        temp = matrix[i * cols + i];
-        for(int j = 0; j < cols; j++){
-            matrix[i * cols + j] = matrix[i * cols + j] / temp;
+}
+ 
+/* Recursive function for finding determinant of matrix.
+   n is current dimension of A[][]. */
+double determinant(double *A, int n,int cols)
+{
+    double D = 0.0; // Initialize result
+ 
+    //  Base case : if matrix contains single element
+    if (n == 1)
+        return A[0];
+ 
+    double *temp = (double *)malloc(cols*cols * sizeof(double)); // To store cofactors
+ 
+    double sign = 1.0;  // To store sign multiplier
+ 
+     // Iterate for each element of first row
+    for (int f = 0; f < n; f++)
+    {
+        // Getting Cofactor of A[0][f]
+        getCofactor(A, temp, 0, f, n, cols);
+        D += sign * A[f] * determinant(temp, n - 1, cols);
+        
+        // terms are to be added with alternate sign
+        sign = -sign;
+    }
+    free(temp);
+    return D;
+}
+ 
+// Function to get adjoint of A[N][N] in adj[N][N].
+void adjoint(double *A,double *adj, int N)
+{
+    if (N == 1)
+    {
+        adj[0] = 1.0;
+        return;
+    }
+ 
+    // temp is used to store cofactors of A[][]
+    double sign = 1.0;
+    double *temp = (double *)malloc(N*N * sizeof(double));
+ 
+    for (int i=0; i<N; i++)
+    {
+        for (int j=0; j<N; j++)
+        {
+            // Get cofactor of A[i][j]
+            getCofactor(A, temp, i, j, N, N);
+ 
+            // sign of adj[j][i] positive if sum of row
+            // and column indexes is even.
+            sign = ((i+j)%2==0)? 1: -1;
+ 
+            // Interchanging rows and columns to get the
+            // transpose of the cofactor matrix
+            adj[j*N+i] = (sign)*(determinant(temp, N-1,N));
         }
     }
+    free(temp);
 }
+ 
+// Function to calculate and store inverse, returns false if
+// matrix is singular
+int inverse(double*A, double *inverse, int N)
+{
+    // Find determinant of A[][]
+    double det = determinant(A, N, N);
+    if (det == 0)
+    {
+        return 0;
+    }
+ 
+    // Find adjoint
+    double *adj = (double *)malloc(N*N * sizeof(double));
+    adjoint(A, adj,N);
+    
+    
+    // Find Inverse using formula "inverse(A) = adj(A)/det(A)"
+    for (int i=0; i<N; i++){
+        for (int j=0; j<N; j++){
+            inverse[i*N+j] = adj[i*N+j]/(det);
+        }
+    }
+           
+        
+    free(adj);
+    return !0;
+}
+
+
+
 
 
