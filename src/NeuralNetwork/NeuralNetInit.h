@@ -6,12 +6,14 @@ struct NeuralNetwork
   //double* inputA;
   int* nbNBL;
   double* wh;
+  double* wT;
   double* wy;
   double* bh;
   double* by;
   double* y;
   double* h;
   double* hA;
+  double* hAP;
   double* yA;
   double* nablaBy;
   double* nablaWy;

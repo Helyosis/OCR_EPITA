@@ -46,6 +46,7 @@ struct NeuralNetwork* initNn(int* nbNBL,double* input){
     
     nnPtr->nbNBL = nbNBL;
     nnPtr->wh = calloc(nnPtr->nbNBL[0]*nnPtr->nbNBL[1],sizeof(double));
+    nnPtr->wT = calloc(nnPtr->nbNBL[2]*nnPtr->nbNBL[1],sizeof(double));
     nnPtr->wy = calloc(nnPtr->nbNBL[1]*nnPtr->nbNBL[2],sizeof(double));
 
     nnPtr->bh = calloc(nnPtr->nbNBL[1],sizeof(double));
@@ -55,6 +56,7 @@ struct NeuralNetwork* initNn(int* nbNBL,double* input){
     nnPtr->h = calloc(nnPtr->nbNBL[1],sizeof(double));
 
     nnPtr->hA = calloc(nnPtr->nbNBL[1],sizeof(double));
+    nnPtr->hAP = calloc(nnPtr->nbNBL[1],sizeof(double));
     nnPtr->yA = calloc(nnPtr->nbNBL[2],sizeof(double));
 
     nnPtr->nablaBy = calloc(nnPtr->nbNBL[2],sizeof(double));
@@ -71,12 +73,14 @@ void freeNn(struct NeuralNetwork* nnPtr){
     free(nnPtr->input);
     free(nnPtr->nbNBL);
     free(nnPtr->wh);
+    free(nnPtr->wT);
     free(nnPtr->wy);
     free(nnPtr->bh);
     free(nnPtr->by);
     free(nnPtr->y);
     free(nnPtr->h);
     free(nnPtr->hA);
+    free(nnPtr->hAP);
     free(nnPtr->yA);
     free(nnPtr->nablaBy);
     free(nnPtr->nablaWy);

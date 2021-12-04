@@ -14,7 +14,7 @@
 // New weight  =  old weight-(stepSize/m)*(nabla of the weight)
 // New bias    =  old bias-(stepSize/m)*(nabla of the bias)
 void gradientDescent(struct NeuralNetwork* nnPtr){
-    double stepSize = 0.1;//0.01 test
+    double stepSize = 0.1;//TODO chanche only for debug
     for(int iHeight = 0;iHeight<nnPtr->nbNBL[0];iHeight++){
         for(int iWidth = 0; iWidth<nnPtr->nbNBL[1];iWidth++){
             nnPtr->wh[iHeight*nnPtr->nbNBL[1]+iWidth]  -= stepSize*nnPtr->nablaWh[iHeight*nnPtr->nbNBL[1]+iWidth];
@@ -29,52 +29,33 @@ void gradientDescent(struct NeuralNetwork* nnPtr){
     }
 }
 
-double* sigmoidPrime(double* h, int width){
-    double* res = calloc(width,sizeof(double));
-    for(int i = 0;i<width;i++){
-        res[i] = 1;
-    }
-    matSub(res, h, res, 1, width);
-    double* res2=hadamardProduct(res, h, 1, width);
-    free(res);
-    return res2;
+void sigmoidPrime(double* h, int width, struct NeuralNetwork* nnPtr){
+    for(int i = 0;i<width;i++)
+        nnPtr->hAP[i] = 1;
+    matSub(nnPtr->hAP, h, nnPtr->hAP, 1, width);
+    hadamardProduct(nnPtr->hAP, h, 1, width);
 }
 // Calculate the output error: error =  y-y*
 void gradErrorL(double* y, double* tO, double* res, int k){
     matSub(y, tO, res, 1, k);
 }
 // Propagate the output error to the hidden layer
-double* gradErrorH(double* error, double* w, struct NeuralNetwork* nnPtr){
-    double* r = calloc(nnPtr->nbNBL[1],sizeof(double));
-    double* wT= calloc(nnPtr->nbNBL[2]*nnPtr->nbNBL[1],sizeof(double));
-    matTranspose(w, wT, nnPtr->nbNBL[1], nnPtr->nbNBL[2]);
-    matMult(error, wT, 1, nnPtr->nbNBL[2], nnPtr->nbNBL[1], r);
-    free(wT);
-    double* hAP = sigmoidPrime(nnPtr->hA, nnPtr->nbNBL[1]);
-    double* result = hadamardProduct(r, hAP, 1, nnPtr->nbNBL[1]);
-    free(hAP);
-    free(r);
-    return result;
+double* gradErrorH(double* error, double* w, double* nBh, struct NeuralNetwork* nnPtr){
+    matTranspose(w, nnPtr->wT, nnPtr->nbNBL[1], nnPtr->nbNBL[2]);
+    matMult(error, nnPtr->wT, 1, nnPtr->nbNBL[2], nnPtr->nbNBL[1], nBh);
+    sigmoidPrime(nnPtr->hA, nnPtr->nbNBL[1], nnPtr);
+    hadamardProduct(nBh, nnPtr->hAP, 1, nnPtr->nbNBL[1]);
+    return nBh;
 }
 // Back propagation: for each layer propagate the error of the predicted output
 void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
-    double* error = calloc(nnPtr->nbNBL[2],sizeof(double)) ;
-    gradErrorL(nnPtr->yA, targetOutput, error, nnPtr->nbNBL[2]);
-    double* errorH = gradErrorH(error, nnPtr->wy, nnPtr);
-    double* r = calloc(nnPtr->nbNBL[1]*nnPtr->nbNBL[2],sizeof(double));
+    gradErrorL(nnPtr->yA, targetOutput, nnPtr->nablaBy, nnPtr->nbNBL[2]);
+    double* error = nnPtr->nablaBy;
+    double* errorH = gradErrorH(error, nnPtr->wy, nnPtr->nablaBh, nnPtr);
     //hA is transposed so we invert dim
-    matMult(nnPtr->hA, error,nnPtr->nbNBL[1], 1, nnPtr->nbNBL[2], r);
-    free(nnPtr->nablaBy);
-    free(nnPtr->nablaWy);
-    nnPtr->nablaWy = r;
-    nnPtr->nablaBy = error;
-    double* uT = nnPtr->input;
-    double* r1 = calloc(nnPtr->nbNBL[0]*nnPtr->nbNBL[1],sizeof(double));
-    matMult(uT, errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], r1);
-    free(nnPtr->nablaBh);
-    free(nnPtr->nablaWh);
-    nnPtr->nablaWh = r1;
-    nnPtr->nablaBh = errorH;
+    matMult(nnPtr->hA, error,nnPtr->nbNBL[1], 1, nnPtr->nbNBL[2], nnPtr->nablaWy);
+    //input is transposed so we invert dim
+    matMult(nnPtr->input, errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], nnPtr->nablaWh);
 }
 
 // Creat sample: two inputs 0 or 1 and the target output
@@ -92,7 +73,7 @@ double* creatSample(int nbSample){
     return sampleList;
 }
 // Train the neural network
-void trainNn(int iterationLimit, char* filename){
+void trainNn(int iterationLimit, char* filename){//TODO if does not converge change the wb
     int nbSample = 4;
     double* sampleList = creatSample(nbSample);
     int* nbNBL = calloc(3, sizeof(3));
@@ -115,7 +96,7 @@ void trainNn(int iterationLimit, char* filename){
             }
             feedForward(nnPtr);
 	        backPropagation(nnPtr, targetOutput);
-            //gradientDescent(nnPtr);
+            gradientDescent(nnPtr);
             if(iterationNum==iterationLimit-1)
             {
                 printf("I1 = %d, I2 = %d, T = %d, 0 = %f\n\n",
