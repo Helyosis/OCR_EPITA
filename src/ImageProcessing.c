@@ -81,6 +81,7 @@ int processImage(t_options options) {
     for (int i = 0; i < 8; i++) {
         printf("%f ", coefs[i]);
     }
+    free(coefs);
     printf("\n");
     warn_s("Perspective transformation is not implemented yet. Skipping.");
 
