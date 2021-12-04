@@ -78,6 +78,7 @@ void putPixel(SDL_Surface *surface, int x, int y, uint32_t pixel)
 }
 
 int I(SDL_Surface *source, int x, int y) {
+    printf("%d, %d\n",x,y);
     return getPixel(source, x, y) & 0xFF;
 }
 

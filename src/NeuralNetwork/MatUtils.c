@@ -105,7 +105,7 @@ void inverse_matrix(double *matrix, int rows, int cols){
                 matrix[i*cols+j] = 1;
             }
         }
-    }
+    }   
     for(int i = rows - 1; i > 0; i--){
         if(matrix[i-1] < matrix[i]){
             swap_rows(matrix, cols, i, i-1);

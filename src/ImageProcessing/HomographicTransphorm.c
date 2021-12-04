@@ -8,6 +8,7 @@
 
 #include "Pixels.h"
 #include "OrderPoints.h"
+#include "../Verbose.h"
 #include "../NeuralNetwork/MatUtils.h"
 
 
@@ -95,6 +96,7 @@ double *Fill_matrix(orderedPoints points)
 
     // Copy the result of the multiplication in the matrix res_inv to prepare for the inverse
     double *res_inv = calloc(8*16,sizeof(double));
+
     for(int i = 0; i < 8; i++){
         res[i] = res_mult[i*8+i];
         for(int j = 0; j < 8; j++){
@@ -112,6 +114,8 @@ double *Fill_matrix(orderedPoints points)
     free(res_inv);
     
     double *res_mult2 = calloc(8*8,sizeof(double));
+    if (res_mult2 == NULL)
+        error_s("Not enough memory !");
     matricesMult(res_mult, mat_transpose, 8,8,8, res_mult2);
     free(res_mult);
     free(mat_transpose);

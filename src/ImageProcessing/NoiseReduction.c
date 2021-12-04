@@ -9,6 +9,7 @@
 
 #include "Pixels.h"
 #include "../Utils.h"
+#include "../Verbose.h"
 
 #define KUWAHARA_RANGE 4
 
@@ -18,7 +19,6 @@
 #ifndef M_PI
 #define M_PI  3.14159265358979323846
 #endif
-
 
 
 /* Calculate the new value of the point on this point
@@ -120,10 +120,9 @@ double Gaussian(double x, double sigma) {
     return exp(-x2 / (2 * sigma2));
 }
 
-double* Build_GaussianKernel() {
-    int kernelSize = 2 * GAUSSIAN_RANGE + 1;
+double* Build_GaussianKernel(int kernelSize) {
     double sum = 0;
-    double* kernel = malloc(kernelSize * sizeof(*kernel));
+    double* kernel = calloc(kernelSize, sizeof(*kernel));
 
     for (int x = 0; x < kernelSize; ++x) {
         double value = Gaussian(x - GAUSSIAN_RANGE, GAUSSIAN_BLUR_SIGMA);
@@ -148,30 +147,36 @@ SDL_Surface* GaussianBlur(SDL_Surface *source) {
                               source->format->Amask
             );
 
-    double* kernel = Build_GaussianKernel();
     int kernelSize = 2 * GAUSSIAN_RANGE + 1;
-
-    unsigned char* tempData = malloc(source->w * source->h * sizeof(*tempData));
-
+    double* kernel = Build_GaussianKernel(kernelSize);
+    for (int w = 0; w < kernelSize; ++w) {
+        printf("%f\n", kernel[w]);
+    }
+    printf("\n");
+    unsigned char* tempData = calloc(source->w * source->h, sizeof(*tempData));
+    if (tempData == NULL) {
+        error_s("Not enough memory !");
+    }
     // First pass
     for (int y = 0; y < source->h; ++y) {
         for (int x = GAUSSIAN_RANGE; x < source->w - GAUSSIAN_RANGE; ++x) {
             double sum = 0;
             for (int w = 0; w < kernelSize; ++w) {
                 sum += I(source, x + w - GAUSSIAN_RANGE, y) * kernel[w];
-            }
-            tempData[y * source->w + x] = clamp(sum, 0, 255);
+            }   
+            tempData[y * source->w + x] = clamp((int) sum, 0, 255);
         }
     }
 
     // Second pass
     for (int y = GAUSSIAN_RANGE; y < source->h - GAUSSIAN_RANGE; ++y) {
-        for (int x = GAUSSIAN_RANGE; x < source->w - GAUSSIAN_RANGE; ++x) {
+        for (int x = 0; x < source->w; ++x) {
             double sum = 0;
             for (int w = 0; w < kernelSize; ++w) {
-                sum += tempData[(y + w - GAUSSIAN_RANGE) * source->w + x] * kernel[w];
+                sum += tempData[(y + w - GAUSSIAN_RANGE) * source->w + x];
+                sum += I(source, x, y + w - GAUSSIAN_RANGE) * kernel[w];
             }
-            putPixel(dest, x, y, intensityToARGB(clamp(sum, 0, 255)));
+            putPixel(dest, x, y, intensityToARGB(clamp((int)sum, 0, 255)));
         }
     }
 
