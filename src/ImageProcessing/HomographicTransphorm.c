@@ -24,29 +24,34 @@
 double *Fill_matrix(orderedPoints points, int size)
 {
     double *mat = calloc(8*8, sizeof(double));
-    FILL(mat,0,2) = 1;
-    FILL(mat,1,5) = 1;
-    FILL(mat,2,0) = size;
-    FILL(mat,2,6) = -size * points.ur.x;
-    FILL(mat,3,3) = size;
-    FILL(mat,3,5) = 1;
-    FILL(mat,3,6) = -size * points.ur.y;
-    FILL(mat,4,1) = size;
-    FILL(mat,4,2) = 1;
-    FILL(mat,4,7) = -size * points.ll.x;
-    FILL(mat,5,4) = size;
-    FILL(mat,5,5) = 1;
-    FILL(mat,5,7) = -size * points.ll.y;
-    FILL(mat,6,0) = size;
-    FILL(mat,6,1) = size;
-    FILL(mat,6,2) = 1;
-    FILL(mat,6,6) = -size * points.lr.x;
-    FILL(mat,6,7) = -size * points.lr.x;
-    FILL(mat,7,3) = size;
-    FILL(mat,7,4) = size;
-    FILL(mat,7,5) = 1;
-    FILL(mat,7,6) = -size * points.lr.y;
-    FILL(mat,7,7) = -size * points.lr.y;
+    //1st ROW
+    FILL(mat, 0, 2) = 1;
+    FILL(mat, 1, 5) = 1;
+    //2nd ROW
+    FILL(mat, 2, 0) = size;
+    FILL(mat, 2, 2) = 1;
+    FILL(mat, 2, 6) = -points.ur.x*size;
+    FILL(mat, 3,3) = size;
+    FILL(mat, 3,5) = 1;
+    FILL(mat, 3,6) = -points.ur.y*size;
+    //3rd ROW
+    FILL(mat, 4,1) = size;
+    FILL(mat, 4,2) = 1;
+    FILL(mat, 4,7) = -points.ll.x*size;
+    FILL(mat, 5,4) = size;
+    FILL(mat, 5,5) = 1;
+    FILL(mat, 5,7) = -points.ll.y*size;
+    //4th ROW
+    FILL(mat, 6,0) = size;
+    FILL(mat, 6,1) = size;
+    FILL(mat, 6,2) = 1;
+    FILL(mat, 6,6) = -points.lr.x*size;
+    FILL(mat, 6,7) = -points.lr.y*size;
+    FILL(mat, 7,3) = size;
+    FILL(mat, 7,4) = size;
+    FILL(mat, 7,5) = 1;
+    FILL(mat, 7,6) = -points.lr.x*size;
+    FILL(mat, 7,7) = -points.lr.y*size;
 
     double *res = calloc(8,sizeof(double));
     double b[] = {
@@ -108,9 +113,12 @@ SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points,int siz
             double x = (mat[0] * i + mat[1] * j + mat[2])/(mat[6] * i + mat[7] * j + 1);
             double y = (mat[3] * i + mat[4] * j + mat[5])/(mat[6] * i + mat[7] * j + 1);
 
-
-            Uint32 pixel = getPixel(src, x, y);
-            putPixel(dest, i, j, pixel);
+            if (x >= 0 && x < src->w && y >= 0 && y < src->h)
+            {
+                Uint32 pixel = getPixel(src, x, y);
+                putPixel(dest, i, j, pixel);
+            }
+            
         }
     }
     free(mat);
