@@ -71,7 +71,7 @@ double* hadamardProduct(double* matA, double* matB,int width, int height){
     return result;
 }
 
-
+// Function to get cofactor of A[p][q] in temp[][]. n is current
 void getCofactor(double *A, double *temp, int p, int q, int n, int cols)
 {
     int i = 0, j = 0;
@@ -85,8 +85,8 @@ void getCofactor(double *A, double *temp, int p, int q, int n, int cols)
             //  which are not in given row and column
             if (row != p && col != q)
             {
-                temp[i*cols+j++] = A[row*cols+col];
                 
+                temp[i*cols+j++] = A[row*cols+col];
                 // Row is filled, so increase row index and
                 // reset col index
                 if (j == n - 1)
@@ -103,15 +103,15 @@ void getCofactor(double *A, double *temp, int p, int q, int n, int cols)
    n is current dimension of A[][]. */
 double determinant(double *A, int n,int cols)
 {
-    double D = 0.0; // Initialize result
+    double D = 0; // Initialize result
  
     //  Base case : if matrix contains single element
     if (n == 1)
         return A[0];
  
-    double *temp = (double *)malloc(cols*cols * sizeof(double)); // To store cofactors
+    double *temp = (double *)calloc(cols* cols, sizeof(double)); // To store cofactors
  
-    double sign = 1.0;  // To store sign multiplier
+    double sign = 1;  // To store sign multiplier
  
      // Iterate for each element of first row
     for (int f = 0; f < n; f++)
@@ -132,13 +132,13 @@ void adjoint(double *A,double *adj, int N)
 {
     if (N == 1)
     {
-        adj[0] = 1.0;
+        adj[0] = 1;
         return;
     }
  
     // temp is used to store cofactors of A[][]
-    double sign = 1.0;
-    double *temp = (double *)malloc(N*N * sizeof(double));
+    double sign = 1;
+    double *temp = (double *)calloc(N*N , sizeof(double));
  
     for (int i=0; i<N; i++)
     {
@@ -161,7 +161,7 @@ void adjoint(double *A,double *adj, int N)
  
 // Function to calculate and store inverse, returns false if
 // matrix is singular
-int inverse(double*A, double *inverse, int N)
+int inverse(double *A, double *inverse, int N)
 {
     // Find determinant of A[][]
     double det = determinant(A, N, N);
@@ -171,21 +171,18 @@ int inverse(double*A, double *inverse, int N)
     }
  
     // Find adjoint
-    double *adj = (double *)malloc(N*N * sizeof(double));
+    double *adj = (double *)calloc(N*N , sizeof(double));
     adjoint(A, adj,N);
     
     
     // Find Inverse using formula "inverse(A) = adj(A)/det(A)"
-    for (int i=0; i<N; i++){
-        for (int j=0; j<N; j++){
-            inverse[i*N+j] = adj[i*N+j]/(det);
-        }
-    }
-           
-        
+    for (int i=0; i<N; i++)
+        for (int j=0; j<N; j++)
+            inverse[i*N+j] = adj[i*N+j]/det;
     free(adj);
     return !0;
 }
+
 
 
 

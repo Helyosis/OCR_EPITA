@@ -61,20 +61,18 @@ double *Fill_matrix(orderedPoints points)
     // Create a Matrix to store the transpose of the matrix mat
     double *mat_transpose = calloc(8*8,sizeof(double));
     matTranspose(mat,mat_transpose, 8,8);
-    printMat(mat_transpose, 8, 8);
     // Create a Matrix to store the multiplication of the matrix mat_transpose and mat
     double *res_mult = calloc(8*8,sizeof(double));
     matricesMult(mat_transpose, mat, 8,8,8, res_mult);
     // Free mat we don't need it anymore
-    printMat(res_mult, 8, 8);
     free(mat);
     double *res_inv = calloc(8*8,sizeof(double));
     if (!inverse(res_mult,res_inv,8)){
         errx(1,"Matrix is singular");
     }
-
+    
+    
     free(res_mult);
-    printMat(res_inv, 8, 8);
     double *res_mult2 = calloc(8*8,sizeof(double));
     matricesMult(res_inv, mat_transpose, 8,8,8, res_mult2);
     free(res_inv);
@@ -102,18 +100,18 @@ SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points)
     {
         for (int j = 0; j < 640; j++)
         {
+            
             double x = mat[0] * i + mat[1] * j + mat[2];
             double y = mat[3] * i + mat[4] * j + mat[5];
             double z = mat[6] * i + mat[7] * j + 1;
-            if (z != 0)
-            {
+            if(z != 0){
                 x = x / z;
                 y = y / z;
             }
             if (x >= 0 && x < 640 && y >= 0 && y < 640)
             {
-                Uint32 pixel = getPixel(src, x, y);
-                putPixel(dest, i, j, pixel);
+                Uint32 pixel = getPixel(src, y, x);
+                putPixel(dest, j, i, pixel);
             }
         }
     }
