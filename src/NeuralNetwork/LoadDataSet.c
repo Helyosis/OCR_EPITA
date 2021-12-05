@@ -25,17 +25,17 @@ int getLabel(char* str){
 //Load an image
 struct tImage* loadImg(char* filename){
     SDL_Surface *original_image = IMG_Load(filename);
-    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+    SDL_Surface *image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     SDL_FreeSurface(original_image);
-    double* pixVect=malloc(image->w*image->h*sizeof(double));
-    struct tImage* d=malloc(sizeof(struct tImage));
-    if(pixVect == NULL || d == NULL)
-        errx(1, "[-] loadImg: Not enough memory");
     if (!image) { // Loading failed so ptr is null
         printf("[-] IMG_Load: %s\n", SDL_GetError());
         errx(1, "Error");
     }
+    double* pixVect=malloc(image->w*image->h*sizeof(double));
+    struct tImage* d=malloc(sizeof(struct tImage));
+    if(pixVect == NULL || d == NULL)
+        errx(1, "[-] loadImg: Not enough memory");
     for (int x = 0; x < image->w; x++)
     {
         for (int y = 0; y < image->h; y++) 
@@ -60,17 +60,28 @@ void freeImVect(struct tImage** v, size_t nbImages){
 //Load all the training images
 struct tImage** imageVect(size_t nbImages){
     struct dirent *dir;
-    DIR *d = opendir("."); 
+    char* dirName="./bddImages/";
+    DIR *d = opendir(dirName); 
     struct tImage** dataSet=malloc(sizeof(struct tImage)*nbImages);
     if(dataSet == NULL)
         errx(1, "[-] imageVect: Not enough memory");
+    if(d == NULL)
+        errx(1, "[-] imageVect: directory \"./bddImages\" does not exist");
     size_t i=0;
     if (d)
     {
         while ((dir = readdir(d)) != NULL)
         {
-            dataSet[i] = loadImg(dir->d_name);
-            i++;
+            if(dir->d_name[0]!='.')
+            {
+                char *result = malloc(strlen(dirName) + strlen(dir->d_name) + 1); 
+                if(result == NULL)
+                    errx(1, "[-] imageVect: Not enough memory");
+                strcpy(result, dirName);
+                strcat(result, dir->d_name);
+                dataSet[i] = loadImg(result);
+                i++;
+            }
         }
         closedir(d);
     }
