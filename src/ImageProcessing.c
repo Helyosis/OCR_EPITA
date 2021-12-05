@@ -105,9 +105,6 @@ int processImage(t_options options) {
     }
 
     SDL_SaveBMP(Homographic, "Homographic.bmp");
-    SDL_FreeSurface(Homographic);
-    
-
  
     drawLine(image, points.ul.x, points.ul.y, points.ur.x, points.ur.y, 0xff00ffff);
     drawLine(image, points.ur.x, points.ur.y, points.lr.x, points.lr.y, 0xff00ffff);
@@ -117,11 +114,12 @@ int processImage(t_options options) {
     SDL_SaveBMP(image, options.outputFile);
     info_s("Saved image under filename %s", options.outputFile);
 
-    cutSudoku(image);
+    cutSudoku(Homographic);
     log_s("Saved digits in directory %s", SC_DESTDIR);
 
     SDL_FreeSurface(image);
-
+    SDL_FreeSurface(Homographic);
+    
     SDL_Quit();
     IMG_Quit();
     return 0;
