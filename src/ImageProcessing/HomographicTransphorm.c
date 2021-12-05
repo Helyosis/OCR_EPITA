@@ -8,6 +8,7 @@
 
 #include "Pixels.h"
 #include "OrderPoints.h"
+#include "../Verbose.h"
 #include "../NeuralNetwork/MatUtils.h"
 #define FILL(mat, x, y) mat[x * 8 + y]
 

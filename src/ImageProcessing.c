@@ -1,8 +1,8 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wpedantic"
 #pragma GCC diagnostic ignored "-Wtype-limits"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_image.h>
+#include <SDL.h>
+#include <SDL_image.h>
 #include <stdbool.h>
 #include <err.h>
 #include <stdio.h>
@@ -21,6 +21,7 @@
 #include "ImageProcessing/OrderPoints.h"
 #include "ImageProcessing/Pixels.h"
 #include "ImageProcessing/HomographicTransphorm.h"
+#include "ImageProcessing/Pixels.h"
 #include "Utils.h"
 #include "Verbose.h"
 
@@ -68,11 +69,26 @@ int processImage(t_options options) {
         wait_for_keypressed();
     }
 
-    orderedPoints points = findGridCorner(image, renderer, options);
-    log_s("Found corner with ul(x = %d, y = %d)", points.ul.x, points.ul.y);
-
     AdaptiveThresholding_inPlace(image);
     log_s("Applied adaptive threshold (mean - C method)");
+
+    if (options.showImage){
+        displaySurface(renderer, image);
+        wait_for_keypressed();
+    }
+
+
+    size_t threshold = 50;
+    removeSmallBlob(image, threshold, WHITE, BLACK);
+    log_s("Removed all blobs smaller than %d pixels", threshold);
+
+    if (options.showImage) {
+        displaySurface(renderer, image);
+        wait_for_keypressed();
+    }
+
+    orderedPoints points = findGridCorner(image, renderer, options);
+    log_s("Found corner with ul(x = %d, y = %d)", points.ul.x, points.ul.y);
 
     MorphologyClose(image);
     MorphologyOpen(image);
@@ -81,22 +97,26 @@ int processImage(t_options options) {
     warn_s("Perspective transformation is not implemented yet. Skipping.");
     
     SDL_Surface *Homographic = HomographicTransform(image, points);
+
     if (options.showImage) {
         displaySurface(renderer, Homographic);
-        wait_for_keypressed();
+           wait_for_keypressed();
     }
+
     SDL_SaveBMP(Homographic, "Homographic.bmp");
     SDL_FreeSurface(Homographic);
     
 
-    if (options.showImage) {}
-        drawLine(image, points.ul.x, points.ul.y, points.ur.x, points.ur.y, 0xff00ffff);
-        drawLine(image, points.ur.x, points.ur.y, points.lr.x, points.lr.y, 0xff00ffff);
-        drawLine(image, points.lr.x, points.lr.y, points.ll.x, points.ll.y, 0xff00ffff);
-        drawLine(image, points.ll.x, points.ll.y, points.ul.x, points.ul.y, 0xff00ffff);
-    
+ 
+    drawLine(image, points.ul.x, points.ul.y, points.ur.x, points.ur.y, 0xff00ffff);
+    drawLine(image, points.ur.x, points.ur.y, points.lr.x, points.lr.y, 0xff00ffff);
+    drawLine(image, points.lr.x, points.lr.y, points.ll.x, points.ll.y, 0xff00ffff);
+    drawLine(image, points.ll.x, points.ll.y, points.ul.x, points.ul.y, 0xff00ffff);
+
     SDL_SaveBMP(image, options.outputFile);
     info_s("Saved image under filename %s", options.outputFile);
+
+    
 
     SDL_FreeSurface(image);
 
@@ -106,16 +126,12 @@ int processImage(t_options options) {
 }
 
 orderedPoints findGridCorner(SDL_Surface* image, SDL_Renderer* renderer, t_options options) {
-    //TODO: Try to fix CannyFilter()
-    SDL_Surface* lineImage = AdaptiveThresholding(image);
-    
     dilate_in_place(image);
 
-    BiggestBlob_result bb_res = findBiggestBlob(lineImage);
+    BiggestBlob_result bb_res = findBiggestBlob(image);
     log_s("Found the biggest blob starting at x = %d, y = %d, of size %d",
             bb_res.point.x, bb_res.point.y, bb_res.size);
     SDL_SaveBMP(bb_res.res, "out2.bmp");
-    SDL_FreeSurface(lineImage);
 
     SDL_Surface* result = bb_res.res;
 

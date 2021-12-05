@@ -16,4 +16,11 @@ typedef struct {
  */
 BiggestBlob_result findBiggestBlob(SDL_Surface* src);
 
+
+/*
+ * Remove all blobs smaller than the provided threshold
+ * on the source image.
+ */
+void removeSmallBlob(SDL_Surface* source, size_t threshold, uint32_t wantedColor, uint32_t backgroundColor);
+
 #endif

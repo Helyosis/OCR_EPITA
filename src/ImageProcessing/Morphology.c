@@ -59,7 +59,7 @@ void dilate_in_place(SDL_Surface* image) {
             putPixel(image, i, j, pixel);
         }
     }
-    free(dest);
+    SDL_FreeSurface(dest);
 }
 
 SDL_Surface* erode(SDL_Surface* surface) {
@@ -113,7 +113,7 @@ void erode_in_place(SDL_Surface* image) {
             putPixel(image, i, j, pixel);
         }
     }
-    free(dest);
+    SDL_FreeSurface(dest);
 }
 
 void MorphologyClose(SDL_Surface* image) {

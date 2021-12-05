@@ -26,7 +26,7 @@ void Apply_grayscale_filter(SDL_Surface* surface) {
              "expected SDL_PIXELFORMAT_ARGB8888\n"
             );
     // We lock the surface to make sure it's not modified while we do our thing
-    SDL_LockSurface(surface);
+    //SDL_LockSurface(surface);
     for (int y = 0; y < surface->h; ++y) {
         for (int x = 0; x < surface->w; ++x) {
             // printf("y = %d, x = %d", y, x);
@@ -35,7 +35,7 @@ void Apply_grayscale_filter(SDL_Surface* surface) {
             putPixel(surface, x, y, pixel);
         }
     }
-    SDL_UnlockSurface(surface);
+    //SDL_UnlockSurface(surface);
 
 }
 
