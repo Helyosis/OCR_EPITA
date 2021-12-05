@@ -113,26 +113,6 @@ void on_button_close(){
 
 }
 
-void on_img_chooser_file_set(GtkFileChooserButton *f){
-	
-	int vertical = 60;
-	int horizontal = 20;
-	//Debug
-	printf("[+] Working with this file as input : %s\n", gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(f)));
-	if(sudoku_img){
-		gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it and put the new one
-		printf("[-] deleting older input\n");
-	}
-    puts((gtk_file_chooser_get_filename( GTK_FILE_CHOOSER(f))));
-	sudoku_img = gtk_image_new_from_file(gtk_file_chooser_get_filename( GTK_FILE_CHOOSER(f)));
-	gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
-	gtk_widget_show(sudoku_img);
-	gtk_fixed_move (GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set hte img at the right place
-    last_file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(f));
-    puts(last_file);
-}
-
-
 void on_new_activated(){
 	on_button_close();
 }
@@ -148,7 +128,11 @@ void on_open_activated(){
 		int vertical = 60;
         	int horizontal = 20;
 		printf("[+] Working with this file as input : %s\n",gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
-		if(sudoku_img){
+		char *filename;
+        filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+        last_file = filename; 
+        printf("[+] Last_file = %s\n",last_file);
+        if(sudoku_img){
 			gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img);
 			printf("[-] deleting older input\n");
 		}
