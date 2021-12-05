@@ -1,13 +1,49 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <string.h>
 #include <SDL2/SDL.h>
+#pragma GCC diagnostic pop
 
-SDL_Surface** cutSudoku(SDL_Surface* source) {
-    SDL_Surface** surfacelist = calloc(9, sizeof(SDL_Surface*));
-    int i = 0;
-    int size = source->w / 3;
-    SDL_Rect
-    for (int x = 0; x < 3; ++x) {
-        for (int y = 0; y < 3; ++y) {
-            
+#include "SquareCutter.h"
+#include "../Verbose.h"
+
+struct stat st = {0};
+
+
+void cutSudoku(SDL_Surface* src) {
+    size_t nbDigitsPerLine = 9;
+    int size = src->w / nbDigitsPerLine;
+    
+    SDL_Rect srcrect = {0, 0, size, size};
+    SDL_Surface* dest = dest = SDL_CreateRGBSurface(0,
+                                size,
+                                size,
+                                src->format->BitsPerPixel,
+                                src->format->Rmask,
+                                src->format->Gmask,
+                                src->format->Bmask,
+                                src->format->Amask);
+    if (dest == NULL) {
+        error_s("Couldn't create SDL_Surface with error %s", SDL_GetError());
+    }
+
+    if (stat(SC_DESTDIR, &st) == -1) {
+        mkdir(SC_DESTDIR, 0700);
+    }
+    for (size_t x = 0; x < nbDigitsPerLine; x += 1) {
+        for (size_t y = 0; y < nbDigitsPerLine; y += 1) {
+            char dstFile[50];
+            sprintf(dstFile, "%s/x%ld-y%ld.bmp", SC_DESTDIR, x, y);
+
+            srcrect.x = x * size;
+            srcrect.y = y * size;
+
+            SDL_BlitSurface(src, &srcrect, dest, NULL);
+            SDL_SaveBMP(dest, dstFile);
         }
     }
 }
