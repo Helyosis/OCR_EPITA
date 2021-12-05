@@ -4,7 +4,6 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <err.h>
-#include <stdio.h>
 #pragma GCC diagnostic pop
 
 #include "Pixels.h"

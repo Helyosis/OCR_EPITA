@@ -25,6 +25,7 @@
 #include "ImageProcessing/SquareCutter.h"
 #include "Utils.h"
 #include "Verbose.h"
+#include "Result/construct.h"
 
 orderedPoints findGridCorner(SDL_Surface* image, SDL_Renderer* renderer, t_options options);
 
@@ -117,6 +118,14 @@ int processImage(t_options options) {
     cutSudoku(Homographic);
     log_s("Saved digits in directory %s", SC_DESTDIR);
 
+    char sdk[] = "435269781682571493197834562826195347374682915951743628519326874248957136763418259";
+    SDL_Surface *res = Result_construct(sdk);
+    if(options.showImage) {
+        displaySurface(renderer, res);
+        wait_for_keypressed();
+    }
+    SDL_SaveBMP(res, "result.bmp");
+    SDL_FreeSurface(res);
     SDL_FreeSurface(image);
     SDL_FreeSurface(Homographic);
     
