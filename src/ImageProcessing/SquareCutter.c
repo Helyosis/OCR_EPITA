@@ -60,7 +60,7 @@ void cutSudoku(SDL_Surface* src) {
 int cleanupAndIdentify(SDL_Surface* digitSurface) {
     // If we remove more than half of the pixels, it could be dangerous and we'd remove 
     // the digit without paying attention
-    size_t max = digitSurface->w * digitSurface->h / 2;
+    size_t max = digitSurface->w * digitSurface->h * 3 / 4;
 
     // There is some strange bug if I start at (0, 0). Better ignore it and continue
     Point seeds[4] = {{3, 3}, {digitSurface->w - 4, 3}, {digitSurface->w - 4, digitSurface->h - 4}, {3, digitSurface->h - 4}};
