@@ -22,6 +22,7 @@
 #include "ImageProcessing/Pixels.h"
 #include "ImageProcessing/HomographicTransphorm.h"
 #include "ImageProcessing/Pixels.h"
+#include "ImageProcessing/SquareCutter.h"
 #include "Utils.h"
 #include "Verbose.h"
 
@@ -93,7 +94,7 @@ int processImage(t_options options) {
     MorphologyClose(image);
     MorphologyOpen(image);
     log_s("Applied Morphology operations");
-    printf("\n");
+
     warn_s("Perspective transformation is not implemented yet. Skipping.");
     
     SDL_Surface *Homographic = HomographicTransform(image, points, 252);
@@ -116,7 +117,8 @@ int processImage(t_options options) {
     SDL_SaveBMP(image, options.outputFile);
     info_s("Saved image under filename %s", options.outputFile);
 
-    
+    cutSudoku(image);
+    log_s("Saved digits in directory %s", SC_DESTDIR);
 
     SDL_FreeSurface(image);
 
