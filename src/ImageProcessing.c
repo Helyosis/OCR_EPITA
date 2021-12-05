@@ -77,13 +77,16 @@ int processImage(t_options options) {
     MorphologyClose(image);
     MorphologyOpen(image);
     log_s("Applied Morphology operations");
-    double *coefs = Fill_matrix(points);
-    for (int i = 0; i < 8; i++) {
-        printf("%f ", coefs[i]);
-    }
-    free(coefs);
     printf("\n");
     warn_s("Perspective transformation is not implemented yet. Skipping.");
+    SDL_Surface *Homographic = HomographicTransform(image, points);
+    if (options.showImage) {
+        displaySurface(renderer, Homographic);
+        wait_for_keypressed();
+    }
+    SDL_SaveBMP(Homographic, "Homographic.bmp");
+    SDL_FreeSurface(Homographic);
+    
 
     if (options.showImage) {}
         drawLine(image, points.ul.x, points.ul.y, points.ur.x, points.ur.y, 0xff00ffff);
