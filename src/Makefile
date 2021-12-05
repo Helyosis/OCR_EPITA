@@ -4,9 +4,9 @@ CPPFLAGS = -MMD
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic `pkg-config --cflags sdl2 SDL2_image` -O2 -g3
 LDFLAGS =
-LDLIBS = -lm `pkg-config --libs sdl2 SDL2_image`
+LDLIBS = -lm `pkg-config --libs sdl2 SDL2_image` 
 
-SRC = main.c ImageProcessing.c ImageProcessing/GrayScale.c ImageProcessing/Pixels.c ImageProcessing/BlackAndWhite.c ImageProcessing/NoiseReduction.c Utils.c ImageProcessing/Rotation.c ImageProcessing/HoughTransform.c NeuralNetwork/MatUtils.c NeuralNetwork/NeuralNet.c NeuralNetwork/NeuralNetInit.c NeuralNetwork/TrainNeuralNet.c
+SRC = main.c ImageProcessing.c ImageProcessing/GrayScale.c ImageProcessing/Pixels.c ImageProcessing/BlackAndWhite.c ImageProcessing/NoiseReduction.c Utils.c ImageProcessing/Rotation.c ImageProcessing/HoughTransform.c NeuralNetwork/MatUtils.c NeuralNetwork/NeuralNet.c NeuralNetwork/NeuralNetInit.c NeuralNetwork/LoadDataSet.c NeuralNetwork/TrainNeuralNet.c
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 

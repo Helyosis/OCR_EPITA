@@ -64,6 +64,7 @@ struct NeuralNetwork* initNn(int* nbNBL,double* input){
     nnPtr->nablaBh = calloc(nnPtr->nbNBL[1],sizeof(double));
     nnPtr->nablaWh = calloc(nnPtr->nbNBL[0]*nbNBL[1],sizeof(double));
 
+    nnPtr->tOutput = calloc(nbNBL[2], sizeof(double));
     initWB(nnPtr);
     return nnPtr;
 }
@@ -86,4 +87,5 @@ void freeNn(struct NeuralNetwork* nnPtr){
     free(nnPtr->nablaWy);
     free(nnPtr->nablaBh);
     free(nnPtr->nablaWh);
+    free(nnPtr->tOutput);
 }

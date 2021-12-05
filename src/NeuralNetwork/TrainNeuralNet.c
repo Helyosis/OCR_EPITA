@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <err.h>
 #pragma GCC diagnostic pop
 
 #include "NeuralNet.h"
 #include "NeuralNetInit.h"
 #include "MatUtils.h"
+#include "LoadDataSet.h"
 
 // Gradient descent, m is the number of training sample
 // New weight  =  old weight-(stepSize/m)*(nabla of the weight)
@@ -58,57 +60,39 @@ void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
     matMult(nnPtr->input, errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], nnPtr->nablaWh);
 }
 
-// Creat sample: two inputs 0 or 1 and the target output
-double* creatSample(int nbSample){
-    double* sampleList = calloc(nbSample*3, sizeof(double));
-    int k=0;
-    for (int j=0;j<2;j++){
-        for (int i=0;i<2;i++){
-            sampleList[k] = i;
-            sampleList[k+1] = j;
-            sampleList[k+2] = i^j;
-            k+=3;
-        }
-    }
-    return sampleList;
+void creatMiniBatch(int size){
+    size=size;
+    //MINI BATCH
+    //On mélange les images
+    //ensuite on crée plein de data set j'usqua la fin de toutes les images
+    //LOAD IMAGE
+    //UDATE BACKPROP FOR EACH IMAGE IN THE MINI batch
+    //AT THE END ONE SINGEL STEP GRAD
 }
+
 // Train the neural network
-void trainNn(int iterationLimit, char* filename){//TODO if does not converge change the wb
-    int nbSample = 4;
-    double* sampleList = creatSample(nbSample);
-    int* nbNBL = calloc(3, sizeof(3));
-    nbNBL[0]  =  2; nbNBL[1]  =  2; nbNBL[2]  =  1;
-    double* input = calloc(2, sizeof(double));
-    double* targetOutput = calloc(nbNBL[2], sizeof(double));
+void trainNn(int iterationLimit, char* filename){
+    //TODO if does not converge change the wb
+    int* nbNBL = calloc(3, sizeof(int));
+    nbNBL[0]  =  784; 
+    nbNBL[1]  =  30; 
+    nbNBL[2]  =  10;
+    double* input = calloc(nbNBL[0], sizeof(double));
     struct NeuralNetwork* nnPtr =  initNn(nbNBL, input);
     int iterationNum = 0;
     while(iterationNum<iterationLimit){
-        for(int iSample = 0; iSample<nbSample*3; iSample +=  3){
-            nnPtr->input[0] =  sampleList[iSample];
-            nnPtr->input[1] =  sampleList[iSample+1];
-            if((int)sampleList[iSample+2]==1)
-            {
-                targetOutput[0] = 1;
-                //targetOutput[1] = 1;
-            }else{
-                targetOutput[0] = 0;
-                //targetOutput[1] = 0;
-            }
-            feedForward(nnPtr);
-	        backPropagation(nnPtr, targetOutput);
-            gradientDescent(nnPtr);
-            if(iterationNum==iterationLimit-1)
-            {
-                printf("I1 = %d, I2 = %d, T = %d, 0 = %f\n\n",
-                (int)nnPtr->input[0], (int)nnPtr->input[1], 
-                (int)sampleList[iSample+2], nnPtr->yA[0]);
-            }
-        }
+        //feedForward(nnPtr);
+        //backPropagation(nnPtr, targetOutput);
+        //gradientDescent(nnPtr);
+        /*if(iterationNum==iterationLimit-1)
+        {
+            printf("I1 = %d, I2 = %d, T = %d, 0 = %f\n\n",
+            (int)nnPtr->input[0], (int)nnPtr->input[1], 
+            (int)sampleList[iSample+2], nnPtr->yA[0]);
+        }*/
         iterationNum +=  1;
     }
     saveNn(filename, nnPtr);
-    free(targetOutput);
-    free(sampleList);
     freeNn(nnPtr);
     free(nnPtr);
 }

@@ -19,6 +19,7 @@ struct NeuralNetwork
   double* nablaWy;
   double* nablaBh;
   double* nablaWh;
+  double* tOutput;
 };
 struct NeuralNetwork* initNn(int* nbNBL,double* input);
 void freeNn(struct NeuralNetwork* nnPtr);
