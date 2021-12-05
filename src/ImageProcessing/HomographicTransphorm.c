@@ -101,8 +101,6 @@ SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points,int siz
     // Create a matrix to store the homographic transphormation matrix
     double *mat = Fill_matrix(points, size);
     
-    //double xOff = src->w/2;
-    //double yOff = src->h/2;
     // Create a matrix to store the transphormation matrix
     SDL_Surface *dest = SDL_CreateRGBSurface(0, size, size, 32, 0, 0, 0, 0);
     // Create a matrix to store the transphormation matrix
