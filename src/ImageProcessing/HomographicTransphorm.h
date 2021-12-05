@@ -4,6 +4,6 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #pragma GCC diagnostic pop
-double *Fill_matrix(orderedPoints points);
-SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points);
+double *Fill_matrix(orderedPoints points, int size);
+SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points, int size);
 #include "Pixels.h"

@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <err.h>
+#include <stdio.h>
 #pragma GCC diagnostic pop
 
 #include "Pixels.h"
@@ -20,32 +21,32 @@
 // input : rderedPoints *points the points
 
 // return : **float the matrix
-double *Fill_matrix(orderedPoints points)
+double *Fill_matrix(orderedPoints points, int size)
 {
     double *mat = calloc(8*8, sizeof(double));
     FILL(mat,0,2) = 1;
     FILL(mat,1,5) = 1;
-    FILL(mat,2,0) = 640;
-    FILL(mat,2,6) = -640 * points.ur.x;
-    FILL(mat,3,3) = 640;
+    FILL(mat,2,0) = size;
+    FILL(mat,2,6) = -size * points.ur.x;
+    FILL(mat,3,3) = size;
     FILL(mat,3,5) = 1;
-    FILL(mat,3,6) = -640 * points.ur.y;
-    FILL(mat,4,1) = 640;
+    FILL(mat,3,6) = -size * points.ur.y;
+    FILL(mat,4,1) = size;
     FILL(mat,4,2) = 1;
-    FILL(mat,4,7) = -640 * points.ll.x;
-    FILL(mat,5,4) = 640;
+    FILL(mat,4,7) = -size * points.ll.x;
+    FILL(mat,5,4) = size;
     FILL(mat,5,5) = 1;
-    FILL(mat,5,7) = -640 * points.ll.y;
-    FILL(mat,6,0) = 640;
-    FILL(mat,6,1) = 640;
+    FILL(mat,5,7) = -size * points.ll.y;
+    FILL(mat,6,0) = size;
+    FILL(mat,6,1) = size;
     FILL(mat,6,2) = 1;
-    FILL(mat,6,6) = -640 * points.lr.x;
-    FILL(mat,6,7) = -640 * points.lr.x;
-    FILL(mat,7,3) = 640;
-    FILL(mat,7,4) = 640;
+    FILL(mat,6,6) = -size * points.lr.x;
+    FILL(mat,6,7) = -size * points.lr.x;
+    FILL(mat,7,3) = size;
+    FILL(mat,7,4) = size;
     FILL(mat,7,5) = 1;
-    FILL(mat,7,6) = -640 * points.lr.y;
-    FILL(mat,7,7) = -640 * points.lr.y;
+    FILL(mat,7,6) = -size * points.lr.y;
+    FILL(mat,7,7) = -size * points.lr.y;
 
     double *res = calloc(8,sizeof(double));
     double b[] = {
@@ -90,34 +91,26 @@ double *Fill_matrix(orderedPoints points)
 //         orderedPoints points the points
 // return : SDL_Surface *the image after the transphormation
 
-SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points)
+SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points,int size)
 {
     // Create a matrix to store the homographic transphormation matrix
-    double *mat = Fill_matrix(points);
-    printMat(mat,8,1);
-    double xoff = src->w/2;
-    double yoff = src->h/2;
+    double *mat = Fill_matrix(points, size);
+    
+    //double xOff = src->w/2;
+    //double yOff = src->h/2;
     // Create a matrix to store the transphormation matrix
-    SDL_Surface *dest = SDL_CreateRGBSurface(0, 640, 640, 32, 0, 0, 0, 0);
+    SDL_Surface *dest = SDL_CreateRGBSurface(0, size, size, 32, 0, 0, 0, 0);
     // Create a matrix to store the transphormation matrix
-    for (int i = 0; i < src->w; i++)
+    for (int i = 0; i < size; i++)
     {
-        for (int j = 0; j < src->h; j++)
+        for (int j = 0; j < size; j++)
         {
-            double x = (i - xoff) / 640;
-            double y = (j - yoff) / 640;
-            x += mat[0] * i + mat[1] * j + mat[2];
-            y += mat[3] * i + mat[4] * j + mat[5];
-            double z = mat[6] * i + mat[7] * j + 1;
-            if(z != 0){
-                x = x / z;
-                y = y / z;
-            }
-            if (x >= 0 && x < 640 && y >= 0 && y < 640)
-            {
-                Uint32 pixel = getPixel(src, x, y);
-                putPixel(dest, i, j, pixel);
-            }
+            double x = (mat[0] * i + mat[1] * j + mat[2])/(mat[6] * i + mat[7] * j + 1);
+            double y = (mat[3] * i + mat[4] * j + mat[5])/(mat[6] * i + mat[7] * j + 1);
+
+
+            Uint32 pixel = getPixel(src, x, y);
+            putPixel(dest, i, j, pixel);
         }
     }
     free(mat);
