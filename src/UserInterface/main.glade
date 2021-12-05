@@ -15,15 +15,16 @@
         <child>
           <object class="GtkButton" id="button_exploit">
             <property name="label" translatable="yes">automatic solve</property>
-            <property name="width-request">110</property>
+            <property name="width-request">139</property>
+            <property name="height-request">34</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <signal name="clicked" handler="on_autosolve" swapped="no"/>
           </object>
           <packing>
-            <property name="x">40</property>
-            <property name="y">470</property>
+            <property name="x">860</property>
+            <property name="y">504</property>
           </packing>
         </child>
         <child>
@@ -119,7 +120,7 @@
         <child>
           <object class="GtkSeparator" id="options_bg">
             <property name="width-request">223</property>
-            <property name="height-request">321</property>
+            <property name="height-request">358</property>
             <property name="visible">True</property>
             <property name="can-focus">False</property>
           </object>

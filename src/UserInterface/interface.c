@@ -35,7 +35,7 @@ GtkWidget	*rotl;
 GtkWidget	*rotr;
 GtkBuilder	*builder;
 GtkWidget	*hough;
-
+GtkWidget   *auto_pwn;
 //Toggle events
 //int GREYSCALE = 0;
 //int GAUSSIAN = 0;
@@ -75,6 +75,7 @@ int initInterface(int argc,char *argv[]){
 	hough = GTK_WIDGET(gtk_builder_get_object(builder, "hough"));
 	rotr = GTK_WIDGET(gtk_builder_get_object(builder, "rot_r"));		
 	rotl = GTK_WIDGET(gtk_builder_get_object(builder, "rot_l"));	
+    auto_pwn =  GTK_WIDGET(gtk_builder_get_object(builder, "button_exploit"));
     gtk_widget_show(main_window);
 	
 	//Init Sudoku_img
@@ -137,7 +138,11 @@ void on_open_activated(){
 			printf("[-] deleting older input\n");
 		}
 		sudoku_img = gtk_image_new_from_file(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
-		gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
+		SDL_Surface *original_image = IMG_Load(last_file);
+        SDL_Surface *image = SDL_ConvertSurfaceFormat(
+            original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+        save_image(image, "Image/actual.png");
+        gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
         gtk_widget_show(sudoku_img);
         gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set the img at the right place
 		gtk_widget_destroy(dialog);
@@ -285,7 +290,7 @@ void on_autosolve(){
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 
-    processImage(last_file,"Image/output.png");
-    
-
+    processImage(last_file,"Image/auto.png");
+    reload_img("Image/auto.png");
+    last_file = "Image/auto.png";
 }
