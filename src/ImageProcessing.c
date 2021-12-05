@@ -79,6 +79,7 @@ int processImage(t_options options) {
     log_s("Applied Morphology operations");
     printf("\n");
     warn_s("Perspective transformation is not implemented yet. Skipping.");
+    
     SDL_Surface *Homographic = HomographicTransform(image, points);
     if (options.showImage) {
         displaySurface(renderer, Homographic);
