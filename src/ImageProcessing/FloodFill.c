@@ -26,7 +26,7 @@ size_t floodFill(SDL_Surface* src, Point seed,
 
         int x = p->point.x;
         int y = p->point.y;
-
+        free(p);
         // Invalid point, we ignore
         if (x < 0 || x >= src->w || y < 0 || y >= src->h) {
             continue;
@@ -57,5 +57,6 @@ size_t floodFill(SDL_Surface* src, Point seed,
         }
     }
 
+    
     return nbPoint;
 }

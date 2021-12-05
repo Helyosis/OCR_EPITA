@@ -28,7 +28,7 @@ SDL_Surface* CannyFilter(SDL_Surface* source) {
 
     for (int i = 0; i < source->w; ++i) {
         for (int j = 0; j < source->h; ++j) {
-            int intensity = hysteresised[j * source->w + i];
+            int intensity = sobel[0][j * source->w + i];
             putPixel(dest, i, j, intensityToARGB(intensity));
         }
     }

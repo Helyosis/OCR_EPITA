@@ -103,7 +103,7 @@ int processImage(t_options options) {
 
 orderedPoints findGridCorner(SDL_Surface* image, SDL_Renderer* renderer, t_options options) {
     //TODO: Try to fix CannyFilter()
-    SDL_Surface* lineImage = AdaptiveThresholding(image);
+    SDL_Surface* lineImage = CannyFilter(image);
     
     dilate_in_place(image);
 
