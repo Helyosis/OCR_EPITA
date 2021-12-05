@@ -8,13 +8,10 @@
 #include "FloodFill.h"
 #include "BlobDetection.h"
 #include "Pixels.h"
+#include "../Verbose.h"
 
 
 BiggestBlob_result findBiggestBlob(SDL_Surface* src) {
-    uint32_t WHITE = 0xffffffff;
-    uint32_t BLACK = 0xff000000;
-    uint32_t BLUE  = 0xff00ffff;
-
     SDL_Surface *dest;
     dest = SDL_CreateRGBSurface(0,
                                 src->w,
@@ -56,4 +53,30 @@ BiggestBlob_result findBiggestBlob(SDL_Surface* src) {
     }
 
     return (BiggestBlob_result) {dest, maxPoint, max};
+}
+
+
+void removeSmallBlob(SDL_Surface* source, size_t threshold, uint32_t foregroundColor, uint32_t backgroundColor) {
+    if (foregroundColor == BLUE) {
+        error_s("removeSmallBlob: Invalid foregroundColor of %#x", foregroundColor);
+    }
+
+    for (int y = 0; y < source->h; ++y) {
+        for (int x = 0; x < source->w; ++x) {
+            if (getPixel(source, x, y) != foregroundColor) continue;
+            Point seed = {x, y};
+            size_t blobSize = floodFill(source, seed, foregroundColor, BLUE);
+            if (blobSize <= threshold) {
+                floodFill(source, seed, BLUE, backgroundColor);
+            }
+        }
+    }  
+
+    // Cleanup loop
+    for (int y = 0; y < source->h; ++y) {
+        for (int x = 0; x < source->w; ++x) {
+            Point seed = {x, y};
+            if (getPixel(source, x, y) == BLUE) floodFill(source, seed, BLUE, foregroundColor);
+        }
+    }
 }

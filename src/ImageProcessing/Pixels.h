@@ -3,6 +3,10 @@
 
 #include <sys/queue.h>
 
+#define WHITE 0xffffffff
+#define BLACK 0xff000000
+#define BLUE  0xff00ffff
+
 typedef struct Point {
     int x;
     int y;

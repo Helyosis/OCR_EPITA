@@ -5,7 +5,6 @@
 #include <math.h>
 #pragma GCC diagnostic pop
 
-
 // Utility function to convert grayscale value to adequate ARGB pixel
 uint32_t intensityToARGB(unsigned char v) {
     return (uint32_t) (0xFF << 24 | v << 16 | v << 8 | v);
