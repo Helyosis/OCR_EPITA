@@ -94,16 +94,20 @@ SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points)
 {
     // Create a matrix to store the homographic transphormation matrix
     double *mat = Fill_matrix(points);
+    printMat(mat,8,1);
+    double xoff = src->w/2;
+    double yoff = src->h/2;
     // Create a matrix to store the transphormation matrix
     SDL_Surface *dest = SDL_CreateRGBSurface(0, 640, 640, 32, 0, 0, 0, 0);
     // Create a matrix to store the transphormation matrix
-    for (int i = 0; i < 640; i++)
+    for (int i = 0; i < src->w; i++)
     {
-        for (int j = 0; j < 640; j++)
+        for (int j = 0; j < src->h; j++)
         {
-            
-            double x = mat[0] * i + mat[1] * j + mat[2];
-            double y = mat[3] * i + mat[4] * j + mat[5];
+            double x = (i - xoff) / 640;
+            double y = (j - yoff) / 640;
+            x += mat[0] * i + mat[1] * j + mat[2];
+            y += mat[3] * i + mat[4] * j + mat[5];
             double z = mat[6] * i + mat[7] * j + 1;
             if(z != 0){
                 x = x / z;
@@ -111,8 +115,8 @@ SDL_Surface *HomographicTransform(SDL_Surface *src, orderedPoints points)
             }
             if (x >= 0 && x < 640 && y >= 0 && y < 640)
             {
-                Uint32 pixel = getPixel(src, y, x);
-                putPixel(dest, j, i, pixel);
+                Uint32 pixel = getPixel(src, x, y);
+                putPixel(dest, i, j, pixel);
             }
         }
     }
