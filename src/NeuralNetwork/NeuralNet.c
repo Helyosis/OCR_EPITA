@@ -58,19 +58,27 @@ void saveNn(char* fileName, struct NeuralNetwork* nnPtr){
 		printf("file can't be opened\n");
 		exit(1);
 	}
-    fprintf(fptr,"%d\n%d\n%d\n",nnPtr->nbNBL[0],nnPtr->nbNBL[1],
+    fprintf(fptr,"%d\n%d\n%d\n", nnPtr->nbNBL[0], nnPtr->nbNBL[1],
     nnPtr->nbNBL[2]);
     int inputH=nnPtr->nbNBL[0];
     int hiddenH=nnPtr->nbNBL[1];
     int outputH=nnPtr->nbNBL[2];
-    writeMat(hiddenH,inputH,fptr,nnPtr->wh);
-    writeMat(hiddenH,1,fptr,nnPtr->bh);
-    writeMat(outputH,hiddenH,fptr,nnPtr->wy);
-    writeMat(outputH,1,fptr,nnPtr->by);
+    writeMat(inputH,hiddenH,fptr,nnPtr->wh);
+    writeMat(1,hiddenH,fptr,nnPtr->bh);
+    writeMat(hiddenH,outputH,fptr,nnPtr->wy);
+    writeMat(1,outputH,fptr,nnPtr->by);
     fclose(fptr);
 }
 
-/*void loadNn(char* fileName,struct NeuralNetwork* nnPtr){
+/*void loadMat(int height, int width,FILE* fptr,double* l){
+    for (int iHeight = 0; iHeight < height; iHeight++) {
+        for (int iWidth = 0; iWidth < width; iWidth++) {
+            fscanf(fptr,"%f",l[iHeight*width+iWidth]);
+        }
+    }
+}
+
+void loadNn(char* fileName, struct NeuralNetwork* nnPtr){
     FILE *fptr;
     fptr=fopen(fileName,"r");
     if(fptr == NULL) {
@@ -78,27 +86,29 @@ void saveNn(char* fileName, struct NeuralNetwork* nnPtr){
 		exit(1);
 	}
     double i=0;
-    fscanf (fptr, "%d", &i); 
+    int* nbNBL = calloc(3, sizeof(int));
+    fscanf (fptr, "%d", &nbNBL[0]);
+    fscanf (fptr, "%d", &nbNBL[1]);
+    fscanf (fptr, "%d", &nbNBL[2]);
     while (!feof(fptr))
     {  
         fscanf(fptr, "%f", &i);
     }
-    nnPtr->nbNBL;
-    nnPtr->wh;
-    nnPtr->wy;
-    nnPtr->bh;
-    nnPtr->by;
     fclose(fptr);
-}*/
+}
+
 // Predict
-/*double* predict(double* input,char* fileName){
-    int* nbNBL = calloc(3, sizeof(3));
-    nbNBL[0]  =  2; nbNBL[1]  =  2; nbNBL[2]  =  1;
-    struct NeuralNetwork* nnPtr = initNn(nbNBL,input);
-    loadNn(fileName,nnPtr);
+int predict(double* input, char* fileName){
+    
+    struct NeuralNetwork* nnPtr = initNn(nbNBL, input);
+    loadNn(fileName, nnPtr);
     feedForward(nnPtr);
+    free(nbNBL);
     free(nnPtr);
-    return nnPtr->yA;
+    double max=0;
+    int nb=0;
+    for(int i=;;)
+    return nb;
 }*/
 
 

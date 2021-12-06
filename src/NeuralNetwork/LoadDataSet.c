@@ -83,6 +83,8 @@ struct tImage** imageVect(size_t nbImages){
                 free(result);
                 i++;
             }
+            if(i==nbImages)
+                break;
         }
         closedir(d);
     }

@@ -93,21 +93,24 @@ void trainNn(int iterationLimit, char* filename){
     nbNBL[2]  =  10;
     double* input = NULL;
     NN nnPtr =  initNn(nbNBL, input);
-    int size=8380;
+    int size=100;//8380
     struct tImage** vect=imageVect(size);
-    int sizeS=1000;
+    int sizeS=1;
     for(int i=0;i<iterationLimit;i++){
         shuffle(vect, size);
         for(int i = 0; i<size-sizeS ; i+=sizeS){
             int u=i+sizeS;
             updateMiniBatch(nnPtr, vect, i, u, sizeS);
         }
-        for(int i = sizeS; i<size ; i+=1){
-            nnPtr->input=vect[i]->pixVect;
-            feedForward(nnPtr);
-            printf("T=%d, O=%f\n",
-            vect[i]->label,nnPtr->yA[vect[i]->label]);
-        }
+        //if(iterationLimit-1==i){
+            for(int i = 0; i<size ; i+=1){
+                nnPtr->input=vect[i]->pixVect;
+                feedForward(nnPtr);
+                printf("T=%d, O=%f\n",
+                vect[i]->label,nnPtr->yA[vect[i]->label]);
+            }
+        //}
+        
     }
     freeImVect(vect, (size_t) size);
     saveNn(filename, nnPtr);
