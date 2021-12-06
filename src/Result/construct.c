@@ -18,8 +18,8 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
     if (result == NULL)
         errx(1, "IMG_Load: %s", IMG_GetError());
     
-    int x = 0;
-    int y = 0;
+    int x = 20;
+    int y = 10;
     for(int i = 0; i < 81; i++)
     {
         if(grid[i] != '0')
@@ -28,10 +28,10 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
             char *text = malloc(2);
             text[0] = grid[i];
             text[1] = '\0';
-            char *path = malloc(strlen("../Ressources/Numbers/") + strlen(text) + strlen("-1.png") + 1);
-            strcpy(path, "../Ressources/Numbers/");
+            char *path = malloc(strlen("../Ressources/Numbers/5-") + strlen(text) + strlen(".png") + 1);
+            strcpy(path, "../Ressources/Numbers/5-");
             strcat(path, text);
-            strcat(path, "-1.png");
+            strcat(path, ".png");
             SDL_Surface *number = IMG_Load(path);
             free(path);
             free(text);
@@ -43,8 +43,16 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
                 for(int j = 0; j < number->w; j++){
                     for(int k = 0; k < number->h; k++){
                         Uint32 pixel = getPixel(number, j, k);
-                        if(pixel != 0x00000000){
-                            putPixel(number, j, k, 0xFF0000FF);
+                        if(pixel == 0x00000000){
+                            // changes the color to RGB : 128,237,153 
+                            uint8_t r = pixel >> 16 & 0xFF;
+                            uint8_t g = pixel >> 8 & 0xFF;
+                            uint8_t b = pixel & 0xFF;
+                            r = 128;
+                            g = 237;
+                            b = 153;
+                            pixel = (r << 16) | (g << 8) | b;
+                            putPixel(number, j, k, pixel);
                         }
                     }
                 }
@@ -53,9 +61,9 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
             SDL_FreeSurface(number);
         }
         x += 100;
-        if(x == 900)
+        if(x == 920)
         {
-            x = 0;
+            x = 20;
             y += 100;
         }
     }
