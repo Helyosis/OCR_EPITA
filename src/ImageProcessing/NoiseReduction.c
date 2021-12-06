@@ -6,26 +6,20 @@
 #include <math.h>
 #include <stdint.h>
 #pragma GCC diagnostic pop
+
 #include "Pixels.h"
+#include "../Utils.h"
+#include "../Verbose.h"
 
 #define KUWAHARA_RANGE 4
 
-#define GAUSSIAN_RANGE 5
-#define GAUSSIAN_BLUR_SIGMA 1.4
+#define GAUSSIAN_RANGE 2
+#define GAUSSIAN_BLUR_SIGMA 1.3
 
 #ifndef M_PI
 #define M_PI  3.14159265358979323846
 #endif
 
-// Utility function to convert grayscale value to adequate ARGB pixel
-uint32_t insensityToARGB(unsigned char v) {
-    return (uint32_t) (0xFF << 24 | v << 16 | v << 8 | v);
-}
-
-// Returns the distance between the points (i, j) and the point (k, l)
-double distance(int i, int j, int k, int l) {
-    return sqrt((k - i) * (k - i) + (j - l) * (j - l));
-}
 
 /* Calculate the new value of the point on this point
  * It uses the Kuwahara Filtering technique to calculate it
@@ -120,95 +114,79 @@ unsigned char Kuwahara_calculateValue(SDL_Surface *source, int x_start, int y_st
 }
 
 
-double** Build_GaussianKernel(int ksize) {
-    // We scale the sigma value in proportion to the radius
-    // Setting the minimum standard deviation as a baseline
-    #ifdef GAUSSIAN_BLUR_SIGMA
-    double sigma = GAUSSIAN_BLUR_SIGMA;
-    #else
-    double sigma = 0.3 * (((double) ksize - 1) * 0.5 - 1) + 0.8;
-    #endif
-    int kernelWidth = 2 * ksize + 1;
+double Gaussian(double x, double sigma) {
+    double x2 = x * x;
+    double sigma2 = sigma * sigma;
+    return exp(-x2 / (2 * sigma2));
+}
 
-    // Initialise the kernel with all elements equals to 0
-    double **kernel = malloc(sizeof(int*) * kernelWidth);
-    for(int i = 0; i < kernelWidth; i++) {
-        kernel[i] = malloc(sizeof(int*) * kernelWidth);
-
-        for (int j = 0; j < kernelWidth; ++j) kernel[i][j] = 0;
-    }
-
-    for (int x = 0; x < kernelWidth; ++x) {
-        for (int y = 0; y < kernelWidth; ++y) {
-            kernel[x][y] = 0;
-        }
-    }
-
+double* Build_GaussianKernel(int kernelSize) {
     double sum = 0;
+    double* kernel = calloc(kernelSize, sizeof(*kernel));
 
-    // x and y represents the value of the pixels AROUNG the center pixel
-    for (int x = -ksize; x <= ksize; ++x) {
-        for (int y = -ksize; y <= ksize; ++y) {
-            double exponentNumerator = (double) (-(x * x + y *y));
-            double exponentDenominator = 2 * sigma * sigma;
-            double eExpression = exp(exponentNumerator / exponentDenominator);
-            double kernelValue = (eExpression / 2 * M_PI);
-
-            // We add radius to the indices to prevent out of bound issues because x and y can be negative
-            kernel[x + ksize][y + ksize] = kernelValue;
-            sum += kernelValue;
-        }
+    for (int x = 0; x < kernelSize; ++x) {
+        double value = Gaussian(x - GAUSSIAN_RANGE, GAUSSIAN_BLUR_SIGMA);
+        kernel[x] = value;
+        sum += value;
     }
 
-    // Normalize the kernel
-    // This ensures that all of the values in the kernel together add up to 1
-    for (int x = 0; x < kernelWidth; ++x) {
-        for (int y = 0; y < kernelWidth; ++y) {
-            kernel[x][y] /= sum;
-        }
+    for (int x = 0; x < kernelSize; ++x) {
+        kernel[x] /= sum;
     }
 
     return kernel;
 }
 
-unsigned char GaussianBlur_calculateValue(SDL_Surface *source, int x_start, int y_start, double **kernel) {
-    //int kernelWidth = 2 * GAUSSIAN_RANGE + 1;
-    unsigned char sum = 0;
-
-    for (int kernelY = -GAUSSIAN_RANGE; kernelY < GAUSSIAN_RANGE; ++kernelY) {
-        for (int kernelX = -GAUSSIAN_RANGE; kernelX < GAUSSIAN_RANGE; ++kernelX) {
-            double kernelValue = kernel[kernelX + GAUSSIAN_RANGE][kernelY + GAUSSIAN_RANGE];
-            sum += I(source, x_start - kernelX, y_start - kernelY) * kernelValue;
-        }
-    }
-    
-    return sum;
-}
-
 SDL_Surface* GaussianBlur(SDL_Surface *source) {
-    SDL_Surface *dest;
-    dest = SDL_CreateRGBSurface (0, source->w, source->h, source->format->BitsPerPixel, 0, 0, 0, 0);
-    double **kernel = Build_GaussianKernel(GAUSSIAN_RANGE);
-    
-    for (int y_start = GAUSSIAN_RANGE; y_start < source->h - GAUSSIAN_RANGE; ++y_start) {
-        for (int x_start = GAUSSIAN_RANGE; x_start < source->w - GAUSSIAN_RANGE; ++x_start) {
-            unsigned char intensity = GaussianBlur_calculateValue(source, x_start, y_start, kernel);
-            putPixel(dest, x_start, y_start, insensityToARGB(intensity));
+    SDL_Surface* dest =
+        SDL_CreateRGBSurface (0, source->w, source->h,
+                              source->format->BitsPerPixel,
+                              source->format->Rmask,
+                              source->format->Gmask,
+                              source->format->Bmask,
+                              source->format->Amask
+            );
+
+    int kernelSize = 2 * GAUSSIAN_RANGE + 1;
+    double* kernel = Build_GaussianKernel(kernelSize);
+
+    unsigned char* tempData = calloc(source->w * source->h, sizeof(*tempData));
+    if (tempData == NULL) {
+        error_s("Not enough memory !");
+    }
+
+    // First pass
+    for (int y = 0; y < source->h; ++y) {
+        for (int x = GAUSSIAN_RANGE; x < source->w - GAUSSIAN_RANGE; ++x) {
+            double sum = 0;
+            for (int w = 0; w < kernelSize; ++w) {
+                sum += I(source, x + w - GAUSSIAN_RANGE, y) * kernel[w];
+            }
+            tempData[y * source->w + x] = clamp(sum, 0, 255);
         }
     }
 
-    for (int i = 0; i < 2 * GAUSSIAN_RANGE + 1; ++i) {
-        free(kernel[i]);
+    // Second pass
+    for (int y = GAUSSIAN_RANGE; y < source->h - GAUSSIAN_RANGE; ++y) {
+        for (int x = GAUSSIAN_RANGE; x < source->w - GAUSSIAN_RANGE; ++x) {
+            double sum = 0;
+            for (int w = 0; w < kernelSize; ++w) {
+                sum += tempData[(y + w - GAUSSIAN_RANGE) * source->w + x] * kernel[w];
+            }
+            putPixel(dest, x, y, intensityToARGB(clamp(sum, 0, 255)));
+        }
     }
+
     free(kernel);
-    
+    free(tempData);
+
     return dest;
 }
 
 void GaussianBlur_inPlace(SDL_Surface *source) {
     SDL_Surface *dest;
     dest = GaussianBlur(source);
-    
+
     for (int i = GAUSSIAN_RANGE; i < source->w - GAUSSIAN_RANGE; ++i) {
         for (int j = GAUSSIAN_RANGE; j < source->h - GAUSSIAN_RANGE; ++j) {
             uint32_t pixel = getPixel(dest, i, j);
@@ -229,7 +207,7 @@ SDL_Surface* KuwaharaFilter(SDL_Surface *source) {
     for (int i = KUWAHARA_RANGE + 1; i < source->w - KUWAHARA_RANGE - 1; ++i) {
         for (int j = KUWAHARA_RANGE + 1; j < source->h - KUWAHARA_RANGE - 1; ++j) {
             unsigned char intensity = Kuwahara_calculateValue(source, i, j);
-            putPixel(dest, i, j, insensityToARGB(intensity));
+            putPixel(dest, i, j, intensityToARGB(intensity));
         }
     }
 
