@@ -132,6 +132,7 @@ int processImage(t_options options) {
     
     SDL_Quit();
     IMG_Quit();
+    
     return 0;
 }
 
