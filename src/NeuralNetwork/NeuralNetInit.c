@@ -71,7 +71,6 @@ struct NeuralNetwork* initNn(int* nbNBL,double* input){
 
 // Free the neural network
 void freeNn(struct NeuralNetwork* nnPtr){
-    free(nnPtr->input);
     free(nnPtr->nbNBL);
     free(nnPtr->wh);
     free(nnPtr->wT);

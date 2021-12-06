@@ -17,7 +17,7 @@ typedef struct NeuralNetwork* NN;
 // New weight  =  old weight-(stepSize/m)*(nabla of the weight)
 // New bias    =  old bias-(stepSize/m)*(nabla of the bias)
 void gradientDescent(NN nnPtr, int s){
-    double stepSize = 0.1;//TODO chanche only for debug
+    double stepSize = 0.25;//TODO chanche only for debug
     for(int iHeight = 0;iHeight<nnPtr->nbNBL[0];iHeight++){
         for(int iWidth = 0; iWidth<nnPtr->nbNBL[1];iWidth++){
             nnPtr->wh[iHeight*nnPtr->nbNBL[1]+iWidth]  -= stepSize*(1/s)*nnPtr->nablaWh[iHeight*nnPtr->nbNBL[1]+iWidth];
@@ -62,9 +62,9 @@ void backPropagation(NN nnPtr){
 }
 
 void swap(struct tImage* v1, struct tImage* v2){
-    struct tImage* tmp=v1;
+    struct tImage tmp=*v1;
     *v1=*v2;
-    *v2=*tmp;
+    *v2=tmp;
 }
 
 void shuffle(struct tImage** v, int size){
@@ -91,14 +91,13 @@ void trainNn(int iterationLimit, char* filename){
     nbNBL[0]  =  784; 
     nbNBL[1]  =  30; 
     nbNBL[2]  =  10;
-    double* input = calloc(nbNBL[0], sizeof(double));
+    double* input = NULL;
     NN nnPtr =  initNn(nbNBL, input);
     int size=8380;
     struct tImage** vect=imageVect(size);
     int sizeS=1000;
     for(int i=0;i<iterationLimit;i++){
         shuffle(vect, size);
-        
         for(int i = 0; i<size-sizeS ; i+=sizeS){
             int u=i+sizeS;
             updateMiniBatch(nnPtr, vect, i, u, sizeS);

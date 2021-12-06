@@ -80,6 +80,7 @@ struct tImage** imageVect(size_t nbImages){
                 strcpy(result, dirName);
                 strcat(result, dir->d_name);
                 dataSet[i] = loadImg(result);
+                free(result);
                 i++;
             }
         }
