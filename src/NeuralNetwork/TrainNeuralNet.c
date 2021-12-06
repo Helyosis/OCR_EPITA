@@ -79,9 +79,9 @@ void updateMiniBatch(NN nnPtr, struct tImage** v, int l, int u, int s){
     for(; l<u ;l++){
         nnPtr->input=v[l]->pixVect;
         feedForward(nnPtr);
-        nnPtr->tOutput[v[l]->label]=1;
+        nnPtr->tOutput[v[l]->label-1]=1;
         backPropagation(nnPtr);
-        nnPtr->tOutput[v[l]->label]=0;
+        nnPtr->tOutput[v[l]->label-1]=0;
     }
     gradientDescent(nnPtr, s);
 }
@@ -92,12 +92,12 @@ void trainNn(int iterationLimit, char* filename){
     int* nbNBL = calloc(3, sizeof(int));
     nbNBL[0]  =  784; 
     nbNBL[1]  =  30; 
-    nbNBL[2]  =  10;
+    nbNBL[2]  =  9;
     double* input = NULL;
     NN nnPtr =  initNn(nbNBL, input);
-    int size=100;//8380
+    int size=1000;//8380
     struct tImage** vect=imageVect(size);
-    int sizeS=1;
+    int sizeS=100;
     for(int i=0;i<iterationLimit;i++){
         shuffle(vect, size);
         for(int i = 0; i<size-sizeS ; i+=sizeS){

@@ -19,7 +19,7 @@ int getLabel(char* str){
     size_t i=0;
     while(str[i]!='-')
         i++;
-    return atoi(&str[i+1]);
+    return atoi(&str[i-1])-1;
 }
 
 //Load an image

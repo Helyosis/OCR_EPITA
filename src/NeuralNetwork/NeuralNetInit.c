@@ -27,13 +27,15 @@ void initWB(struct NeuralNetwork* nnPtr) {
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[0]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[1]; iWidth++) {
             nnPtr->wh[iHeight * nnPtr->nbNBL[1] + iWidth] =-1+2*((double)rand())/RAND_MAX;// randomDouble()/sqrt(nnPtr->nbNBL[1]);
-            nnPtr->bh[iWidth] = -1+2*((double)rand())/RAND_MAX;
+            if(iHeight == 0)
+                nnPtr->bh[iWidth] = -1+2*((double)rand())/RAND_MAX;
         }
     }
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[2]; iWidth++) {
             nnPtr->wy[iHeight * nnPtr->nbNBL[2] + iWidth] = -1+2*((double)rand())/RAND_MAX;
-            nnPtr->by[iWidth] =  -1+2*((double)rand())/RAND_MAX;
+            if(iHeight == 0)
+                nnPtr->by[iWidth] =  -1+2*((double)rand())/RAND_MAX;
         }
     }
 }
