@@ -5,14 +5,14 @@
 #include <SDL_image.h>
 #include <err.h>
 #pragma GCC diagnostic pop
-
+#include "../ImageProcessing/Pixels.h"
 
 // Function: Result_construct
 // Description: Constructs a the png with the grid solved
 // Inputs: char *grid - the solved grid
 // Returns: SDL_Surface * - the solved grid
 
-SDL_Surface *Result_construct(char *grid)
+SDL_Surface *Result_construct(char *grid, char *basegrid)
 {
     SDL_Surface *result = IMG_Load("../Images/resultGrid.jpg");
     if (result == NULL)
@@ -37,6 +37,18 @@ SDL_Surface *Result_construct(char *grid)
             free(text);
             if (number == NULL)
                 errx(1, "IMG_Load: %s", IMG_GetError());
+
+            if(basegrid[i] == '.'){
+                //chages the color of number to red
+                for(int j = 0; j < number->w; j++){
+                    for(int k = 0; k < number->h; k++){
+                        Uint32 pixel = getPixel(number, j, k);
+                        if(pixel != 0x00000000){
+                            putPixel(number, j, k, 0xFF0000FF);
+                        }
+                    }
+                }
+            }
             SDL_BlitSurface(number, NULL, result, &rect);
             SDL_FreeSurface(number);
         }

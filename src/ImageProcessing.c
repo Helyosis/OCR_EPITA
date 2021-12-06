@@ -119,7 +119,8 @@ int processImage(t_options options) {
     log_s("Saved digits in directory %s", SC_DESTDIR);
 
     char sdk[] = "435269781682571493197834562826195347374682915951743628519326874248957136763418259";
-    SDL_Surface *res = Result_construct(sdk);
+    char srdb[] = "...26.7.168..7..9.19...45..82.1...4...46.29...5...3.28..93...74.4..5..367.3.18...";
+    SDL_Surface *res = Result_construct(sdk, srdb);
     if(options.showImage) {
         displaySurface(renderer, res);
         wait_for_keypressed();

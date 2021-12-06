@@ -6,4 +6,4 @@
 #include <err.h>
 #pragma GCC diagnostic pop
 
-SDL_Surface *Result_construct(char *grid);
+SDL_Surface *Result_construct(char *grid, char *basegrid);
