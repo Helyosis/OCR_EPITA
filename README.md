@@ -1,5 +1,7 @@
 # SUDO.C.R - EPITA S3 Project
 
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a96baca52b294b9a84ac0b90f4c5e754)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Helyosis/OCR_EPITA&amp;utm_campaign=Badge_Grade)
+
 <img src="Ressources/L.png" width="500" height="500" />
 
 This is project is an OCR wich could recognize and resolves SUDOKU.
