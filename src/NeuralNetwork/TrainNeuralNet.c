@@ -107,20 +107,20 @@ void trainNn(t_options options){
     for(int i=0;i<iterationLimit;i++){
         info_s("Iteration %d", i);
         shuffle(vect, size);
-        for(int i = 0; i<size-sizeS ; i+=sizeS){
+        for(int i = 0; i<=size-sizeS ; i+=sizeS){
             int u=i+sizeS;
             updateMiniBatch(nnPtr, vect, i, u, sizeS, options.learningRate);
         }
         //if(iterationLimit-1==i){
-            for(int i = 0; i<size ; i+=1){
-                nnPtr->input=vect[i]->pixVect;
+            for(int i = 0; i < size ; i+=1){
+                nnPtr->input = vect[i]->pixVect;
                 feedForward(nnPtr);
                 if (iterationLimit - 1 == i) {
                     printMat(nnPtr->nablaBy, 1, nnPtr->nbNBL[2]);
                 }
                 else
                     info_s("T=%d, O=%f",
-                        vect[i]->label,nnPtr->yA[vect[i]->label]);
+                        vect[i]->label,nnPtr->yA[vect[i]->label-1]);
             }
         //}
         
