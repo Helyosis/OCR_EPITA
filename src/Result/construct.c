@@ -54,6 +54,9 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
                             pixel = (r << 16) | (g << 8) | b;
                             putPixel(number, j, k, pixel);
                         }
+                        else{
+                            putPixel(number, j, k, 0xFFFFFFFF);
+                        }
                     }
                 }
             }
