@@ -17,17 +17,19 @@ typedef struct NeuralNetwork* NN;
 // New weight  =  old weight-(stepSize/m)*(nabla of the weight)
 // New bias    =  old bias-(stepSize/m)*(nabla of the bias)
 void gradientDescent(NN nnPtr, int s){
-    double stepSize = 0.25;//TODO chanche only for debug
+    double stepSize = 0.25;
     for(int iHeight = 0;iHeight<nnPtr->nbNBL[0];iHeight++){
         for(int iWidth = 0; iWidth<nnPtr->nbNBL[1];iWidth++){
             nnPtr->wh[iHeight*nnPtr->nbNBL[1]+iWidth]  -= stepSize*(1/s)*nnPtr->nablaWh[iHeight*nnPtr->nbNBL[1]+iWidth];
-            nnPtr->bh[iWidth] -= stepSize*(1/s)*nnPtr->nablaBh[iWidth];
+            if(iHeight==0)
+                nnPtr->bh[iWidth] -= stepSize*(1/s)*nnPtr->nablaBh[iWidth];
         }
     }
     for(int iHeight = 0;iHeight<nnPtr->nbNBL[1];iHeight++){
         for(int iWidth = 0; iWidth<nnPtr->nbNBL[2];iWidth++){
             nnPtr->wy[iHeight*nnPtr->nbNBL[2]+iWidth] -= stepSize*(1/s)*nnPtr->nablaWy[iHeight*nnPtr->nbNBL[2]+iWidth];
-            nnPtr->by[iWidth] -= stepSize*(1/s)*nnPtr->nablaBy[iWidth];
+            if(iHeight==0)
+                nnPtr->by[iWidth] -= stepSize*(1/s)*nnPtr->nablaBy[iWidth];
         }
     }
 }

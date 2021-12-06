@@ -6,4 +6,5 @@ struct tImage{
 };
 struct tImage** imageVect(size_t nbImages);
 void freeImVect(struct tImage** v, size_t nbImages);
+struct tImage* loadImg(char* filename);
 #endif

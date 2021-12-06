@@ -5,7 +5,9 @@
 #include <stdlib.h>
 #include <math.h>
 #include <time.h>
+#include <string.h>
 #pragma GCC diagnostic pop
+#include "LoadDataSet.h"
 #include "NeuralNetInit.h"
 #include "MatUtils.h"
 
@@ -70,45 +72,45 @@ void saveNn(char* fileName, struct NeuralNetwork* nnPtr){
     fclose(fptr);
 }
 
-/*void loadMat(int height, int width,FILE* fptr,double* l){
+void loadMat(int height, int width,FILE* fptr,double* l){
     for (int iHeight = 0; iHeight < height; iHeight++) {
         for (int iWidth = 0; iWidth < width; iWidth++) {
-            fscanf(fptr,"%f",l[iHeight*width+iWidth]);
+            fscanf(fptr,"%lf",&l[iHeight*width+iWidth]);
         }
     }
 }
 
-void loadNn(char* fileName, struct NeuralNetwork* nnPtr){
+struct NeuralNetwork* loadNn(char* fileName){
     FILE *fptr;
     fptr=fopen(fileName,"r");
     if(fptr == NULL) {
 		printf("file can't be opened\n");
 		exit(1);
 	}
-    double i=0;
     int* nbNBL = calloc(3, sizeof(int));
     fscanf (fptr, "%d", &nbNBL[0]);
     fscanf (fptr, "%d", &nbNBL[1]);
     fscanf (fptr, "%d", &nbNBL[2]);
-    while (!feof(fptr))
-    {  
-        fscanf(fptr, "%f", &i);
-    }
+    struct NeuralNetwork* nnPtr =  initNn(nbNBL, NULL);
+    loadMat(nnPtr->nbNBL[0], nnPtr->nbNBL[1],fptr,nnPtr->wh);
+    loadMat(1, nnPtr->nbNBL[1],fptr,nnPtr->bh);
+    loadMat(nnPtr->nbNBL[1], nnPtr->nbNBL[2],fptr,nnPtr->wy);
+    loadMat(1, nnPtr->nbNBL[2],fptr,nnPtr->by);
     fclose(fptr);
+    return nnPtr;
 }
 
 // Predict
-int predict(double* input, char* fileName){
-    
-    struct NeuralNetwork* nnPtr = initNn(nbNBL, input);
-    loadNn(fileName, nnPtr);
+double* predict(char* imageFileName, char* SavefileName){
+    struct tImage* img=loadImg(imageFileName);
+    struct NeuralNetwork* nnPtr=loadNn(SavefileName);
+    nnPtr->input=img->pixVect;
     feedForward(nnPtr);
-    free(nbNBL);
+    double* res=malloc(nnPtr->nbNBL[2]*sizeof(double));
+    memcpy(res,nnPtr->y,nnPtr->nbNBL[2]);
+    freeNn(nnPtr);
     free(nnPtr);
-    double max=0;
-    int nb=0;
-    for(int i=;;)
-    return nb;
-}*/
+    return res;
+}
 
 
