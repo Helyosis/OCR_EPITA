@@ -18,7 +18,7 @@ int buildGrid(char* gridFileName, char* out_filename) {
     SDL_FreeSurface(original_image);
     if (!image) { // Loading failed so ptr is null
         printf("[-] IMG_Load: %s\n", SDL_GetError());
-        errx(1, "Error");
+        error_s("Error");
     }
     char *grid = calloc(sizeof(char) * 81, sizeof(char));
     loadGrid(gridFileName, grid);

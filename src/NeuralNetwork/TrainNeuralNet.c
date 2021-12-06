@@ -12,12 +12,15 @@
 #include "NeuralNetInit.h"
 #include "MatUtils.h"
 #include "LoadDataSet.h"
+#include "../Utils.h"
+#include "../Verbose.h"
+
 typedef struct NeuralNetwork* NN;
 // Gradient descent, m is the number of training sample
 // New weight  =  old weight-(stepSize/m)*(nabla of the weight)
 // New bias    =  old bias-(stepSize/m)*(nabla of the bias)
-void gradientDescent(NN nnPtr, int s){
-    double stepSize = 0.25;
+void gradientDescent(NN nnPtr, int s, double learningRate){
+    double stepSize = learningRate;
     for(int iHeight = 0;iHeight<nnPtr->nbNBL[0];iHeight++){
         for(int iWidth = 0; iWidth<nnPtr->nbNBL[1];iWidth++){
             nnPtr->wh[iHeight*nnPtr->nbNBL[1]+iWidth]  -= stepSize*(1/s)*nnPtr->nablaWh[iHeight*nnPtr->nbNBL[1]+iWidth];
@@ -75,7 +78,7 @@ void shuffle(struct tImage** v, int size){
         swap(v[rand()%size],v[rand()%size]);
 }
 
-void updateMiniBatch(NN nnPtr, struct tImage** v, int l, int u, int s){
+void updateMiniBatch(NN nnPtr, struct tImage** v, int l, int u, int s, double learningRate){
     for(; l<u ;l++){
         nnPtr->input=v[l]->pixVect;
         feedForward(nnPtr);
@@ -83,33 +86,41 @@ void updateMiniBatch(NN nnPtr, struct tImage** v, int l, int u, int s){
         backPropagation(nnPtr);
         nnPtr->tOutput[v[l]->label-1]=0;
     }
-    gradientDescent(nnPtr, s);
+    gradientDescent(nnPtr, s, learningRate);
 }
 
 // Train the neural network
-void trainNn(int iterationLimit, char* filename){
+void trainNn(t_options options){
+    int iterationLimit = options.nbIterations;
+    char* filename = options.outputFile;
     //TODO if does not converge change the wb
     int* nbNBL = calloc(3, sizeof(int));
+    info_s("SSSS");
     nbNBL[0]  =  784; 
     nbNBL[1]  =  30; 
     nbNBL[2]  =  9;
     double* input = NULL;
     NN nnPtr =  initNn(nbNBL, input);
-    int size=1000;//8380
+    int size= options.nbImages;
     struct tImage** vect=imageVect(size);
-    int sizeS=100;
+    int sizeS = options.minibatch_size;
     for(int i=0;i<iterationLimit;i++){
+        info_s("Iteration %d", i);
         shuffle(vect, size);
         for(int i = 0; i<size-sizeS ; i+=sizeS){
             int u=i+sizeS;
-            updateMiniBatch(nnPtr, vect, i, u, sizeS);
+            updateMiniBatch(nnPtr, vect, i, u, sizeS, options.learningRate);
         }
         //if(iterationLimit-1==i){
             for(int i = 0; i<size ; i+=1){
                 nnPtr->input=vect[i]->pixVect;
                 feedForward(nnPtr);
-                printf("T=%d, O=%f\n",
-                vect[i]->label,nnPtr->yA[vect[i]->label]);
+                if (iterationLimit - 1 == i) {
+                    printMat(nnPtr->nablaBy, 1, nnPtr->nbNBL[2]);
+                }
+                else
+                    info_s("T=%d, O=%f",
+                        vect[i]->label,nnPtr->yA[vect[i]->label]);
             }
         //}
         

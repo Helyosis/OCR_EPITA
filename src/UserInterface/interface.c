@@ -240,7 +240,7 @@ void on_hough_toggled(){
 		//fclose(file);
 	}
 	else
-		errx(1,"You need to apply thresholding first");
+		error_s("You need to apply thresholding first");
 
 }
 

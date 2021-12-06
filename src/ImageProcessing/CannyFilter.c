@@ -10,6 +10,7 @@
 #include "NonMaxSuppression.h"
 #include "DoubleThreshold.h"
 #include "../Utils.h"
+#include "../Verbose.h"
 
 SDL_Surface* CannyFilter(SDL_Surface* source) {
     SDL_Surface *dest;
@@ -18,7 +19,7 @@ SDL_Surface* CannyFilter(SDL_Surface* source) {
                                  source->format->Rmask, source->format->Gmask,
                                  source->format->Bmask, source->format->Amask);
     if (dest == NULL) {
-        errx(1, "Coudln't create surface");
+        error_s("Coudln't create surface");
     }
 
     double** sobel = SobelFilters(source);

@@ -13,13 +13,14 @@
 #pragma GCC diagnostic pop
 
 #include "LoadDataSet.h"
+#include "../Verbose.h"
 
 //Get the label in the file name
 int getLabel(char* str){
     size_t i=0;
     while(str[i]!='-')
         i++;
-    return atoi(&str[i-1])-1;
+    return atoi(&str[i+1]);
 }
 
 //Load an image
@@ -29,13 +30,13 @@ struct tImage* loadImg(char* filename){
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     SDL_FreeSurface(original_image);
     if (!image) { // Loading failed so ptr is null
-        printf("[-] IMG_Load: %s\n", SDL_GetError());
-        errx(1, "Error");
+        error_s("IMG_Load: %s\n", SDL_GetError());
     }
+
     double* pixVect=malloc(image->w*image->h*sizeof(double));
     struct tImage* d=malloc(sizeof(struct tImage));
     if(pixVect == NULL || d == NULL)
-        errx(1, "[-] loadImg: Not enough memory");
+        error_s("loadImg: Not enough memory");
     for (int x = 0; x < image->w; x++)
     {
         for (int y = 0; y < image->h; y++) 
@@ -64,9 +65,9 @@ struct tImage** imageVect(size_t nbImages){
     DIR *d = opendir(dirName); 
     struct tImage** dataSet=malloc(sizeof(struct tImage)*nbImages);
     if(dataSet == NULL)
-        errx(1, "[-] imageVect: Not enough memory");
+        error_s("imageVect: Not enough memory");
     if(d == NULL)
-        errx(1, "[-] imageVect: directory \"./bddImages\" does not exist");
+        error_s("imageVect: directory \"./bddImages\" does not exist");
     size_t i=0;
     if (d)
     {
@@ -76,7 +77,7 @@ struct tImage** imageVect(size_t nbImages){
             {
                 char *result = malloc(strlen(dirName) + strlen(dir->d_name) + 1); 
                 if(result == NULL)
-                    errx(1, "[-] imageVect: Not enough memory");
+                    error_s("imageVect: Not enough memory");
                 strcpy(result, dirName);
                 strcat(result, dir->d_name);
                 dataSet[i] = loadImg(result);

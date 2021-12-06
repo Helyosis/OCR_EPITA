@@ -1,5 +1,8 @@
 #ifndef TRAINNEURALNET
 #define TRAINNEURALNET
-void trainNn(int iterationLimit, char* filename);
+
+#include "../Utils.h"
+
+void trainNn(t_options options);
 
 #endif

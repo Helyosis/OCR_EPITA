@@ -7,9 +7,11 @@
 #include <time.h>
 #include <string.h>
 #pragma GCC diagnostic pop
+
 #include "LoadDataSet.h"
 #include "NeuralNetInit.h"
 #include "MatUtils.h"
+#include "../Verbose.h"
 
 // Activation function: sigmoid
 double sigmoidF(double x){
@@ -57,8 +59,7 @@ void saveNn(char* fileName, struct NeuralNetwork* nnPtr){
     FILE* fptr;
     fptr=fopen(fileName,"w");
     if(fptr == NULL) {
-		printf("file can't be opened\n");
-		exit(1);
+		error_s("Cannot open %s. No such file or directory.", fileName);
 	}
     fprintf(fptr,"%d\n%d\n%d\n", nnPtr->nbNBL[0], nnPtr->nbNBL[1],
     nnPtr->nbNBL[2]);
@@ -84,8 +85,7 @@ struct NeuralNetwork* loadNn(char* fileName){
     FILE *fptr;
     fptr=fopen(fileName,"r");
     if(fptr == NULL) {
-		printf("file can't be opened\n");
-		exit(1);
+        error_s("Cannot open %s. No such file or directory.", fileName);
 	}
     int* nbNBL = calloc(3, sizeof(int));
     fscanf (fptr, "%d", &nbNBL[0]);
