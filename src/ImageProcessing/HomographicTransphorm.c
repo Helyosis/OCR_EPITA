@@ -69,21 +69,21 @@ double *Fill_matrix(orderedPoints points, int size)
     matTranspose(mat,mat_transpose, 8,8);
     // Create a Matrix to store the multiplication of the matrix mat_transpose and mat
     double *res_mult = calloc(8*8,sizeof(double));
-    matricesMult(mat_transpose, mat, 8,8,8, res_mult);
+    matMult(mat_transpose, mat, 8,8,8, res_mult);
     // Free mat we don't need it anymore
     free(mat);
     double *res_inv = calloc(8*8,sizeof(double));
     if (!inverse(res_mult,res_inv,8)){
-        errx(1,"Matrix is singular");
+        error_s("Matrix is singular");
     }
     
     
     free(res_mult);
     double *res_mult2 = calloc(8*8,sizeof(double));
-    matricesMult(res_inv, mat_transpose, 8,8,8, res_mult2);
+    matMult(res_inv, mat_transpose, 8,8,8, res_mult2);
     free(res_inv);
     free(mat_transpose);
-    matricesMult(res_mult2, b, 8,8,1, res);
+    matMult(res_mult2, b, 8,8,1, res);
     free(res_mult2);
     return res;
 }

@@ -9,6 +9,7 @@
 #pragma GCC diagnostic pop
 
 #include "Pixels.h"
+#include "../Verbose.h"
 
 uint32_t TransformPixel_Grayscale(uint32_t pixel) {
     uint8_t r = pixel >> 16 & 0xFF;
@@ -21,7 +22,7 @@ uint32_t TransformPixel_Grayscale(uint32_t pixel) {
 
 void Apply_grayscale_filter(SDL_Surface* surface) {
     if (surface->format->format != SDL_PIXELFORMAT_ARGB8888)
-        errx(1,
+        error_s(
              "[-] Invalid format for surface,"
              "expected SDL_PIXELFORMAT_ARGB8888\n"
             );

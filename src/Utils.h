@@ -34,6 +34,9 @@ typedef struct {
     char* outputFile;
     int showImage;
     int nbIterations;
+    int minibatch_size;
+    int nbImages;
+    double learningRate;
     enum MODE_ENUM mode;
 } t_options;
 

@@ -5,7 +5,9 @@
 #include <SDL_image.h>
 #include <err.h>
 #pragma GCC diagnostic pop
+
 #include "../ImageProcessing/Pixels.h"
+#include "../Verbose.h"
 
 // Function: Result_construct
 // Description: Constructs a the png with the grid solved
@@ -16,7 +18,7 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
 {
     SDL_Surface *result = IMG_Load("../Images/resultGrid.jpg");
     if (result == NULL)
-        errx(1, "IMG_Load: %s", IMG_GetError());
+        error_s("IMG_Load: %s", IMG_GetError());
     
     int x = 20;
     int y = 10;
@@ -36,7 +38,7 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
             free(path);
             free(text);
             if (number == NULL)
-                errx(1, "IMG_Load: %s", IMG_GetError());
+                error_s("IMG_Load: %s", IMG_GetError());
 
             if(basegrid[i] == '.'){
                 //chages the color of number to red

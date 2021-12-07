@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <err.h>
 
+#include "../Verbose.h"
+
 //IsValid checks if the sudoku grid is valid
 //@param grid the sudoku grid
 //@return 1 if the grid is valid, 0 if not
@@ -22,7 +24,7 @@ int IsValid(char board[], size_t rows,size_t cols) {
 
 void Clean(char board[], size_t rows, size_t cols){
   if(!IsValid(board,rows,cols)){
-    errx(1,"Invalid GRID\n");
+    error_s("Invalid GRID\n");
   }
   size_t i,j;
   for (i = 0; i < rows; ++i) {
