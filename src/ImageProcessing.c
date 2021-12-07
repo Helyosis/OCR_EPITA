@@ -50,25 +50,8 @@ int processImage(t_options options) {
         renderer = SDL_CreateRenderer(window, -1, 0);
     }
 
-    printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
-           options.inputFile, image->w, image->h);
-    Apply_grayscale_filter(image);
-    printf("[*] Applied grayscale\n");
-
-    GaussianBlur_inPlace(image);
-    printf("[*] Reduced noise\n");
-
-    CannyFilter_inPlace(image);
-    printf("[*] Applied adaptive threshold (mean - C method)\n");
-    
-    houghTransform_result* res = HoughTransform(image);
-    DrawHoughlines(image, res);
     log_s("Successfully loaded %s (w=%d, h=%d)",
            options.inputFile, image->w, image->h);
-
-
-    Apply_grayscale_filter(image);
-    log_s("Applied grayscale");
 
     if (options.showImage) {
         displaySurface(renderer, image);
@@ -87,19 +70,6 @@ int processImage(t_options options) {
     AdaptiveThresholding_inPlace(image);
     log_s("Applied adaptive threshold (mean - C method)");
 
-    free_houghTransform_result(res);
-
-    printf("[+] Drew Hough lines\n");
-    printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
-
-    image = Rotation_shearing(image,105);
-    IMG_SavePNG(image, options.outputFile);
-    if (options.showImage){
-        displaySurface(renderer, image);
-        wait_for_keypressed();
-    }
-
-
     size_t threshold = 50;
     removeSmallBlob(image, threshold, WHITE, BLACK);
     log_s("Removed all blobs smaller than %d pixels", threshold);
@@ -109,16 +79,15 @@ int processImage(t_options options) {
         wait_for_keypressed();
     }
 
-    orderedPoints points = findGridCorner(image, renderer, options);
-    log_s("Found corner with ul(x = %d, y = %d)", points.ul.x, points.ul.y);
-
     MorphologyClose(image);
     MorphologyOpen(image);
     log_s("Applied Morphology operations");
 
-    warn_s("Perspective transformation is not implemented yet. Skipping.");
+    orderedPoints points = findGridCorner(image, renderer, options);
+    log_s("Found corner with ul(x = %d, y = %d)", points.ul.x, points.ul.y);
     
     SDL_Surface *Homographic = HomographicTransform(image, points, 252);
+    log_s("Applied homographic transform");
 
     if (options.showImage) {
         displaySurface(renderer, Homographic);
@@ -126,11 +95,6 @@ int processImage(t_options options) {
     }
 
     SDL_SaveBMP(Homographic, "Homographic.bmp");
- 
-    drawLine(image, points.ul.x, points.ul.y, points.ur.x, points.ur.y, 0xff00ffff);
-    drawLine(image, points.ur.x, points.ur.y, points.lr.x, points.lr.y, 0xff00ffff);
-    drawLine(image, points.lr.x, points.lr.y, points.ll.x, points.ll.y, 0xff00ffff);
-    drawLine(image, points.ll.x, points.ll.y, points.ul.x, points.ul.y, 0xff00ffff);
 
     SDL_SaveBMP(image, options.outputFile);
     info_s("Saved image under filename %s", options.outputFile);
@@ -145,6 +109,7 @@ int processImage(t_options options) {
         displaySurface(renderer, resu);
         wait_for_keypressed();
     }
+
     SDL_SaveBMP(resu, "result.bmp");
     SDL_FreeSurface(resu);
     SDL_FreeSurface(image);
