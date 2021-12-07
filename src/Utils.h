@@ -17,6 +17,7 @@
         MODE(GUI)   \
         MODE(IMAGE) \
         MODE(TRAIN) \
+        MODE(PREDICT)\
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
@@ -32,6 +33,7 @@ EXTERN const char *MODE_STRING[];
 typedef struct {
     char* inputFile;
     char* outputFile;
+    char* nnInputFile;
     int showImage;
     int nbIterations;
     int minibatch_size;
