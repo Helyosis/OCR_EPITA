@@ -44,7 +44,7 @@ void feedForward(struct NeuralNetwork* nnPtr){
     sigmoid(nnPtr->hA, nnPtr->h,l);
     matMult(nnPtr->hA,nnPtr->wy,1,l,k,nnPtr->y);
     matAdd(nnPtr->y,nnPtr->by,1,k);
-    softMax(nnPtr->yA,nnPtr->y,k);
+    sigmoid(nnPtr->yA,nnPtr->y,k);
 }
 
 void writeMat(int height, int width,FILE* fptr,double* l){
@@ -107,7 +107,7 @@ double* predict(char* imageFileName, char* SavefileName){
     nnPtr->input=img->pixVect;
     feedForward(nnPtr);
     double* res=malloc(nnPtr->nbNBL[2]*sizeof(double));
-    memcpy(res,nnPtr->y,nnPtr->nbNBL[2]);
+    memcpy(res,nnPtr->yA,nnPtr->nbNBL[2]);
     freeNn(nnPtr);
     free(nnPtr);
     return res;

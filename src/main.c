@@ -16,6 +16,7 @@
 #include "Verbose.h"
 #include "ImageProcessing.h"
 #include "NeuralNetwork/TrainNeuralNet.h"
+#include "NeuralNetwork/NeuralNet.h"
 #include "Utils.h"
 
 // Macros used to transform enum to string
@@ -38,9 +39,12 @@ static const char* ARGS_HELP =
     "[ Train mode specific options ]\n"
     "   -n nb: Specifiy the number of iterations to train the neural net with (default is 100 000)\n"
     "   -o file: Specify the output file to save the neural network\n"
-    "   --batch-size s: Specify the numbers of elements in a minibatch size (default 100)\n"
+    "   --batch-size n / -b n: Specify the numbers of elements in a minibatch size (default 100)\n"
     "   --nb-images n: Specify the number of image to train with. (default 8228)\n"
-    "   --learning-rate n / --step-size n: Specify the step size (default 0.25)\n"
+    "   --learning-rate n / --step-size n / -l n: Specify the step size (default 0.25)\n"
+    "[ Predict mode specific options ]\n"
+    "   -i file: Specify the image file to predict the digit"
+    "   -a file: Specify the file containing the weights and biais of the neural network"
     "[ General options ]\n"
     "   -v: Increase the verbose level (default 0), can be used up to 3 times\n"
     "   --mode mode: Specify the mode to use. Can be one of IMAGE/TRAIN/GUI (default is GUI)\n"
@@ -59,6 +63,7 @@ int main(int argc, char **argv)
     t_options options = {
         NULL,   // inputFile
         NULL,   // outputFile
+        NULL,   // nnInputFile
         0,      // showImage
         100000, // nbIterations
         100,    // miniBatch size
@@ -167,6 +172,17 @@ int main(int argc, char **argv)
         if (options.outputFile == NULL)
             options.outputFile = "result_training.txt";
         trainNn(options);
+        break;
+    case PREDICT:
+        if (options.inputFile == NULL)
+            error_s("Predict mode: flag -i is required");
+        if (options.nnInputFile == NULL)
+            options.nnInputFile = "result_training.txt";
+
+        double* result = predict(options.inputFile, options.nnInputFile);
+        for (int i = 0; i < 9; ++i)
+            printf("%f ", result[i]);
+        printf("\n");
         break;
 
     default:
