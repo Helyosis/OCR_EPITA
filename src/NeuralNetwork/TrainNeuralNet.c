@@ -48,24 +48,23 @@ void gradErrorL(double* y, double* tO, double* res, int k){
     matSub(y, tO, res, 1, k);
 }
 // Propagate the output error to the hidden layer
-double* gradErrorH(double* error, double* w, double* nBh, NN nnPtr){
+void gradErrorH(double* error, double* w, double* nBh, NN nnPtr){
     matTranspose(w, nnPtr->wT, nnPtr->nbNBL[1], nnPtr->nbNBL[2]);
     matMult(error, nnPtr->wT, 1, nnPtr->nbNBL[2], nnPtr->nbNBL[1], nBh);
     sigmoidPrime(nnPtr->hA, nnPtr->nbNBL[1], nnPtr);
     hadamardProduct(nBh, nnPtr->hAP, 1, nnPtr->nbNBL[1]);
-    return nBh;
 }
 // Back propagation: for each layer propagate the error of the predicted output
 void backPropagation(NN nnPtr){
     gradErrorL(nnPtr->yA, nnPtr->tOutput, nnPtr->error, nnPtr->nbNBL[2]);
     matAdd(nnPtr->nablaBy,nnPtr->error,1,nnPtr->nbNBL[2]);
-    double* errorH = gradErrorH(nnPtr->error, nnPtr->wy, nnPtr->errorH, nnPtr);
+    gradErrorH(nnPtr->error, nnPtr->wy, nnPtr->errorH, nnPtr);
     matAdd(nnPtr->nablaBh,nnPtr->errorH,1,nnPtr->nbNBL[1]);
     //hA is transposed so we invert dim
     matMult(nnPtr->hA, nnPtr->error, nnPtr->nbNBL[1], 1, nnPtr->nbNBL[2], nnPtr->nablaWyI);
     matAdd(nnPtr->nablaWy, nnPtr->nablaWyI, nnPtr->nbNBL[1], nnPtr->nbNBL[2]);
     //input is transposed so we invert dim
-    matMult(nnPtr->input, errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], nnPtr->nablaWhI);
+    matMult(nnPtr->input, nnPtr->errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], nnPtr->nablaWhI);
     matAdd(nnPtr->nablaWh, nnPtr->nablaWhI, nnPtr->nbNBL[0], nnPtr->nbNBL[1]);
 }
 
