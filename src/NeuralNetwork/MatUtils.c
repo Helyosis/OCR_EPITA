@@ -3,6 +3,7 @@
 #pragma GCC diagnostic ignored "-Wtype-limits"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #pragma GCC diagnostic pop
 
 void printMat(double* mat, int height, int width){
@@ -15,8 +16,9 @@ void printMat(double* mat, int height, int width){
     printf("\n");
 }
 
-// Multiply matA * matB
-void matricesMult(double* matA, double* matB,int heightA,int widthA, int widthB, double* result) {
+/* Multiply matA * matB 
+@param the height of the matA, the width of matA, the width of matB, the result mat */
+void matMult(double* matA, double* matB,int heightA, int widthA, int widthB, double* result) {
     for(int iHeightA=0;iHeightA<heightA;iHeightA++){
         for(int iWidthB=0;iWidthB<widthB;iWidthB++){
             double sum=0;
@@ -25,30 +27,28 @@ void matricesMult(double* matA, double* matB,int heightA,int widthA, int widthB,
             }
             result[iHeightA*widthB+iWidthB] = sum;
         }   
-    } 
+    }
 }
 
-// Add matA (column) + matB (column)
-void matricesCAdd(double* matA, double* matB, int heightA) {
-    for(int iHeight=0;iHeight<heightA;iHeight++){
-        matA[iHeight]+=matB[iHeight];
-    }
-} 
-// Substract matA (column) + matB (column)
-void matricesCSub(double* matA, double* matB, int heightA) {
-    for(int iHeight=0;iHeight<heightA;iHeight++){
-        matA[iHeight]-=matB[iHeight];
-    }
-} 
-// Add matA + matB
-void matricesAdd(double* matA, double* matB, int height,int width){
+// Substract: matC = matA - matB
+void matSub(double* matA, double* matB,double* matC, int height,int width){
     for(int iHeight = 0; iHeight < height; ++iHeight)
-	{
-		for(int iWidth=0; iWidth < width; ++iWidth)
-		{
-			matA[iHeight*width+iWidth] = matA[iHeight*width+iWidth] + matB[iHeight*width+iWidth];
-		}
-	}
+    {
+        for(int iWidth=0; iWidth < width; ++iWidth)
+        {
+            matC[iHeight*width+iWidth] = matA[iHeight*width+iWidth] - matB[iHeight*width+iWidth];
+        }
+    }
+}
+// Add: matA = matA + matB
+void matAdd(double* matA, double* matB, int height,int width){
+    for(int iHeight = 0; iHeight < height; ++iHeight)
+    {
+        for(int iWidth=0; iWidth < width; ++iWidth)
+        {
+            matA[iHeight*width+iWidth] = matA[iHeight*width+iWidth] + matB[iHeight*width+iWidth];
+        }
+    }
 }
 
 // Tranpose a mat
@@ -61,14 +61,12 @@ void matTranspose(double* mat, double* result, int height, int width){
 }
 
 // Hadamard product: result[i][j] = matA[i][j] * matB[i][j]
-double* hadamardProduct(double* matA, double* matB,int width, int height){
-    double* result  = calloc(width*height,sizeof(double));
+void hadamardProduct(double* matA, double* matB, int height, int width){
     for(int iHeight=0;iHeight<height;iHeight++){
         for(int iWidth=0; iWidth<width;iWidth++){
-            result[iHeight*width+iWidth] = matA[iHeight*width+iWidth] * matB[iHeight*width+iWidth];
+            matA[iHeight*width+iWidth] = matA[iHeight*width+iWidth] * matB[iHeight*width+iWidth];
         }
     }
-    return result;
 }
 
 // Function to get cofactor of A[p][q] in temp[][]. n is current
@@ -182,9 +180,3 @@ int inverse(double *A, double *inverse, int N)
     free(adj);
     return !0;
 }
-
-
-
-
-
-

@@ -51,7 +51,7 @@ int processImage(t_options options) {
     }
 
     printf("[+] Successfully loaded %s (w=%d, h=%d)\n",
-           in_filename, image->w, image->h);
+           options.inputFile, image->w, image->h);
     Apply_grayscale_filter(image);
     printf("[*] Applied grayscale\n");
 
@@ -93,7 +93,7 @@ int processImage(t_options options) {
     printf("[-] Perspective transformation is not implemented yet. Skipping.\n");
 
     image = Rotation_shearing(image,105);
-    IMG_SavePNG(image, out_filename);
+    IMG_SavePNG(image, options.outputFile);
     if (options.showImage){
         displaySurface(renderer, image);
         wait_for_keypressed();
@@ -140,13 +140,13 @@ int processImage(t_options options) {
 
     char sdk[] = "435269781682571493197834562826195347374682915951743628519326874248957136763418259";
     char srdb[] = "...26.7.168..7..9.19...45..82.1...4...46.29...5...3.28..93...74.4..5..367.3.18...";
-    SDL_Surface *res = Result_construct(sdk, srdb);
+    SDL_Surface *resu = Result_construct(sdk, srdb);
     if(options.showImage) {
-        displaySurface(renderer, res);
+        displaySurface(renderer, resu);
         wait_for_keypressed();
     }
-    SDL_SaveBMP(res, "result.bmp");
-    SDL_FreeSurface(res);
+    SDL_SaveBMP(resu, "result.bmp");
+    SDL_FreeSurface(resu);
     SDL_FreeSurface(image);
     SDL_FreeSurface(Homographic);
     

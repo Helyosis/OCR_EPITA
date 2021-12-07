@@ -27,7 +27,7 @@ const char* MODE_STRING[] = {
     FOREACH_MODE(GENERATE_STRING)
 };
 
-#define OPTSTR "hvi:o:n:m:"
+#define OPTSTR "hvi:o:n:m:b:c:l:"
 
 static const char* ARGS_HELP =
     "%s 3.14.15 help:\n"
@@ -37,10 +37,14 @@ static const char* ARGS_HELP =
     "   --show: Show the image being processed, one step at a time\n"
     "[ Train mode specific options ]\n"
     "   -n nb: Specifiy the number of iterations to train the neural net with (default is 100 000)\n"
+    "   -o file: Specify the output file to save the neural network\n"
+    "   --batch-size s: Specify the numbers of elements in a minibatch size (default 100)\n"
+    "   --nb-images n: Specify the number of image to train with. (default 8228)\n"
+    "   --learning-rate n / --step-size n: Specify the step size (default 0.25)\n"
     "[ General options ]\n"
     "   -v: Increase the verbose level (default 0), can be used up to 3 times\n"
     "   --mode mode: Specify the mode to use. Can be one of IMAGE/TRAIN/GUI (default is GUI)\n"
-    "   -h / --help: Show this help and \n"
+    "   -h / --help: Show this help and quit\n"
     ;
 
 
@@ -53,17 +57,24 @@ int main(int argc, char **argv)
     char* progname = argv[0];
 
     t_options options = {
-        NULL,
-        NULL,
-        0,
-        100000,
-        GUI,
+        NULL,   // inputFile
+        NULL,   // outputFile
+        0,      // showImage
+        100000, // nbIterations
+        100,    // miniBatch size
+        8228,   // NbImages
+        0.25,   // Learning rate
+        GUI,    // mode
     };
 
     static struct option long_options[] = {
         {"mode", required_argument, 0, 'm'},
         {"show", no_argument, 0, 's'},
         {"help", no_argument, 0, 'h'},
+        {"batch-size", required_argument, 0, 'b'},
+        {"nb-images", required_argument, 0, 'c'},
+        {"learning-rate", required_argument, 0, 'l'},
+        {"step-size", required_argument, 0, 'l'},
         {0, 0, 0, 0}
     };
 
@@ -116,8 +127,21 @@ int main(int argc, char **argv)
         case 's':
             options.showImage = 1;
             break;
-            
+        case 'n':
+            options.nbIterations = atoi(optarg);
+            break;
+        case 'b':
+            options.minibatch_size = atoi(optarg);
+            break;
+        case 'c':
+            options.nbImages = atoi(optarg);
+            break;
+        case 'l':
+            options.learningRate = atof(optarg);
+            break;
+
         default: // c == '?'
+            printf("%c\n", c);
             usage(progname, 1);
         }
     }
@@ -142,7 +166,7 @@ int main(int argc, char **argv)
     case TRAIN:
         if (options.outputFile == NULL)
             options.outputFile = "result_training.txt";
-        trainNn(options.nbIterations, options.outputFile);
+        trainNn(options);
         break;
 
     default:

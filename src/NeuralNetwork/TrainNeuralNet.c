@@ -4,106 +4,129 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <err.h>
+#include <time.h>
 #pragma GCC diagnostic pop
 
 #include "NeuralNet.h"
 #include "NeuralNetInit.h"
 #include "MatUtils.h"
+#include "LoadDataSet.h"
+#include "../Utils.h"
+#include "../Verbose.h"
 
-//TODO
+typedef struct NeuralNetwork* NN;
 // Gradient descent, m is the number of training sample
 // New weight  =  old weight-(stepSize/m)*(nabla of the weight)
 // New bias    =  old bias-(stepSize/m)*(nabla of the bias)
-void gradientDescent(struct NeuralNetwork* nnPtr){
-    double stepSize = 0.1;//0.25
-    for(int iHeight = 0;iHeight<nnPtr->nbNBL[1];iHeight++){
-        for(int iWidth = 0; iWidth<nnPtr->nbNBL[0];iWidth++){
-            nnPtr->w1[iHeight*nnPtr->nbNBL[0]+iWidth] +=  stepSize*nnPtr->nablaW1[iHeight*nnPtr->nbNBL[0]+iWidth];
-            nnPtr->b1[iHeight] +=  -stepSize*nnPtr->nablaB1[iHeight];
+void gradientDescent(NN nnPtr, int s, double learningRate){
+    double stepSize = learningRate;
+    for(int iHeight = 0;iHeight<nnPtr->nbNBL[0];iHeight++){
+        for(int iWidth = 0; iWidth<nnPtr->nbNBL[1];iWidth++){
+            nnPtr->wh[iHeight*nnPtr->nbNBL[1]+iWidth]  -= stepSize*(1/s)*nnPtr->nablaWh[iHeight*nnPtr->nbNBL[1]+iWidth];
+            if(iHeight==0)
+                nnPtr->bh[iWidth] -= stepSize*(1/s)*nnPtr->nablaBh[iWidth];
         }
     }
-    for(int iHeight = 0;iHeight<nnPtr->nbNBL[2];iHeight++){
-        for(int iWidth = 0; iWidth<nnPtr->nbNBL[1];iWidth++){
-            nnPtr->w2[iHeight*nnPtr->nbNBL[1]+iWidth] +=  stepSize*nnPtr->nablaW2[iHeight*nnPtr->nbNBL[1]+iWidth];
-            nnPtr->b2[iHeight] +=  -stepSize*nnPtr->nablaB2[iHeight];
+    for(int iHeight = 0;iHeight<nnPtr->nbNBL[1];iHeight++){
+        for(int iWidth = 0; iWidth<nnPtr->nbNBL[2];iWidth++){
+            nnPtr->wy[iHeight*nnPtr->nbNBL[2]+iWidth] -= stepSize*(1/s)*nnPtr->nablaWy[iHeight*nnPtr->nbNBL[2]+iWidth];
+            if(iHeight==0)
+                nnPtr->by[iWidth] -= stepSize*(1/s)*nnPtr->nablaBy[iWidth];
         }
     }
 }
 
-// Calculate the output error
-double calculateGradErrorOutputLayer(double y, double error){ 
-    return y*(1-y)*error;
+void sigmoidPrime(double* h, int width, NN nnPtr){
+    for(int i = 0;i<width;i++)
+        nnPtr->hAP[i] = 1;
+    matSub(nnPtr->hAP, h, nnPtr->hAP, 1, width);
+    hadamardProduct(nnPtr->hAP, h, 1, width);
+}
+// Calculate the output error: error =  y-y*
+void gradErrorL(double* y, double* tO, double* res, int k){
+    matSub(y, tO, res, 1, k);
 }
 // Propagate the output error to the hidden layer
-double calculateGardErrorHiddenLayer(double y, double errorGradOutputLayer, double w){
-    return y*(1-y)*errorGradOutputLayer*w;
+double* gradErrorH(double* error, double* w, double* nBh, NN nnPtr){
+    matTranspose(w, nnPtr->wT, nnPtr->nbNBL[1], nnPtr->nbNBL[2]);
+    matMult(error, nnPtr->wT, 1, nnPtr->nbNBL[2], nnPtr->nbNBL[1], nBh);
+    sigmoidPrime(nnPtr->hA, nnPtr->nbNBL[1], nnPtr);
+    hadamardProduct(nBh, nnPtr->hAP, 1, nnPtr->nbNBL[1]);
+    return nBh;
 }
 // Back propagation: for each layer propagate the error of the predicted output
-void backPropagation(struct NeuralNetwork* nnPtr, double* targetOutput){
-    double errorOutputLayer  =  targetOutput[0]-nnPtr->outputLayerA[0];
-    double gradErrorOutputLayer  =  calculateGradErrorOutputLayer(nnPtr->outputLayerA[0],errorOutputLayer);
-    nnPtr->nablaW2[0] = nnPtr->hiddenLayerA[0]*gradErrorOutputLayer;
-    nnPtr->nablaW2[1] = nnPtr->hiddenLayerA[1]*gradErrorOutputLayer;
-    double errorGradHiddenLayer1 = calculateGardErrorHiddenLayer(nnPtr->hiddenLayerA[0],errorOutputLayer,nnPtr->w2[0]);
-    double errorGradHiddenLayer2 = calculateGardErrorHiddenLayer(nnPtr->hiddenLayerA[1],errorOutputLayer,nnPtr->w2[1]);
-    nnPtr->nablaB2[0] = errorGradHiddenLayer1;
-    nnPtr->nablaW1[0] = nnPtr->input[0]*errorGradHiddenLayer1;
-    nnPtr->nablaW1[1] = nnPtr->input[1]*errorGradHiddenLayer1;
-    nnPtr->nablaW1[2] = nnPtr->input[0]*errorGradHiddenLayer2;
-    nnPtr->nablaW1[3] = nnPtr->input[1]*errorGradHiddenLayer2;
-    nnPtr->nablaB1[0] = errorGradHiddenLayer1;
-    nnPtr->nablaB1[1] = errorGradHiddenLayer2;
+void backPropagation(NN nnPtr){
+    gradErrorL(nnPtr->yA, nnPtr->tOutput, nnPtr->nablaBy, nnPtr->nbNBL[2]);
+    double* error = nnPtr->nablaBy;
+    double* errorH = gradErrorH(error, nnPtr->wy, nnPtr->nablaBh, nnPtr);
+    //hA is transposed so we invert dim
+    matMult(nnPtr->hA, error,nnPtr->nbNBL[1], 1, nnPtr->nbNBL[2], nnPtr->nablaWy);
+    //input is transposed so we invert dim
+    matMult(nnPtr->input, errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], nnPtr->nablaWh);
 }
 
-// Creat sample: two inputs 0 or 1 and the target output
-double* creatSample(int nbSample){
-    double* sampleList = calloc(nbSample*3,sizeof(double));
-    sampleList[0]  =  0;
-    sampleList[1]  =  0;
-    sampleList[2]  =  0;
-    sampleList[3]  =  1;
-    sampleList[4]  =  1;
-    sampleList[5]  =  0;
-    sampleList[6]  =  1;
-    sampleList[7]  =  0;
-    sampleList[8]  =  1;
-    sampleList[9]  =  0;
-    sampleList[10]  =  1;
-    sampleList[11]  =  1;
-    return sampleList;
+void swap(struct tImage* v1, struct tImage* v2){
+    struct tImage tmp=*v1;
+    *v1=*v2;
+    *v2=tmp;
 }
-// Train the neural network
-void trainNn(int iterationLimit, char* filename){
-    int nbSample = 4;
-    double* targetOutput = calloc(1,sizeof(double));
-    double* sampleList = creatSample(nbSample);
-    int* nbNBL = calloc(3, sizeof(3));
-    nbNBL[0]  =  2; nbNBL[1]  =  2; nbNBL[2]  =  1;
-    double* input = calloc(2, sizeof(double));
-    struct NeuralNetwork* nnPtr =  initNn(nbNBL,input);
-    int iterationNum = 0;
 
-    while(iterationNum<iterationLimit){
-        for(int iSample = 0;iSample<nbSample*3;iSample += 3){
-            nnPtr->input[0] = sampleList[iSample];
-            nnPtr->input[1] = sampleList[iSample+1];
-            targetOutput[0] = sampleList[iSample+2];
-            feedForward(nnPtr);
-	        backPropagation(nnPtr,targetOutput);
-            gradientDescent(nnPtr);
-            if(iterationNum==iterationLimit-1){
-            printf("I1 = %f, I2 = %f, T = %f, O = %f\n",
-            sampleList[iSample],sampleList[iSample+1],
-            sampleList[iSample+2],nnPtr->outputLayerA[0]);
-            }
-        }
-        iterationNum += 1;
+void shuffle(struct tImage** v, int size){
+    srand(time(NULL));
+    for(int i=0;i<size;i++)
+        swap(v[rand()%size],v[rand()%size]);
+}
+
+void updateMiniBatch(NN nnPtr, struct tImage** v, int l, int u, int s, double learningRate){
+    for(; l<u ;l++){
+        nnPtr->input=v[l]->pixVect;
+        feedForward(nnPtr);
+        nnPtr->tOutput[v[l]->label-1]=1;
+        backPropagation(nnPtr);
+        nnPtr->tOutput[v[l]->label-1]=0;
     }
-    saveNn(filename,nnPtr);
-    free(nbNBL);
-    free(input);
-    free(targetOutput);
+    gradientDescent(nnPtr, s, learningRate);
+}
+
+// Train the neural network
+void trainNn(t_options options){
+    int iterationLimit = options.nbIterations;
+    char* filename = options.outputFile;
+    //TODO if does not converge change the wb
+    int* nbNBL = calloc(3, sizeof(int));
+    info_s("SSSS");
+    nbNBL[0]  =  784; 
+    nbNBL[1]  =  30; 
+    nbNBL[2]  =  9;
+    double* input = NULL;
+    NN nnPtr =  initNn(nbNBL, input);
+    int size= options.nbImages;
+    struct tImage** vect=imageVect(size);
+    int sizeS = options.minibatch_size;
+    for(int i=0;i<iterationLimit;i++){
+        info_s("Iteration %d", i);
+        shuffle(vect, size);
+        for(int i = 0; i<=size-sizeS ; i+=sizeS){
+            int u=i+sizeS;
+            updateMiniBatch(nnPtr, vect, i, u, sizeS, options.learningRate);
+        }
+        //if(iterationLimit-1==i){
+            for(int i = 0; i < size ; i+=1){
+                nnPtr->input = vect[i]->pixVect;
+                feedForward(nnPtr);
+                if (iterationLimit - 1 == i) {
+                    printMat(nnPtr->nablaBy, 1, nnPtr->nbNBL[2]);
+                }
+                else
+                    info_s("T=%d, O=%f",
+                        vect[i]->label,nnPtr->yA[vect[i]->label-1]);
+            }
+        //}
+        
+    }
+    freeImVect(vect, (size_t) size);
+    saveNn(filename, nnPtr);
     freeNn(nnPtr);
     free(nnPtr);
-    free(sampleList);
 }

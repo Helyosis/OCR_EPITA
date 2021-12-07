@@ -266,8 +266,6 @@ void on_rot_l_clicked(){
 	image = Rotation_shearing(image,angle);
 	save_image(image,"Image/actualrot.png");
 	reload_img("Image/actualrot.png");
-
-    //last_file = "Image/actualrot.png";
 }
 
 void on_rot_r_clicked(){
