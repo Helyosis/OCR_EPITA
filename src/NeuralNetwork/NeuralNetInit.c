@@ -13,7 +13,7 @@
 double randomDouble(double fMax, double fMin){
     //double x = (double)rand()/(double)(RAND_MAX);
     double f = (double)rand() / RAND_MAX;
-    return fMin + f * (fMax - fMin);
+    return fMin + f * (fMax - fMin);q
 }
 
 // Initialize the weight with uniform distribution: 
