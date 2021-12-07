@@ -34,10 +34,10 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
         if(grid[i] != '0')
         {
             SDL_Rect rect = {x, y, 0, 0};
-            char *text = malloc(2);
+            char *text = malloc(2 * sizeof(char));
             text[0] = grid[i];
             text[1] = '\0';
-            char *path = malloc(strlen("/tmp/Numbers/5-") + strlen(text) + strlen(".png") + 1);
+            char *path = malloc(50 * sizeof(char));
             strcpy(path, "/tmp/Numbers/5-");
             strcat(path, text);
             strcat(path, ".png");

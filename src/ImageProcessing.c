@@ -7,6 +7,7 @@
 #include <err.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/stat.h>
 #pragma GCC diagnostic pop
 
 #include "ImageProcessing/GrayScale.h"
@@ -122,13 +123,15 @@ int processImage(t_options options) {
     //    }
     //}
     char *startingGrid = calloc(82, sizeof(char));
-    for(int i = 0; i < 82; i++){
+    for(int i = 0; i < 81; i++){
         startingGrid[i] = '.';
     }
     for(int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++){
             char *path = malloc(60);
             sprintf(path, "%s/x%d-y%d.bmp", SC_DESTDIR, i, j);
+            struct stat buff;
+            if (stat(path, &buff) == -1) continue;
             double *resultnet = predict(path,PATH_WEIGHT);//predict(path, PATH_WEIGHT);
             double max = -1;
             int nb = 0;
@@ -156,7 +159,12 @@ int processImage(t_options options) {
         wait_for_keypressed();
     }
 
-    SDL_SaveBMP(resu, "result.bmp");
+
+    // verify the extension
+    if(strlen(options.outputFile) > 4 && !strcmp(options.outputFile + strlen(options.outputFile) - 4, ".bmp"))
+        SDL_SaveBMP(resu, options.outputFile);
+    else if(strlen(options.outputFile) > 4 && !strcmp(options.outputFile + strlen(options.outputFile) - 4, ".png"))
+        IMG_SavePNG(resu, options.outputFile);
     SDL_FreeSurface(resu);
     SDL_FreeSurface(image);
     SDL_FreeSurface(Homographic);

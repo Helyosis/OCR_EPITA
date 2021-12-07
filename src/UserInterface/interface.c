@@ -10,9 +10,12 @@
 #include <gtk/gtk.h>
 #include <math.h>
 #include <ctype.h>
-//#include "SDL/SDL.h"
+#include <SDL.h>
 #include <stdbool.h>
 #include <err.h>
+
+#define DEFINE_GLOBALS
+
 #include "../ImageProcessing/GrayScale.h"
 #include "../ImageProcessing/NoiseReduction.h"
 #include "../ImageProcessing/BlackAndWhite.h"
@@ -23,10 +26,12 @@
 #include "../ImageProcessing/HomographicTransphorm.h"
 #include "../ImageProcessing/OrderPoints.h"
 #include "../ImageProcessing/BlobDetection.h"
-
-#define DEFINE_GLOBALS
-
 #include "../Verbose.h"
+
+int VERBOSE_LEVEL = 0;
+const char* MODE_STRING[] = {
+    FOREACH_MODE(GENERATE_STRING)
+};
 
 // GtK Items
 GtkWidget	*main_window;
@@ -109,7 +114,21 @@ void reload_img(char *path){
         	gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it
         	printf("[-] deleting older input\n");
         }
-    sudoku_img = gtk_image_new_from_file(path);
+
+	SDL_Surface *original_image = IMG_Load(path);
+	SDL_Surface *image = SDL_ConvertSurfaceFormat(
+	original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+
+	orderedPoints points;
+	points.ul = (Point) {0, 0};
+	points.ur = (Point) {image->w, 0};
+	points.ll = (Point) {0, image->h};
+	points.lr = (Point) {image->w, image->h};
+
+	SDL_Surface *img = HomographicTransform(image, points, 516);
+	save_image(img, "Image/resized.png");
+
+    sudoku_img = gtk_image_new_from_file("Image/resized.png");
 	gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
     gtk_widget_show(sudoku_img);
     gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical);
@@ -150,13 +169,12 @@ void on_open_activated(){
 			gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img);
 			printf("[-] deleting older input\n");
 		}
+
+
 		SDL_Surface *original_image = IMG_Load(last_file);
-        SDL_Surface *image = SDL_ConvertSurfaceFormat(
-        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-        
-        orderedPoints points = orderPoints(image); 
-        SDL_Surface *img = HomographicTransform(image, points, 516);
-        save_image(img, "Image/actual.png");
+		SDL_Surface *image = SDL_ConvertSurfaceFormat(original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+		
+        save_image(image, "Image/actual.png");
         reload_img("Image/actual.png");
         last_file = "Image/actual.png";
         gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
@@ -317,6 +335,7 @@ void on_autosolve(){
     t_options options = {
         last_file,          //inputfile
         "Image/auto.png",   //output
+		NULL,
         0,
         100000,
         100,
@@ -326,8 +345,8 @@ void on_autosolve(){
     };
 
     processImage(options);
-    //reload_img("Image/auto.png");
-    //last_file = "Image/auto.png";
+    reload_img("Image/auto.png");
+    last_file = "Image/auto.png";
 }
 void biggest_blob(){
     

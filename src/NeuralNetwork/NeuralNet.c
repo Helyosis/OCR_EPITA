@@ -76,7 +76,8 @@ void saveNn(char* fileName, struct NeuralNetwork* nnPtr){
 void loadMat(int height, int width,FILE* fptr,double* l){
     for (int iHeight = 0; iHeight < height; iHeight++) {
         for (int iWidth = 0; iWidth < width; iWidth++) {
-            fscanf(fptr,"%lf",&l[iHeight*width+iWidth]);
+            if (fscanf(fptr,"%lf",&l[iHeight*width+iWidth]) != 1)
+                error_s("Badly formated file.");
         }
     }
 }
@@ -88,9 +89,14 @@ struct NeuralNetwork* loadNn(char* fileName){
         error_s("Cannot open %s. No such file or directory.", fileName);
 	}
     int* nbNBL = calloc(3, sizeof(int));
-    fscanf (fptr, "%d", &nbNBL[0]);
-    fscanf (fptr, "%d", &nbNBL[1]);
-    fscanf (fptr, "%d", &nbNBL[2]);
+
+    if (fscanf (fptr, "%d", &nbNBL[0]) != 1)
+        error_s("Invalid file: %s", fileName);
+    if (fscanf (fptr, "%d", &nbNBL[1]) != 1)
+        error_s("Invalid file: %s", fileName);
+
+    if (fscanf (fptr, "%d", &nbNBL[2]) != 1)
+        error_s("Invalid file: %s", fileName);
     struct NeuralNetwork* nnPtr =  initNn(nbNBL, NULL);
     loadMat(nnPtr->nbNBL[0], nnPtr->nbNBL[1],fptr,nnPtr->wh);
     loadMat(1, nnPtr->nbNBL[1],fptr,nnPtr->bh);

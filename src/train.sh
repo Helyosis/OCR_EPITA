@@ -7,7 +7,7 @@ i=0
 while [ $i -lt 200000 ]
 do
     echo "Iteration $i"
-    ./main -m train -n 40000 --nb-images 2000 ./results/res$1.txt -vv | awk '{print $2}' >> ./weightsres/bias$1.txt
+    ./main -m train -n 40000 --nb-images 2000 ./results/res$i.txt -vv | awk '{print $2}' >> ./weightsres/bias$i.txt
     get_best_weights
     i=$[$i+1]
 done
