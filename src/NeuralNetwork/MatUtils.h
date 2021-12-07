@@ -1,6 +1,7 @@
 #ifndef MATUTILS
 #define MATUTILS
 void printMat(double* mat, int height, int width);
+int inverse(double *matrix,double *inverse, int cols);
 void matricesMult(double* matA, double* matB,int heightA,int widthA, int widthB, double* result);
 void matricesCAdd(double* matA, double *matB, int heightA);
 void matricesCSub(double* matA, double* matB, int heightA);

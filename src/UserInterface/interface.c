@@ -14,6 +14,8 @@
 #include "./utilsUI.h"
 #include "../ImageProcessing/Rotation.h"
 #include "../ImageProcessing.h"
+#include "../ImageProcessing/HomographicTransphorm.h"
+#include "../ImageProcessing/OrderPoints.h"
 
 // GtK Items
 GtkWidget	*main_window;
@@ -141,6 +143,10 @@ void on_open_activated(){
 		SDL_Surface *original_image = IMG_Load(last_file);
         SDL_Surface *image = SDL_ConvertSurfaceFormat(
             original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+        
+        orderedPoints points = orderPoints(image); 
+        image = HomographicTransform(image, points, 512);
+        
         save_image(image, "Image/actual.png");
         gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
         gtk_widget_show(sudoku_img);
@@ -289,8 +295,9 @@ void on_autosolve(){
 	SDL_Surface *original_image = IMG_Load(last_file);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    
 
-    processImage(last_file,"Image/auto.png");
+    //processImage(last_file,"Image/auto.png");
     reload_img("Image/auto.png");
     last_file = "Image/auto.png";
 }

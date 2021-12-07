@@ -15,7 +15,6 @@ double* DoubleThreshold(double* img, int nb_pixels) {
     for (int i = 0; i < nb_pixels; ++i)
         if (img[i] > maxi) maxi = img[i];
 
-    printf("maxi = %f\n", maxi);
     double highThreshold = maxi * highThresholdRatio;
     double lowThreshold  = highThreshold * lowThresholdRatio;
 

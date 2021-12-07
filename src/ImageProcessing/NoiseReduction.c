@@ -9,6 +9,7 @@
 
 #include "Pixels.h"
 #include "../Utils.h"
+#include "../Verbose.h"
 
 #define KUWAHARA_RANGE 4
 
@@ -18,7 +19,6 @@
 #ifndef M_PI
 #define M_PI  3.14159265358979323846
 #endif
-
 
 
 /* Calculate the new value of the point on this point
@@ -120,10 +120,9 @@ double Gaussian(double x, double sigma) {
     return exp(-x2 / (2 * sigma2));
 }
 
-double* Build_GaussianKernel() {
-    int kernelSize = 2 * GAUSSIAN_RANGE + 1;
+double* Build_GaussianKernel(int kernelSize) {
     double sum = 0;
-    double* kernel = malloc(kernelSize * sizeof(*kernel));
+    double* kernel = calloc(kernelSize, sizeof(*kernel));
 
     for (int x = 0; x < kernelSize; ++x) {
         double value = Gaussian(x - GAUSSIAN_RANGE, GAUSSIAN_BLUR_SIGMA);
@@ -148,10 +147,13 @@ SDL_Surface* GaussianBlur(SDL_Surface *source) {
                               source->format->Amask
             );
 
-    double* kernel = Build_GaussianKernel();
     int kernelSize = 2 * GAUSSIAN_RANGE + 1;
+    double* kernel = Build_GaussianKernel(kernelSize);
 
-    unsigned char* tempData = malloc(source->w * source->h * sizeof(*tempData));
+    unsigned char* tempData = calloc(source->w * source->h, sizeof(*tempData));
+    if (tempData == NULL) {
+        error_s("Not enough memory !");
+    }
 
     // First pass
     for (int y = 0; y < source->h; ++y) {
