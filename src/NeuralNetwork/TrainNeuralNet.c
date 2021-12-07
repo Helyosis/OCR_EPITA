@@ -28,11 +28,12 @@ void gradientDescent(NN nnPtr, int s, double learningRate){
                 nnPtr->bh[iWidth] -= stepSize*(1/s)*nnPtr->nablaBh[iWidth];
         }
     }
+
     for(int iHeight = 0;iHeight<nnPtr->nbNBL[1];iHeight++){
         for(int iWidth = 0; iWidth<nnPtr->nbNBL[2];iWidth++){
             nnPtr->wy[iHeight*nnPtr->nbNBL[2]+iWidth] -= stepSize*(1/s)*nnPtr->nablaWy[iHeight*nnPtr->nbNBL[2]+iWidth];
             if(iHeight==0)
-                nnPtr->by[iWidth] -= stepSize*(1/s)*nnPtr->nablaBy[iWidth];
+                nnPtr->by[iWidth] -= stepSize * (1/s)*nnPtr->nablaBy[iWidth];
         }
     }
 }
@@ -94,7 +95,7 @@ void trainNn(t_options options){
     for(int i=0;i<iterationLimit;i++){
         if (i % 1000 == 0)
             info_s("Iteration %d", i);
-        //shuffle(vect, size);
+        shuffle(vect, size);
 
         for (int iImage = 0; iImage < size; ++iImage) {
             nnPtr->input= vect[iImage]->pixVect;

@@ -43,7 +43,7 @@ int processImage(t_options options) {
     }
 
     SDL_Window *window;
-    SDL_Renderer *renderer;
+    SDL_Renderer *renderer = NULL;
     if (options.showImage) {
         SDL_Init(SDL_INIT_VIDEO);
         window = SDL_CreateWindow("My GUI lol",
@@ -127,13 +127,8 @@ int processImage(t_options options) {
     }
     for(int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++){
-            char *path = malloc(sizeof(char)*(strlen(SC_DESTDIR) + 9));
-            strcpy(path, SC_DESTDIR);
-            strcat(path, "x");
-            strcat(path,(char) (i+'0'));
-            strcat(path, "-y");
-            strcat(path,(char) (j+'0'));
-            strcat(path, ".bmp");
+            char *path = malloc(60);
+            sprintf(path, "%s/x%d-y%d.bmp", SC_DESTDIR, i, j);
             double resultnet[] = {0.0};//predict(path, PATH_WEIGHT);
             double max = -1;
             for (size_t k = 0; k < 8; k++)
@@ -146,6 +141,8 @@ int processImage(t_options options) {
                 
             }
             startingGrid[i*9+j] = (char)((int)(max) + '0');
+
+            free(path);
         }
     }
     char *solved = calloc(82, sizeof(char));

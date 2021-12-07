@@ -28,7 +28,7 @@ const char* MODE_STRING[] = {
     FOREACH_MODE(GENERATE_STRING)
 };
 
-#define OPTSTR "hvi:o:n:m:b:c:l:"
+#define OPTSTR "hvi:o:n:m:b:c:l:a:"
 
 static const char* ARGS_HELP =
     "%s 3.14.15 help:\n"
@@ -43,8 +43,8 @@ static const char* ARGS_HELP =
     "   --nb-images n: Specify the number of image to train with. (default 8228)\n"
     "   --learning-rate n / --step-size n / -l n: Specify the step size (default 0.25)\n"
     "[ Predict mode specific options ]\n"
-    "   -i file: Specify the image file to predict the digit"
-    "   -a file: Specify the file containing the weights and biais of the neural network"
+    "   -i file: Specify the image file to predict the digit\n"
+    "   -a file: Specify the file containing the weights and biais of the neural network\n"
     "[ General options ]\n"
     "   -v: Increase the verbose level (default 0), can be used up to 3 times\n"
     "   --mode mode: Specify the mode to use. Can be one of IMAGE/TRAIN/GUI (default is GUI)\n"
@@ -91,7 +91,6 @@ int main(int argc, char **argv)
 
         if (c == -1)
             break;
-
         switch(c) {
         case 'v':
             VERBOSE_LEVEL += 1;
@@ -143,6 +142,9 @@ int main(int argc, char **argv)
             break;
         case 'l':
             options.learningRate = atof(optarg);
+            break;
+        case 'a':
+            options.nnInputFile = optarg;
             break;
 
         default: // c == '?'

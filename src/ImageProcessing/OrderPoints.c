@@ -10,16 +10,16 @@
 orderedPoints orderPoints(SDL_Surface* src) {
     // The top left (or lower right) will have the mimimum (or maximum) sum of x + y
     size_t minSum = src->w + src->h; // By default we'll say it's far right
-    Point ul;
+    Point ul = {0, 0};
 
     size_t maxSum = 0;
-    Point lr;
+    Point lr = {0, 0};
 
     int minDiff = src->w > src->h ? src->w : src->h;
-    Point ll;
+    Point ll = {0, 0};
 
     int maxDiff = -1 * minDiff;
-    Point ur;
+    Point ur = {0, 0};
 
     for (int y = 0; y < src->h; ++y) {
         for (int x = 0; x < src->w; ++x) {

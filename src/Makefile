@@ -14,7 +14,6 @@ DEP = ${SRC:.c=.d}
 all: main
 
 main: ${OBJ}
-	cp -r ../../Ressources/Numbers /tmp/ && cp ../../Images/resultGrid.jpg /tmp/
 
 .PHONY: clean
 clean:
