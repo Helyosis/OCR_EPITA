@@ -116,8 +116,8 @@ void trainNn(t_options options){
                 printMat(nnPtr->nablaBy, 1, nnPtr->nbNBL[2]);
             }
             else
-                log_s("T=%d, O=%f",
-                    vect[j]->label,nnPtr->yA[vect[j]->label-1]);
+                log_s("%f",
+                    nnPtr->yA[vect[j]->label-1]);
     }
 
     freeImVect(vect, (size_t) size);
