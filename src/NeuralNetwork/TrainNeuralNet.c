@@ -57,13 +57,16 @@ double* gradErrorH(double* error, double* w, double* nBh, NN nnPtr){
 }
 // Back propagation: for each layer propagate the error of the predicted output
 void backPropagation(NN nnPtr){
-    gradErrorL(nnPtr->yA, nnPtr->tOutput, nnPtr->nablaBy, nnPtr->nbNBL[2]);
-    double* error = nnPtr->nablaBy;
-    double* errorH = gradErrorH(error, nnPtr->wy, nnPtr->nablaBh, nnPtr);
+    gradErrorL(nnPtr->yA, nnPtr->tOutput, nnPtr->error, nnPtr->nbNBL[2]);
+    matAdd(nnPtr->nablaBy,nnPtr->error,1,nnPtr->nbNBL[2]);
+    double* errorH = gradErrorH(nnPtr->error, nnPtr->wy, nnPtr->errorH, nnPtr);
+    matAdd(nnPtr->nablaBh,nnPtr->errorH,1,nnPtr->nbNBL[1]);
     //hA is transposed so we invert dim
-    matMult(nnPtr->hA, error,nnPtr->nbNBL[1], 1, nnPtr->nbNBL[2], nnPtr->nablaWy);
+    matMult(nnPtr->hA, nnPtr->error, nnPtr->nbNBL[1], 1, nnPtr->nbNBL[2], nnPtr->nablaWyI);
+    matAdd(nnPtr->nablaWy, nnPtr->nablaWyI, nnPtr->nbNBL[1], nnPtr->nbNBL[2]);
     //input is transposed so we invert dim
-    matMult(nnPtr->input, errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], nnPtr->nablaWh);
+    matMult(nnPtr->input, errorH, nnPtr->nbNBL[0], 1, nnPtr->nbNBL[1], nnPtr->nablaWhI);
+    matAdd(nnPtr->nablaWh, nnPtr->nablaWhI, nnPtr->nbNBL[0], nnPtr->nbNBL[1]);
 }
 
 void swap(struct tImage* v1, struct tImage* v2){
@@ -87,7 +90,23 @@ void updateMiniBatch(NN nnPtr, struct tImage** v, int l, int u, int s, double le
     }
     gradientDescent(nnPtr, s, learningRate);
 }
-
+//Set all the nabla/error/errorH to 0
+void resetNabla(NN nnPtr){
+    for (int iHeight = 0; iHeight < nnPtr->nbNBL[0]; iHeight++) {
+        for (int iWidth = 0; iWidth < nnPtr->nbNBL[1]; iWidth++) {
+            nnPtr->nablaWh[iHeight * nnPtr->nbNBL[1] + iWidth] = 0;
+            if( iHeight == 0)
+                nnPtr->error[iWidth] = 0;
+        }
+    }
+    for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
+        for (int iWidth = 0; iWidth < nnPtr->nbNBL[2]; iWidth++) {
+            nnPtr->nablaWy[iHeight * nnPtr->nbNBL[2] + iWidth] = 0;
+            if( iHeight == 0)
+                nnPtr->errorH[iWidth] = 0;
+        }
+    }
+}
 // Train the neural network
 void trainNn(t_options options){
     int iterationLimit = options.nbIterations;
@@ -111,20 +130,18 @@ void trainNn(t_options options){
             if(u>size)
                 u=size;
             updateMiniBatch(nnPtr, vect, s, u, sizeS, options.learningRate);
+            resetNabla(nnPtr);
         }
-        //if(iterationLimit-1==i){
-            for(int j = 0; j < size ; j+=1){
-                nnPtr->input = vect[j]->pixVect;
-                feedForward(nnPtr);
-                if (iterationLimit - 1 == j) {
-                    printMat(nnPtr->nablaBy, 1, nnPtr->nbNBL[2]);
-                }
-                else
-                    info_s("T=%d, O=%f",
-                        vect[j]->label,nnPtr->yA[vect[j]->label-1]);
+        for(int j = 0; j < size ; j+=1){
+            nnPtr->input = vect[j]->pixVect;
+            feedForward(nnPtr);
+            if (iterationLimit - 1 == j) {
+                printMat(nnPtr->nablaBy, 1, nnPtr->nbNBL[2]);
             }
-        //}
-        
+            else
+                info_s("T=%d, O=%f",
+                    vect[j]->label,nnPtr->yA[vect[j]->label-1]);
+        }
     }
     freeImVect(vect, (size_t) size);
     saveNn(filename, nnPtr);
