@@ -27,6 +27,8 @@
 #include "Utils.h"
 #include "Verbose.h"
 #include "Result/construct.h"
+#include "NeuralNetwork/NeuralNet.h"
+#include "Solver/sudoku.h"
 
 orderedPoints findGridCorner(SDL_Surface* image, SDL_Renderer* renderer, t_options options);
 
@@ -111,9 +113,41 @@ int processImage(t_options options) {
     cutSudoku(Homographic);
     log_s("Saved digits in directory %s", SC_DESTDIR);
 
-    char sdk[] = "435269781682571493197834562826195347374682915951743628519326874248957136763418259";
-    char srdb[] = "...26.7.168..7..9.19...45..82.1...4...46.29...5...3.28..93...74.4..5..367.3.18...";
-    SDL_Surface *resu = Result_construct(sdk, srdb);
+
+    //double *resultnet = predict(/*le path de l'image, l'endroit où ils ont été sauvegardé*/);
+    //double max = 0;
+    //for(int i = 0; i < 8; i++){
+    //    if(resultnet[i] > max){
+    //        max = resultnet[i];
+    //    }
+    //}
+    char *startingGrid = calloc(82, sizeof(char));
+
+    for(int i = 0; i < 9; i++){
+        for(int j = 0; j < 9; j++){
+            char *path = malloc(sizeof(char)*(strlen(SC_DESTDIR) + 9));
+            strcpy(path, SC_DESTDIR);
+            strcat(path, "x");
+            strcat(path,i);
+            strcat(path, "-y");
+            strcat(path, j);
+            strcat(path, ".bmp");
+            double *resultnet = predict(path, PATH_WEIGHT);
+            double max = -1;
+            for (size_t k = 0; k < 8; k++)
+            {
+                if(resultnet[k] > max){
+                    max = resultnet[k];
+                }
+            }
+            startingGrid[i*9+j] = (char)((int)(max) + '0');
+            
+        }
+    }
+    char *solved = calloc(82, sizeof(char));
+    strcpy(solved, startingGrid);
+    Solve(solved);
+    SDL_Surface *resu = Result_construct(solved, startingGrid);
     if(options.showImage) {
         displaySurface(renderer, resu);
         wait_for_keypressed();
