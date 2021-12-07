@@ -146,7 +146,7 @@ void on_open_activated(){
         
         orderedPoints points = orderPoints(image); 
         image = HomographicTransform(image, points, 512);
-        
+        printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n"); 
         save_image(image, "Image/actual.png");
         gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
         gtk_widget_show(sudoku_img);
