@@ -22,6 +22,8 @@
 #include "../ImageProcessing.h"
 #include "../ImageProcessing/HomographicTransphorm.h"
 #include "../ImageProcessing/OrderPoints.h"
+#include "../ImageProcessing/BlobDetection.h"
+
 #define DEFINE_GLOBALS
 
 #include "../Verbose.h"
@@ -326,4 +328,16 @@ void on_autosolve(){
     processImage(options);
     //reload_img("Image/auto.png");
     //last_file = "Image/auto.png";
+}
+void biggest_blob(){
+    
+	printf("[+] Biggest Blob\n"); 
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+	BiggestBlob_result blob;
+    blob = findBiggestBlob(image);
+	image = blob.res;
+    save_image(image,"Image/actualrot.png");
+
 }
