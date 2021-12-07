@@ -122,7 +122,9 @@ int processImage(t_options options) {
     //    }
     //}
     char *startingGrid = calloc(82, sizeof(char));
-
+    for(int i = 0; i < 82; i++){
+        startingGrid[i] = '.'
+    }
     for(int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++){
             char *path = malloc(sizeof(char)*(strlen(SC_DESTDIR) + 9));
@@ -137,11 +139,13 @@ int processImage(t_options options) {
             for (size_t k = 0; k < 8; k++)
             {
                 if(resultnet[k] > max){
-                    max = resultnet[k];
+                    if (!AlreadyInColumn(startingGrid, 3, 3, i, (int)resultnet[k]) && !AlreadyInLine(startingGrid, 3, j, (int)resultnet[k]) && !AlreadyInSquare(startingGrid, 3, i, j, (int)startingGrid[k])){
+                       max = resultnet[k];
+                    }
                 }
+                
             }
             startingGrid[i*9+j] = (char)((int)(max) + '0');
-            
         }
     }
     char *solved = calloc(82, sizeof(char));
