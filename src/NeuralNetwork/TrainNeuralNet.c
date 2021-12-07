@@ -91,10 +91,12 @@ void trainNn(t_options options){
     int size= options.nbImages;
     info_s("Load the Images");
     struct tImage** vect=imageVect(size);
-    //int sizeS = options.minibatch_size;
+
     for(int i=0;i<iterationLimit;i++){
-        if (i % 1000 == 0)
-            info_s("Iteration %d", i);
+        if (i % 200 == 0)
+            log_s("Iteration %d", i);
+        if (i % 500 == 0 && VERBOSE_LEVEL >= 3)
+            saveNn(filename, nnPtr);
         shuffle(vect, size);
 
         for (int iImage = 0; iImage < size; ++iImage) {
@@ -118,9 +120,8 @@ void trainNn(t_options options){
                     vect[j]->label,nnPtr->yA[vect[j]->label-1]);
     }
 
-    //freeImVect(vect, (size_t) size);
+    freeImVect(vect, (size_t) size);
     saveNn(filename, nnPtr);
-    free(nnPtr->input);
     freeNn(nnPtr);
     free(nnPtr);
 }
