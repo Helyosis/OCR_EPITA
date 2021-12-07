@@ -1,4 +1,10 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#pragma GCC diagnostic pop
 #include <unistd.h>
 #include <string.h>
 #include <gtk/gtk.h>
@@ -11,11 +17,14 @@
 #include "../ImageProcessing/NoiseReduction.h"
 #include "../ImageProcessing/BlackAndWhite.h"
 #include "../ImageProcessing/HoughTransform.h"
-#include "./utilsUI.h"
+#include "utilsUI.h"
 #include "../ImageProcessing/Rotation.h"
 #include "../ImageProcessing.h"
 #include "../ImageProcessing/HomographicTransphorm.h"
 #include "../ImageProcessing/OrderPoints.h"
+#define DEFINE_GLOBALS
+
+#include "../Verbose.h"
 
 // GtK Items
 GtkWidget	*main_window;
@@ -290,12 +299,22 @@ void on_reset_rot(){
 }
 void on_autosolve(){
 	printf("[+] AutoSolve\n"); 
-	SDL_Surface *original_image = IMG_Load(last_file);
-    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
-        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+	//SDL_Surface *original_image = IMG_Load(last_file);
+    //SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        //original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     
+    t_options options = {
+        last_file,          //inputfile
+        "Image/auto.png",   //output
+        0,
+        100000,
+        100,
+        8225,
+        0.25,
+        GUI
+    };
 
-    //processImage(last_file,"Image/auto.png");
-    reload_img("Image/auto.png");
-    last_file = "Image/auto.png";
+    processImage(options);
+    //reload_img("Image/auto.png");
+    //last_file = "Image/auto.png";
 }

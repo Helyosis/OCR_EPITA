@@ -21,7 +21,7 @@ clean:
 	${RM} ${DEP}   # remove dependency files
 	${RM} main     # remove main program
 
-	${RM} out*.bmp # remove out files
+	${RM} *.bmp # remove out files
 
 -include ${DEP}
 

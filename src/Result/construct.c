@@ -5,7 +5,9 @@
 #include <SDL_image.h>
 #include <err.h>
 #pragma GCC diagnostic pop
-
+#include<stdio.h>
+#include<unistd.h> 
+#include<stdlib.h>
 #include "../ImageProcessing/Pixels.h"
 #include "../Verbose.h"
 
@@ -16,7 +18,12 @@
 
 SDL_Surface *Result_construct(char *grid, char *basegrid)
 {
-    SDL_Surface *result = IMG_Load("../Images/resultGrid.jpg");
+    
+    //char *current_path;
+    //current_path=(char *)malloc(100*sizeof(char));
+    //getcwd(current_path,100);
+    //printf(current_path);
+    SDL_Surface *result = IMG_Load("/tmp/resultGrid.jpg");
     if (result == NULL)
         error_s("IMG_Load: %s", IMG_GetError());
     
@@ -30,8 +37,8 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
             char *text = malloc(2);
             text[0] = grid[i];
             text[1] = '\0';
-            char *path = malloc(strlen("../Ressources/Numbers/5-") + strlen(text) + strlen(".png") + 1);
-            strcpy(path, "../Ressources/Numbers/5-");
+            char *path = malloc(strlen("/tmp/Numbers/5-") + strlen(text) + strlen(".png") + 1);
+            strcpy(path, "/tmp/Numbers/5-");
             strcat(path, text);
             strcat(path, ".png");
             SDL_Surface *number = IMG_Load(path);
