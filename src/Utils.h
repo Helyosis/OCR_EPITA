@@ -69,4 +69,9 @@ double* Build2DGaussianKernel(size_t kernelRadius, double sigma);
  */
 void strtoupper(char* s);
 
+/*
+ * Remove a directory recursively
+*/
+int remove_directory(const char *path);
+
 #endif

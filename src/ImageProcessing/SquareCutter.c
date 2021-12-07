@@ -13,6 +13,7 @@
 #include "Pixels.h"
 #include "FloodFill.h"
 #include "../Verbose.h"
+#include "../Utils.h"
 
 struct stat st = {0};
 
@@ -35,9 +36,13 @@ void cutSudoku(SDL_Surface* src) {
         error_s("Couldn't create SDL_Surface with error %s", SDL_GetError());
     }
 
-    if (stat(SC_DESTDIR, &st) == -1) {
-        mkdir(SC_DESTDIR, 0700);
+    if (stat(SC_DESTDIR, &st) == 0) {
+        remove_directory(SC_DESTDIR);        
     }
+
+    mkdir(SC_DESTDIR, 0700);
+
+
     for (size_t x = 0; x < nbDigitsPerLine; x += 1) {
         for (size_t y = 0; y < nbDigitsPerLine; y += 1) {
             char dstFile[50];
@@ -63,11 +68,12 @@ int cleanupAndIdentify(SDL_Surface* digitSurface) {
     BiggestBlob_result digitBlob = findBiggestBlob(digitSurface);
     SDL_BlitSurface(digitBlob.res, NULL, digitSurface, NULL);
     SDL_FreeSurface(digitBlob.res);
-
+    info_s("digitBlob is at x = %d, y = %d, size = %ld", digitBlob.point.x, digitBlob.point.y, digitBlob.size);
+    /*
     Point midPoint = {digitSurface->w / 2, digitSurface->h / 2};
     size_t centerBlobsize = floodFill(digitSurface, midPoint, BLACK, BLUE);
-    floodFill(digitSurface, midPoint, BLUE, BLACK);
-    if (centerBlobsize < 20)
+    floodFill(digitSurface, midPoint, BLUE, BLACK); */
+    if (digitBlob.size > 40)
         return 0; // We indicate it's a digit
     return 1; // Else it empty and we don't save it
 }
