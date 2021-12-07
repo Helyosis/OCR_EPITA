@@ -50,7 +50,7 @@ orderedPoints orderPoints(SDL_Surface* src) {
             }
         }
     }
-    
+        
     orderedPoints result;
     result.ul = ul;
     result.lr = lr;

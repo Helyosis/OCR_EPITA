@@ -23,6 +23,7 @@
 #include "ImageProcessing/HomographicTransphorm.h"
 #include "ImageProcessing/Pixels.h"
 #include "ImageProcessing/SquareCutter.h"
+#include "ImageProcessing/FloodFill.h"
 #include "Utils.h"
 #include "Verbose.h"
 #include "Result/construct.h"
@@ -86,6 +87,14 @@ int processImage(t_options options) {
     orderedPoints points = findGridCorner(image, renderer, options);
     log_s("Found corner with ul(x = %d, y = %d)", points.ul.x, points.ul.y);
     
+    floodFill(image, points.ul, WHITE, BLACK);
+    log_s("Removed the grid");
+
+    if (options.showImage) {
+        displaySurface(renderer, image);
+        wait_for_keypressed();
+    }
+
     SDL_Surface *Homographic = HomographicTransform(image, points, 252);
     log_s("Applied homographic transform");
 
@@ -127,7 +136,6 @@ orderedPoints findGridCorner(SDL_Surface* image, SDL_Renderer* renderer, t_optio
     BiggestBlob_result bb_res = findBiggestBlob(image);
     log_s("Found the biggest blob starting at x = %d, y = %d, of size %d",
             bb_res.point.x, bb_res.point.y, bb_res.size);
-    SDL_SaveBMP(bb_res.res, "out2.bmp");
 
     SDL_Surface* result = bb_res.res;
 

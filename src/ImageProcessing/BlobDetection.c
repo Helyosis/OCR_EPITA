@@ -21,8 +21,10 @@ BiggestBlob_result findBiggestBlob(SDL_Surface* src) {
                                 src->format->Gmask,
                                 src->format->Bmask,
                                 src->format->Amask);
-
-    memcpy(dest->pixels, src->pixels, src->w * src->h * sizeof(uint32_t));
+    if (dest == NULL)
+        error_s("Not enoug memory !");
+    SDL_BlitSurface(src, NULL, dest, NULL);
+    //memcpy(dest->pixels, src->pixels, src->w * src->h * sizeof(uint32_t));
 
     size_t max = 0;
     Point maxPoint;
@@ -32,10 +34,12 @@ BiggestBlob_result findBiggestBlob(SDL_Surface* src) {
             if (getPixel(dest, x, y) == WHITE) {
                 Point seed = {x, y};
                 size_t area = floodFill(dest, seed, WHITE, BLUE);
+
                 if (area > max) {
                     max = area;
                     maxPoint = seed;
                 }
+
             }
         }
     }
