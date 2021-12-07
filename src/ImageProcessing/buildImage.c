@@ -8,11 +8,17 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h> 
+#include <stdlib.h>
 #pragma GCC diagnostic pop
 
 
 int buildGrid(char* gridFileName, char* out_filename) {
-    SDL_Surface *original_image = IMG_Load("../Images/resultGrid.jpg");
+    //char *current_path;
+    //current_path=(char *)malloc(100*sizeof(char));
+    //getcwd(current_path,100);
+    printf(current_path);
+    SDL_Surface *original_image = IMG_Load("/tmp/resultGrid.jpg");
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
     SDL_FreeSurface(original_image);
@@ -24,7 +30,7 @@ int buildGrid(char* gridFileName, char* out_filename) {
     loadGrid(gridFileName, grid);
     SDL_Surface **numbers = malloc(9*sizeof(SDL_Surface*));
     for(int n=0; n<10; n++){
-        char* path = strcat("../Resources/Numbers", strcat(n+'0', ".jpg"));
+        char* path = strcat("/tmp/Numbers", strcat(n+'0', ".jpg"));
         numbers[n] = SDL_ConvertSurfaceFormat(IMG_Load(path,
                                             SDL_PIXELFORMAT_ARGB8888, 0);
     }
