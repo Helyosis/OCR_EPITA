@@ -20,20 +20,20 @@ double randomDouble(double fMax, double fMin){
 //(random number)/sqrt(nb neurone of the layer) and the bias to 0
 void initWB(struct NeuralNetwork* nnPtr) {
     srand(time(NULL));
-    double fMin=-sqrt(6/(nnPtr->nbNBL[0]+nnPtr->nbNBL[1]));
+    //double fMin=-sqrt(6/(nnPtr->nbNBL[0]+nnPtr->nbNBL[1]));
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[0]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[1]; iWidth++) {
             //Xavier/Glorot Uniform Initialization (better for sigmoid activation)
-            nnPtr->wh[iHeight * nnPtr->nbNBL[1] + iWidth] = randomDouble(fMin,-fMin);
+            nnPtr->wh[iHeight * nnPtr->nbNBL[1] + iWidth] = randomDouble(-1,1);
 //          if(iHeight == 0)
 //              nnPtr->bh[iWidth] = -1+2*((double)rand())/RAND_MAX;
         }
     }
-    fMin=-1/sqrt(nnPtr->nbNBL[1]);
+    //fMin=-1/sqrt(nnPtr->nbNBL[1]);
     for (int iHeight = 0; iHeight < nnPtr->nbNBL[1]; iHeight++) {
         for (int iWidth = 0; iWidth < nnPtr->nbNBL[2]; iWidth++) {
             //Uniform Initialization
-            nnPtr->wy[iHeight * nnPtr->nbNBL[2] + iWidth] = randomDouble(fMin,-fMin);
+            nnPtr->wy[iHeight * nnPtr->nbNBL[2] + iWidth] = randomDouble(-1,1);
             //-1/sqrt(nnPtr->nbNBL[1]) + 2 * randomDouble()/sqrt(nnPtr->nbNBL[1]);
 //          if(iHeight == 0)
 //              nnPtr->by[iWidth] =  -1+2*((double)rand())/RAND_MAX;
