@@ -179,7 +179,10 @@ int main(int argc, char **argv)
         if (options.nnInputFile == NULL)
             options.nnInputFile = "result_training.txt";
 
-        predictNN(options.inputFile, options.nnInputFile);
+        double* result = predict(options.inputFile, options.nnInputFile);
+        for (int i = 0; i < 9; ++i)
+            printf("%f ", result[i]);
+        printf("\n");
         break;
 
     default:

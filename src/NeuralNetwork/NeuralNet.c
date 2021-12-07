@@ -107,7 +107,7 @@ double* predict(char* imageFileName, char* SavefileName){
     nnPtr->input=img->pixVect;
     feedForward(nnPtr);
     double* res=malloc(nnPtr->nbNBL[2]*sizeof(double));
-    memcpy(res,nnPtr->y,nnPtr->nbNBL[2]);
+    memcpy(res,nnPtr->yA,nnPtr->nbNBL[2]);
     freeNn(nnPtr);
     free(nnPtr);
     return res;
