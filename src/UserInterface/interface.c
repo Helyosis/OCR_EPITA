@@ -337,7 +337,7 @@ void biggest_blob(){
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 	BiggestBlob_result blob;
     blob = findBiggestBlob(image);
-	image = blob.res;
-    save_image(image,"Image/actualrot.png");
-
+	SDL_Surface *img = blob.res;
+    save_image(img,"Image/biggest_blob.png");
+    reload_img("Image/biggest_blob.png");
 }

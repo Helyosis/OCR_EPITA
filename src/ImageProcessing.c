@@ -28,7 +28,7 @@
 #include "Verbose.h"
 #include "Result/construct.h"
 #include "NeuralNetwork/NeuralNet.h"
-#include "Solver/sudoku.h"
+#include "solver/sudoku.h"
 
 orderedPoints findGridCorner(SDL_Surface* image, SDL_Renderer* renderer, t_options options);
 
@@ -123,18 +123,18 @@ int processImage(t_options options) {
     //}
     char *startingGrid = calloc(82, sizeof(char));
     for(int i = 0; i < 82; i++){
-        startingGrid[i] = '.'
+        startingGrid[i] = '.';
     }
     for(int i = 0; i < 9; i++){
         for(int j = 0; j < 9; j++){
             char *path = malloc(sizeof(char)*(strlen(SC_DESTDIR) + 9));
             strcpy(path, SC_DESTDIR);
             strcat(path, "x");
-            strcat(path,i);
+            strcat(path,(char) (i+'0'));
             strcat(path, "-y");
-            strcat(path, j);
+            strcat(path,(char) (j+'0'));
             strcat(path, ".bmp");
-            double *resultnet = predict(path, PATH_WEIGHT);
+            double resultnet[] = {0.0};//predict(path, PATH_WEIGHT);
             double max = -1;
             for (size_t k = 0; k < 8; k++)
             {
@@ -150,7 +150,7 @@ int processImage(t_options options) {
     }
     char *solved = calloc(82, sizeof(char));
     strcpy(solved, startingGrid);
-    Solve(solved);
+    Solve(solved, 3, 3);
     SDL_Surface *resu = Result_construct(solved, startingGrid);
     if(options.showImage) {
         displaySurface(renderer, resu);
