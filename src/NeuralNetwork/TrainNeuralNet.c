@@ -73,7 +73,6 @@ void swap(struct tImage* v1, struct tImage* v2){
 }
 
 void shuffle(struct tImage** v, int size){
-    srand(time(NULL));
     for(int i=0;i<size;i++)
         swap(v[rand()%size],v[rand()%size]);
 }
@@ -93,34 +92,36 @@ void updateMiniBatch(NN nnPtr, struct tImage** v, int l, int u, int s, double le
 void trainNn(t_options options){
     int iterationLimit = options.nbIterations;
     char* filename = options.outputFile;
-    //TODO if does not converge change the wb
     int* nbNBL = calloc(3, sizeof(int));
-    info_s("SSSS");
     nbNBL[0]  =  784; 
     nbNBL[1]  =  30; 
     nbNBL[2]  =  9;
     double* input = NULL;
+    info_s("Init Neural Net weights and bias");
     NN nnPtr =  initNn(nbNBL, input);
     int size= options.nbImages;
+    info_s("Load the Images");
     struct tImage** vect=imageVect(size);
     int sizeS = options.minibatch_size;
     for(int i=0;i<iterationLimit;i++){
         info_s("Iteration %d", i);
-        shuffle(vect, size);
-        for(int i = 0; i<=size-sizeS ; i+=sizeS){
-            int u=i+sizeS;
-            updateMiniBatch(nnPtr, vect, i, u, sizeS, options.learningRate);
+        //shuffle(vect, size);
+        for(int s = 0; s<=size; s+=sizeS){
+            int u=s+sizeS;
+            if(u>size)
+                u=size;
+            updateMiniBatch(nnPtr, vect, s, u, sizeS, options.learningRate);
         }
         //if(iterationLimit-1==i){
-            for(int i = 0; i < size ; i+=1){
-                nnPtr->input = vect[i]->pixVect;
+            for(int j = 0; j < size ; j+=1){
+                nnPtr->input = vect[j]->pixVect;
                 feedForward(nnPtr);
-                if (iterationLimit - 1 == i) {
+                if (iterationLimit - 1 == j) {
                     printMat(nnPtr->nablaBy, 1, nnPtr->nbNBL[2]);
                 }
                 else
                     info_s("T=%d, O=%f",
-                        vect[i]->label,nnPtr->yA[vect[i]->label-1]);
+                        vect[j]->label,nnPtr->yA[vect[j]->label-1]);
             }
         //}
         
