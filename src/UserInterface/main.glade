@@ -125,8 +125,8 @@
             <property name="can-focus">False</property>
           </object>
           <packing>
-            <property name="x">808</property>
-            <property name="y">204</property>
+            <property name="x">807</property>
+            <property name="y">203</property>
           </packing>
         </child>
         <child>
@@ -187,6 +187,8 @@
           <object class="GtkCheckButton" id="houg">
             <property name="label" translatable="yes">HoughTransform</property>
             <property name="name">houg</property>
+            <property name="width-request">135</property>
+            <property name="height-request">22</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">False</property>
@@ -195,7 +197,24 @@
           </object>
           <packing>
             <property name="x">870</property>
-            <property name="y">340</property>
+            <property name="y">337</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="BiggestBlob">
+            <property name="label" translatable="yes">Biggest Blob</property>
+            <property name="name">BiggestBlob</property>
+            <property name="width-request">135</property>
+            <property name="height-request">22</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="draw-indicator">True</property>
+            <signal name="toggled" handler="biggest_blob" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">870</property>
+            <property name="y">364</property>
           </packing>
         </child>
       </object>
