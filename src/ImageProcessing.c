@@ -129,19 +129,21 @@ int processImage(t_options options) {
         for(int j = 0; j < 9; j++){
             char *path = malloc(60);
             sprintf(path, "%s/x%d-y%d.bmp", SC_DESTDIR, i, j);
-            double resultnet[] = {0.0};//predict(path, PATH_WEIGHT);
+            double *resultnet = predict(path,PATH_WEIGHT);//predict(path, PATH_WEIGHT);
             double max = -1;
+            int nb = 0;
             for (size_t k = 0; k < 8; k++)
             {
                 if(resultnet[k] > max){
-                    if (!AlreadyInColumn(startingGrid, 3, 3, i, (int)resultnet[k]) && !AlreadyInLine(startingGrid, 3, j, (int)resultnet[k]) && !AlreadyInSquare(startingGrid, 3, i, j, (int)startingGrid[k])){
+                    if (!AlreadyInColumn(startingGrid, 3, 3, i, 1+k) && !AlreadyInLine(startingGrid, 3, j, k + 1) && !AlreadyInSquare(startingGrid, 3, i, j, k+1)){
                        max = resultnet[k];
+                       nb = k+1;
                     }
                 }
                 
             }
-            startingGrid[i*9+j] = (char)((int)(max) + '0');
-
+            startingGrid[i*9+j] = (char)( nb + '0');
+            free(resultnet);
             free(path);
         }
     }
