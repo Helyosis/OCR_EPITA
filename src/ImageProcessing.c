@@ -138,14 +138,11 @@ int processImage(t_options options) {
             for (size_t k = 0; k < 8; k++)
             {
                 if(resultnet[k] > max){
-                    if (!AlreadyInColumn(startingGrid, 3, 3, i, 1+k) && !AlreadyInLine(startingGrid, 3, j, k + 1) && !AlreadyInSquare(startingGrid, 3, i, j, k+1)){
                        max = resultnet[k];
                        nb = k+1;
-                    }
-                }
-                
+                    }              
             }
-            startingGrid[i*9+j] = (char)( nb + '0');
+            startingGrid[j*9+i] = (char)( nb + '0');
             free(resultnet);
             free(path);
         }
