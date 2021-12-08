@@ -89,19 +89,19 @@
           </packing>
         </child>
         <child>
-          <object class="GtkCheckButton" id="Kuwahara">
-            <property name="label" translatable="yes">Kuwahara</property>
+          <object class="GtkCheckButton" id="Homographic">
+            <property name="label" translatable="yes">Homographic Transform</property>
             <property name="name">Kuwahara</property>
             <property name="width-request">100</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">False</property>
             <property name="draw-indicator">True</property>
-            <signal name="toggled" handler="on_Kuwahara_toggled" swapped="no"/>
+            <signal name="toggled" handler="on_Homographic_toggled" swapped="no"/>
           </object>
           <packing>
-            <property name="x">870</property>
-            <property name="y">310</property>
+            <property name="x">843</property>
+            <property name="y">362</property>
           </packing>
         </child>
         <child>
@@ -125,8 +125,8 @@
             <property name="can-focus">False</property>
           </object>
           <packing>
-            <property name="x">807</property>
-            <property name="y">203</property>
+            <property name="x">806</property>
+            <property name="y">201</property>
           </packing>
         </child>
         <child>
@@ -184,20 +184,20 @@
           </packing>
         </child>
         <child>
-          <object class="GtkCheckButton" id="houg">
-            <property name="label" translatable="yes">HoughTransform</property>
-            <property name="name">houg</property>
+          <object class="GtkCheckButton" id="SmallBlob">
+            <property name="label" translatable="yes">Smallest Blob</property>
+            <property name="name">SmallBlob</property>
             <property name="width-request">135</property>
             <property name="height-request">22</property>
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">False</property>
             <property name="draw-indicator">True</property>
-            <signal name="toggled" handler="on_houg_toggled" swapped="no"/>
+            <signal name="toggled" handler="on_SmallBlob_toggled" swapped="no"/>
           </object>
           <packing>
             <property name="x">870</property>
-            <property name="y">337</property>
+            <property name="y">309</property>
           </packing>
         </child>
         <child>
@@ -214,7 +214,7 @@
           </object>
           <packing>
             <property name="x">870</property>
-            <property name="y">364</property>
+            <property name="y">334</property>
           </packing>
         </child>
       </object>

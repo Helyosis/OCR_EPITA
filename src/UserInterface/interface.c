@@ -27,6 +27,7 @@
 #include "../ImageProcessing/OrderPoints.h"
 #include "../ImageProcessing/BlobDetection.h"
 #include "../Verbose.h"
+#include "../Result/construct.h"
 
 int VERBOSE_LEVEL = 0;
 const char* MODE_STRING[] = {
@@ -359,4 +360,45 @@ void biggest_blob(){
 	SDL_Surface *img = blob.res;
     save_image(img,"Image/biggest_blob.png");
     reload_img("Image/biggest_blob.png");
+    //last_file = "Image/biggest_blob.png";
+}
+void on_SmallBlob_toggled(){
+    printf("[+] Smallest Blob\n");
+
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    removeSmallBlob(image, 50, WHITE, BLACK);
+    save_image(image,"Image/SmallBlob.png");
+    reload_img("Image/SmallBlob.png");
+    last_file = "Image/SmallBlob.png";
+}
+void on_Homographic_toggled(){
+    
+    printf("[+] Homographic\n");
+
+    t_options options = {
+        last_file,          //inputfile
+        "Image/homo.png",   //output
+		NULL,
+        0,
+        100000,
+        100,
+        8225,
+        0.25,
+        GUI
+    };
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    
+	BiggestBlob_result blob;
+    blob = findBiggestBlob(image);
+	SDL_Surface *img = blob.res;
+    orderedPoints points = findGridCorner(img, NULL, options);
+    SDL_Surface *out = HomographicTransform(image, points, 252);
+    
+    save_image(out,"Image/Homo.png");
+    reload_img("Image/Homo.png");
+    last_file = "Image/Homo.png";
 }
