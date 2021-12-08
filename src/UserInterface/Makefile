@@ -10,7 +10,7 @@ TMP = main.glade~ Image/*.png *.bmp
 all: main
 
 main: ${SRC}
-	gcc -o interface ${SRC} ${CFLAGS} ${LDFLAGS} && cp -r ../../Ressources/Numbers /tmp/ && cp ../../Images/resultGrid.jpg /tmp/
+	gcc -o interface ${SRC} ${CFLAGS} ${LDFLAGS} && cp -r ../../Ressources/Numbers /tmp/ && cp /tmp/Numbers/5-0.png /tmp/Numbers/5-..png && cp ../../Images/resultGrid.jpg /tmp/
 	
 .PHONY: clean
 clean:
