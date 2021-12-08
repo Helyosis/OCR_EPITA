@@ -17,7 +17,7 @@
         MODE(GUI)   \
         MODE(IMAGE) \
         MODE(TRAIN) \
-        MODE(PREDICT)\
+        MODE(PREDICT) \
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,

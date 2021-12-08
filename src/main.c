@@ -192,11 +192,12 @@ int main(int argc, char **argv)
         printf("\n");
         break;
     case GUI:
-        chdir(interfaceWD);
+        if (chdir(interfaceWD) != 0)
+            error_s("Invalid directory. %s does not exists or cannot enter", interfaceWD);
         execvp(interfaceArgs[0], interfaceArgs);
         break;
     default:
-        error_s("Mode %s is not implemented yet. Quitting.", MODE_STRING[options.mode]);
+        error_s("Mode n°%d is not implemented yet. Quitting.",options.mode);
         break;
     }
 }
