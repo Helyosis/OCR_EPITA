@@ -50,9 +50,12 @@ static const char* ARGS_HELP =
     "[ Predict mode specific options ]\n"
     "   -i file: Specify the image file to predict the digit\n"
     "   -a file: Specify the file containing the weights and biais of the neural network\n"
+    "[ Solver mode specific options ]\n"
+    "   -i file: Specify the input file containing the grid to solve"
+    "   -o file: Specify the output to save the file in"
     "[ General options ]\n"
     "   -v: Increase the verbose level (default 0), can be used up to 3 times\n"
-    "   --mode mode: Specify the mode to use. Can be one of IMAGE/TRAIN/GUI (default is GUI)\n"
+    "   --mode mode: Specify the mode to use. Can be one of IMAGE/TRAIN/GUI/PREDICT/SOLVE (default is GUI)\n"
     "   -h / --help: Show this help and quit\n"
     ;
 
@@ -195,6 +198,14 @@ int main(int argc, char **argv)
         if (chdir(interfaceWD) != 0)
             error_s("Invalid directory. %s does not exists or cannot enter", interfaceWD);
         execvp(interfaceArgs[0], interfaceArgs);
+        break;
+    case SOLVE:
+        if (options.inputFile == NULL)
+            options.inputFile = "grid.txt";
+        if (options.outputFile == NULL)
+            options.outputFile = "grid_solved.txt";
+
+        log_s("Call solved with %s -> %s", options.inputFile, options.outputFile);
         break;
     default:
         error_s("Mode n°%d is not implemented yet. Quitting.",options.mode);

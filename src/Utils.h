@@ -18,6 +18,7 @@
         MODE(IMAGE) \
         MODE(TRAIN) \
         MODE(PREDICT) \
+        MODE(SOLVE) \
 
 #define GENERATE_ENUM(ENUM) ENUM,
 #define GENERATE_STRING(STRING) #STRING,
