@@ -97,7 +97,7 @@ int processImage(t_options options) {
         displaySurface(renderer, image);
         wait_for_keypressed();
     }
-
+    SDL_SaveBMP(image, "output.bmp");
     SDL_Surface *Homographic = HomographicTransform(image, points, 252);
     log_s("Applied homographic transform");
 
