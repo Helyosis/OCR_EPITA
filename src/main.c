@@ -10,6 +10,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include<unistd.h>
+#include <SDL.h>
+#include <SDL_image.h>
 #pragma GCC diagnostic pop
 
 #define DEFINE_GLOBALS
@@ -19,6 +21,7 @@
 #include "NeuralNetwork/TrainNeuralNet.h"
 #include "NeuralNetwork/NeuralNet.h"
 #include "Utils.h"
+#include "solver/sudoku.h"
 
 // Macros used to transform enum to string
 #define str(x) #x
@@ -51,8 +54,7 @@ static const char* ARGS_HELP =
     "   -i file: Specify the image file to predict the digit\n"
     "   -a file: Specify the file containing the weights and biais of the neural network\n"
     "[ SOLVE mode specific options ]\n"
-    "   -i file: Specify the input file containing the grid to solve"
-    "   -o file: Specify the output to save the file in"
+    "   -i file: Specify the input file containing the grid to solve (default: grid.txt)"
     "[ General options ]\n"
     "   -v: Increase the verbose level (default 0), can be used up to 3 times\n"
     "   --mode mode: Specify the mode to use. Can be one of IMAGE/TRAIN/GUI/PREDICT/SOLVE (default is GUI)\n"
@@ -202,10 +204,23 @@ int main(int argc, char **argv)
     case SOLVE:
         if (options.inputFile == NULL)
             options.inputFile = "grid.txt";
-        if (options.outputFile == NULL)
-            options.outputFile = "grid_solved.txt";
 
-        log_s("Call solved with %s -> %s", options.inputFile, options.outputFile);
+        SDL_Surface* solvedSudoku = ReadFromFile(options.inputFile);
+
+        SDL_Init(SDL_INIT_VIDEO);
+        SDL_Window* window = SDL_CreateWindow("Result of sudoku",
+                                              SDL_WINDOWPOS_UNDEFINED,
+                                              SDL_WINDOWPOS_UNDEFINED,
+                                              solvedSudoku->w, solvedSudoku->h, 0);
+        SDL_Renderer* renderer = SDL_CreateRenderer(window, -1, 0);
+
+        displaySurface(renderer, solvedSudoku);
+        wait_for_keypressed();
+
+        SDL_FreeSurface(solvedSudoku);
+
+        SDL_Quit();
+        IMG_Quit();
         break;
     default:
         error_s("Mode n°%d is not implemented yet. Quitting.",options.mode);

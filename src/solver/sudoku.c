@@ -189,7 +189,7 @@ SDL_Surface *ReadFromFile(char *path)
         errx(1,"Error: Could not open file %s\n", path);
     }
         //removing the space in the file
-    char *grid = calloc(sizeof(char) * 81, sizeof(char));
+    char *grid = calloc(sizeof(char) * 100, sizeof(char));
     int i = 0;
     char c;
     while ((c = fgetc(input)) != EOF)
@@ -206,10 +206,12 @@ SDL_Surface *ReadFromFile(char *path)
     }
     fclose(input);
     //solving the grid
-    char *solvedgrid = calloc(sizeof(char) * 81, sizeof(char));
+    char *solvedgrid = calloc(sizeof(char) * 100, sizeof(char));
     strcpy(solvedgrid, grid);
     Solve(solvedgrid, 9, 9);
     SDL_Surface *surface = NULL;
     surface = Result_construct(solvedgrid,grid);
+    free(grid);
+    free(solvedgrid);
     return surface;
 }
