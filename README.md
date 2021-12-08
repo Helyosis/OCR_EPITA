@@ -13,8 +13,36 @@ cd OCR_EPITA/src
 make
 ```
 ## Usage
-`./main`
-
+### How to compile 
+```
+git clone https://github.com/Helyosis/OCR_EPITA
+cd OCR_EPITA/src/ && make
+cd UserInterface/ && make
+```
+### How to use
+Commande line:
+```
+./main 3.14.15 help:
+[ Image mode specific options ]
+   -i file: Specifiy the input file (required)
+   -o file: Specify the output file (default: out.bmp)
+   --show: Show the image being processed, one step at a time
+[ Train mode specific options ]
+   -n nb: Specifiy the number of iterations to train the neural net with (default is 100 000)
+   -o file: Specify the output file to save the neural network
+   --batch-size s: Specify the numbers of elements in a minibatch size (default 100)
+   --nb-images n: Specify the number of image to train with. (default 8228)
+   --learning-rate n / --step-size n: Specify the step size (default 0.25)
+[ General options ]
+   -v: Increase the verbose level (default 0), can be used up to 3 times
+   --mode mode: Specify the mode to use. Can be one of IMAGE/TRAIN/GUI (default is GUI)
+   -h / --help: Show this help and quit
+```
+Graphical Interface:
+```
+cd OCR_EPITA/src/UserInterface
+./interface
+```
 Then select your sudoku grid and click on the "solve" button and your grid will be solved automaticaly.
 
 ## User Interface
