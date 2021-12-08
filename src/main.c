@@ -9,6 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include<unistd.h>
 #pragma GCC diagnostic pop
 
 #define DEFINE_GLOBALS
@@ -27,6 +28,10 @@ int VERBOSE_LEVEL = 0;
 const char* MODE_STRING[] = {
     FOREACH_MODE(GENERATE_STRING)
 };
+
+char* interfaceWD = "./UserInterface";
+char* interfaceArgs[] = {"./interface", NULL};
+
 
 #define OPTSTR "hvi:o:n:m:b:c:l:a:"
 
@@ -186,7 +191,10 @@ int main(int argc, char **argv)
             printf("%f ", result[i]);
         printf("\n");
         break;
-
+    case GUI:
+        chdir(interfaceWD);
+        execvp(interfaceArgs[0], interfaceArgs);
+        break;
     default:
         error_s("Mode %s is not implemented yet. Quitting.", MODE_STRING[options.mode]);
         break;
