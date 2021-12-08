@@ -29,7 +29,7 @@
 #include "../Verbose.h"
 #include "../Result/construct.h"
 
-int VERBOSE_LEVEL = 0;
+int VERBOSE_LEVEL = 3;
 const char* MODE_STRING[] = {
     FOREACH_MODE(GENERATE_STRING)
 };
@@ -113,7 +113,7 @@ void reload_img(char *path){
     int horizontal = 20;
 	if(sudoku_img){
         	gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it
-        	printf("[-] deleting older input\n");
+        	info_s("Deleting older input");
         }
 
 	SDL_Surface *original_image = IMG_Load(path);
@@ -141,9 +141,9 @@ void on_button_close(){
 	// check if the img is already loaded
 	if(sudoku_img){
                 gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it
-                printf("[-] deleting older input\n");
+                log_s("deleting older input");
         }
-	printf("[E] They isn't img yet\n");
+	warn_s("There isn't img yet");
 
 }
 
@@ -161,14 +161,14 @@ void on_open_activated(){
 	if(resp==GTK_RESPONSE_OK){
 		int vertical = 60;
         	int horizontal = 20;
-		printf("[+] Working with this file as input : %s\n",gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
+		log_s("Working with this file as input : %s",gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
 		char *filename;
         filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
         last_file = filename; 
-        printf("[+] Last_file = %s\n",last_file);
+        log_s("Last_file = %s",last_file);
         if(sudoku_img){
 			gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img);
-			printf("[-] deleting older input\n");
+			info_s("Deleting older input");
 		}
 
 
@@ -189,13 +189,13 @@ void on_open_activated(){
     }
 	//If choosed cancel
 	else{
-		printf("[-] deleting dialogbox\n");
+		info_s("Deleting dialogbox");
 		gtk_widget_destroy(dialog);
 	}
 }
 void on_close(){
      gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img);
-     printf("[-] deleting older input\n");
+     info_s("Deleting older input");
      last_file = "";
 }
 void on_quit_activated(){
@@ -204,7 +204,7 @@ void on_quit_activated(){
 
 //greyscale
 void on_greyscale_toggled(){
-	printf("[+] Greyscale\n");
+	log_s("Greyscale");
 	puts(last_file);
     SDL_Surface *original_image = IMG_Load(last_file);
 	SDL_Surface *image = SDL_ConvertSurfaceFormat(
@@ -217,12 +217,11 @@ void on_greyscale_toggled(){
 	save_image(image,"Image/greyscale.png");
 	
 	reload_img("Image/greyscale.png");
-    printf("LAST FILE");
     last_file = "Image/greyscale.png";
     
 }
 void on_gaussian_toggled(){
-	printf("[+] GaussianBlur\n");
+	log_s("GaussianBlur");
         
 	SDL_Surface *original_image = IMG_Load(last_file);
 	SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
@@ -240,7 +239,7 @@ void on_gaussian_toggled(){
 }
 //Thresholding
 void on_th_toggled(){
-	printf("[+] Thresholding\n");
+	log_s("Thresholding");
 
     SDL_Surface *original_image = IMG_Load(last_file);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
@@ -258,24 +257,24 @@ void on_th_toggled(){
 }
 
 void on_Kuwahara_toggled(){
-        printf("[+] Kuwahara\n");
+    log_s("Kuwahara");
 
-        SDL_Surface *original_image = IMG_Load(last_file);
-        SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
-        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+    original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 
-        //apply filter
-        KuwaharaFilter_inPlace(image);
+    //apply filter
+    KuwaharaFilter_inPlace(image);
 
-        //Saves tmp + set actual_img
-        save_image(image,"Image/Kuwahara.png");
-        reload_img("Image/Kuwahara.png");
+    //Saves tmp + set actual_img
+    save_image(image,"Image/Kuwahara.png");
+    reload_img("Image/Kuwahara.png");
 
-        last_file = "Image/Kuwahara.png";
+    last_file = "Image/Kuwahara.png";
 
 }
 void on_houg_toggled(){
-    printf("[+] HoughTransform\n");
+    log_s("HoughTransform");
     
 	SDL_Surface *original_image = IMG_Load(last_file);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
@@ -292,7 +291,7 @@ void on_houg_toggled(){
 
 }
 void on_rot_l_clicked(){
-	printf("[+] Rotate Image Left\n");
+	log_s("Rotate Image Left");
     
 	SDL_Surface *original_image = IMG_Load(last_file);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
@@ -306,7 +305,7 @@ void on_rot_l_clicked(){
 }
 
 void on_rot_r_clicked(){
-	printf("[+] Rotate Image Right\n"); 
+	log_s("Rotate Image Right"); 
 	SDL_Surface *original_image = IMG_Load(last_file);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
@@ -327,8 +326,9 @@ void on_reset_rot(){
     save_image(image,"Image/actualrot.png");
 
 }
+
 void on_autosolve(){
-	printf("[+] AutoSolve\n"); 
+	log_s("AutoSolve"); 
 	//SDL_Surface *original_image = IMG_Load(last_file);
     //SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         //original_image, SDL_PIXELFORMAT_ARGB8888, 0);
@@ -351,7 +351,7 @@ void on_autosolve(){
 }
 void biggest_blob(){
     
-	printf("[+] Biggest Blob\n"); 
+	log_s("Biggest Blob"); 
 	SDL_Surface *original_image = IMG_Load(last_file);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
@@ -363,7 +363,7 @@ void biggest_blob(){
     //last_file = "Image/biggest_blob.png";
 }
 void on_SmallBlob_toggled(){
-    printf("[+] Smallest Blob\n");
+    log_s("Smallest Blob");
 
 	SDL_Surface *original_image = IMG_Load(last_file);
     SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
@@ -375,7 +375,7 @@ void on_SmallBlob_toggled(){
 }
 void on_Homographic_toggled(){
     
-    printf("[+] Homographic\n");
+    log_s("Homographic");
 
     t_options options = {
         last_file,          //inputfile
