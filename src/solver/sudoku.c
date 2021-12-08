@@ -1,7 +1,13 @@
 #include <stdio.h>
 #include <err.h>
+#include <SDL.h>
 
 #include "../Verbose.h"
+#include "../Result/construct.h"
+
+
+
+
 
 //IsValid checks if the sudoku grid is valid
 //@param grid the sudoku grid
@@ -167,4 +173,43 @@ void PrintGrid(char grid[], size_t rows, size_t cols) {
         printf("|");
     }
     printf("\n%s\n", separator);
+}
+
+
+
+//ReadFromFile reads the grid from a file
+//@param path the path of the file
+//@return the grid
+SDL_Surface *ReadFromFile(char *path)
+{
+    FILE *input;
+    input = fopen(path, "r");
+    if(input == NULL)
+    {
+        errx(1,"Error: Could not open file %s\n", path);
+    }
+        //removing the space in the file
+    char *grid = calloc(sizeof(char) * 81, sizeof(char));
+    int i = 0;
+    char c;
+    while ((c = fgetc(input)) != EOF)
+    {
+        if(c == ' ' || c == '\n')
+        {
+            continue;
+        }
+        else
+        {
+            grid[i] = c;
+            i++;
+        }
+    }
+    fclose(input);
+    //solving the grid
+    char *solvedgrid = calloc(sizeof(char) * 81, sizeof(char));
+    strcpy(solvedgrid, grid);
+    Solve(solvedgrid, 9, 9);
+    SDL_Surface *surface = NULL;
+    surface = Result_construct(solvedgrid,grid);
+    return surface;
 }
