@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS= -g3 -Wall -Wextra -std=c99 -O2 -lm `pkg-config --cflags --libs sdl2 SDL2_image gtk+-3.0` -export-dynamic
+CFLAGS= -g3 -Wall -Wextra -std=c99 -O2 -lm `pkg-config --cflags --libs sdl2 SDL2_image gtk+-3.0` -export-dynamic -O2
 LDFLAGS = -lm `pkg-config --libs sdl2 SDL2_image gtk+-3.0`
 
 SRC = ../Verbose.c utilsUI.c interface.c ../ImageProcessing.c ../ImageProcessing/GrayScale.c ../ImageProcessing/Pixels.c ../ImageProcessing/BlackAndWhite.c ../Result/construct.c ../ImageProcessing/NoiseReduction.c ../ImageProcessing/Morphology.c ../ImageProcessing/FloodFill.c ../ImageProcessing/BlobDetection.c ../ImageProcessing/OrderPoints.c ../Utils.c ../ImageProcessing/Rotation.c ../ImageProcessing/HoughTransform.c ../ImageProcessing/GradientCalculation.c ../ImageProcessing/CannyFilter.c ../ImageProcessing/NonMaxSuppression.c ../ImageProcessing/DoubleThreshold.c ../ImageProcessing/SquareCutter.c ../solver/sudoku.c ../ImageProcessing/HomographicTransphorm.c ../NeuralNetwork/MatUtils.c ../NeuralNetwork/NeuralNet.c ../NeuralNetwork/NeuralNetInit.c ../NeuralNetwork/TrainNeuralNet.c ../NeuralNetwork/LoadDataSet.c

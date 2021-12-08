@@ -2,7 +2,7 @@
 
 CPPFLAGS = -MMD 
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic `pkg-config --cflags sdl2 SDL2_image` -g3 -O0
+CFLAGS = -Wall -Wextra -Werror -std=c99 -pedantic `pkg-config --cflags sdl2 SDL2_image` -g3 -O2 # Le dioxygène c'est génial
 LDFLAGS =
 LDLIBS = -lm `pkg-config --libs sdl2 SDL2_image` -static-libasan
 
@@ -11,7 +11,9 @@ SRC = main.c ImageProcessing.c ImageProcessing/GrayScale.c ImageProcessing/Pixel
 OBJ = ${SRC:.c=.o}
 DEP = ${SRC:.c=.d}
 
-all: main
+all:
+	$(MAKE) main
+	cd UserInterface && $(MAKE)
 
 main: ${OBJ}
 
@@ -22,6 +24,9 @@ clean:
 	${RM} main     # remove main program
 
 	${RM} *.bmp # remove out files
+
+	cd UserInterface && $(MAKE) # Clean UserInterface directory
+
 
 -include ${DEP}
 
