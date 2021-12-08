@@ -1,35 +1,246 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.22.2 -->
+<!-- Generated with glade 3.38.2 -->
 <interface>
   <requires lib="gtk+" version="3.22"/>
   <object class="GtkWindow" id="main_window">
-    <property name="can_focus">False</property>
+    <property name="can-focus">False</property>
     <property name="resizable">False</property>
-    <property name="window_position">center</property>
-    <property name="default_width">900</property>
-    <property name="default_height">600</property>
+    <property name="window-position">center</property>
+    <property name="default-width">900</property>
+    <property name="default-height">600</property>
+    <child>
+      <object class="GtkFixed" id="fixed1">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <child>
+          <object class="GtkButton" id="button_exploit">
+            <property name="label" translatable="yes">automatic solve</property>
+            <property name="width-request">139</property>
+            <property name="height-request">34</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_autosolve" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">860</property>
+            <property name="y">504</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="greyscale">
+            <property name="label" translatable="yes">Grey scale</property>
+            <property name="name">greyscale</property>
+            <property name="width-request">100</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="draw-indicator">True</property>
+            <signal name="toggled" handler="on_greyscale_toggled" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">870</property>
+            <property name="y">220</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="gaussian">
+            <property name="label" translatable="yes">GaussianBlur</property>
+            <property name="name">gaussian</property>
+            <property name="width-request">100</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="draw-indicator">True</property>
+            <signal name="toggled" handler="on_gaussian_toggled" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">870</property>
+            <property name="y">250</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="Thresholding">
+            <property name="label" translatable="yes">Thresholding</property>
+            <property name="name">Thresholding</property>
+            <property name="width-request">100</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="draw-indicator">True</property>
+            <signal name="toggled" handler="on_th_toggled" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">870</property>
+            <property name="y">280</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="sudoku_img">
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="stock">gtk-missing-image</property>
+          </object>
+          <packing>
+            <property name="x">20</property>
+            <property name="y">60</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="Homographic">
+            <property name="label" translatable="yes">Homographic Transform</property>
+            <property name="name">Kuwahara</property>
+            <property name="width-request">100</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="draw-indicator">True</property>
+            <signal name="toggled" handler="on_Homographic_toggled" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">843</property>
+            <property name="y">362</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkImage" id="logo">
+            <property name="width-request">100</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="pixbuf">../../Ressources/L_Low.png</property>
+          </object>
+          <packing>
+            <property name="x">813</property>
+            <property name="y">2</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkSeparator" id="options_bg">
+            <property name="width-request">223</property>
+            <property name="height-request">358</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+          </object>
+          <packing>
+            <property name="x">806</property>
+            <property name="y">201</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="width-request">72</property>
+            <property name="height-request">80</property>
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <property name="label" translatable="yes">Rotation</property>
+          </object>
+          <packing>
+            <property name="x">889</property>
+            <property name="y">380</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="rot_l">
+            <property name="label" translatable="yes">&lt;-</property>
+            <property name="height-request">34</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_rot_l_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">839</property>
+            <property name="y">401</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="rot_r">
+            <property name="label" translatable="yes">-&gt;</property>
+            <property name="height-request">38</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_rot_r_clicked" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">964</property>
+            <property name="y">401</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkButton" id="reset_rot">
+            <property name="label" translatable="yes">reset rotation</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <signal name="clicked" handler="on_reset_rot" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">863</property>
+            <property name="y">445</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="SmallBlob">
+            <property name="label" translatable="yes">Smallest Blob</property>
+            <property name="name">SmallBlob</property>
+            <property name="width-request">135</property>
+            <property name="height-request">22</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="draw-indicator">True</property>
+            <signal name="toggled" handler="on_SmallBlob_toggled" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">870</property>
+            <property name="y">309</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkCheckButton" id="BiggestBlob">
+            <property name="label" translatable="yes">Biggest Blob</property>
+            <property name="name">BiggestBlob</property>
+            <property name="width-request">135</property>
+            <property name="height-request">22</property>
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">False</property>
+            <property name="draw-indicator">True</property>
+            <signal name="toggled" handler="biggest_blob" swapped="no"/>
+          </object>
+          <packing>
+            <property name="x">870</property>
+            <property name="y">334</property>
+          </packing>
+        </child>
+      </object>
+    </child>
     <child type="titlebar">
       <object class="GtkMenuBar" id="menu1">
-        <property name="height_request">5</property>
+        <property name="height-request">5</property>
         <property name="visible">True</property>
-        <property name="can_focus">False</property>
+        <property name="can-focus">False</property>
         <child>
           <object class="GtkMenuItem" id="menu_file">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="label" translatable="yes">_File</property>
-            <property name="use_underline">True</property>
+            <property name="use-underline">True</property>
             <child type="submenu">
               <object class="GtkMenu">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <child>
                   <object class="GtkImageMenuItem" id="menu_new">
                     <property name="label">gtk-new</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                     <signal name="activate" handler="on_new_activated" swapped="no"/>
                   </object>
                 </child>
@@ -37,43 +248,44 @@
                   <object class="GtkImageMenuItem" id="menu_open">
                     <property name="label">gtk-open</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                     <signal name="activate" handler="on_open_activated" swapped="no"/>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkImageMenuItem" id="menu_save">
-                    <property name="label">gtk-save</property>
+                  <object class="GtkImageMenuItem" id="menu_close">
+                    <property name="label">gtk-delete</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
+                    <signal name="activate" handler="on_close" swapped="no"/>
                   </object>
                 </child>
                 <child>
-                  <object class="GtkImageMenuItem" id="menu_save_as">
+                  <object class="GtkImageMenuItem" id="menu_save_">
                     <property name="label">gtk-save-as</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkSeparatorMenuItem">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
+                    <property name="can-focus">False</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkImageMenuItem" id="menu_quit">
                     <property name="label">gtk-quit</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                     <signal name="activate" handler="on_quit_activated" swapped="no"/>
                   </object>
                 </child>
@@ -84,46 +296,46 @@
         <child>
           <object class="GtkMenuItem" id="menu_edit">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="label" translatable="yes">_Edit</property>
-            <property name="use_underline">True</property>
+            <property name="use-underline">True</property>
             <child type="submenu">
               <object class="GtkMenu">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <child>
                   <object class="GtkImageMenuItem">
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkImageMenuItem">
                     <property name="label">gtk-copy</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkImageMenuItem">
                     <property name="label">gtk-paste</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                   </object>
                 </child>
                 <child>
                   <object class="GtkImageMenuItem">
                     <property name="label">gtk-delete</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                   </object>
                 </child>
               </object>
@@ -133,121 +345,25 @@
         <child>
           <object class="GtkMenuItem" id="menu_help">
             <property name="visible">True</property>
-            <property name="can_focus">False</property>
+            <property name="can-focus">False</property>
             <property name="label" translatable="yes">_Help</property>
-            <property name="use_underline">True</property>
+            <property name="use-underline">True</property>
             <child type="submenu">
               <object class="GtkMenu">
                 <property name="visible">True</property>
-                <property name="can_focus">False</property>
+                <property name="can-focus">False</property>
                 <child>
                   <object class="GtkImageMenuItem">
                     <property name="label">gtk-about</property>
                     <property name="visible">True</property>
-                    <property name="can_focus">False</property>
-                    <property name="use_underline">True</property>
-                    <property name="use_stock">True</property>
+                    <property name="can-focus">False</property>
+                    <property name="use-underline">True</property>
+                    <property name="use-stock">True</property>
                   </object>
                 </child>
               </object>
             </child>
           </object>
-        </child>
-      </object>
-    </child>
-    <child>
-      <object class="GtkFixed" id="fixed1">
-        <property name="visible">True</property>
-        <property name="can_focus">False</property>
-        <child>
-          <object class="GtkButton" id="button_exploit">
-            <property name="label" translatable="yes">automatic solve</property>
-            <property name="width_request">110</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">True</property>
-          </object>
-          <packing>
-            <property name="x">850</property>
-            <property name="y">5</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkCheckButton" id="greyscale">
-            <property name="label" translatable="yes">Grey scale</property>
-            <property name="name">greyscale</property>
-            <property name="width_request">100</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="draw_indicator">True</property>
-            <signal name="toggled" handler="on_greyscale_toggled" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">870</property>
-            <property name="y">110</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkCheckButton" id="gaussian">
-            <property name="label" translatable="yes">GaussianBlur</property>
-            <property name="name">gaussian</property>
-            <property name="width_request">100</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="draw_indicator">True</property>
-            <signal name="toggled" handler="on_gaussian_toggled" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">870</property>
-            <property name="y">140</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkCheckButton" id="Thresholding">
-            <property name="label" translatable="yes">Thresholding</property>
-            <property name="name">Thresholding</property>
-            <property name="width_request">100</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="draw_indicator">True</property>
-            <signal name="toggled" handler="on_th_toggled" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">870</property>
-            <property name="y">170</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkImage" id="sudoku_img">
-            <property name="width_request">100</property>
-            <property name="height_request">80</property>
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="stock">gtk-missing-image</property>
-          </object>
-          <packing>
-            <property name="x">20</property>
-            <property name="y">60</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkCheckButton" id="Kuwahara">
-            <property name="label" translatable="yes">Kuwahara</property>
-            <property name="name">Kuwahara</property>
-            <property name="width_request">100</property>
-            <property name="visible">True</property>
-            <property name="can_focus">True</property>
-            <property name="receives_default">False</property>
-            <property name="draw_indicator">True</property>
-            <signal name="toggled" handler="on_Kuwahara_toggled" swapped="no"/>
-          </object>
-          <packing>
-            <property name="x">870</property>
-            <property name="y">200</property>
-          </packing>
         </child>
       </object>
     </child>

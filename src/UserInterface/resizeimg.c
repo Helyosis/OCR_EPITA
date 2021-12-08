@@ -1,2 +1,4 @@
 #include <stdio.h>
-#incl
+#include <gtk/gtk.h>
+
+void resize

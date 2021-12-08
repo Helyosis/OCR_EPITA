@@ -1,8 +1,13 @@
 #ifndef NEURALNET
 #define NEURALNET
 #include "NeuralNetInit.h"
+
+#define PATH_WEIGHT "./weights/result_training.txt"
+
 void feedForward(struct NeuralNetwork* nnPtr);
-double activationF(double x);
+void sigmoid(double* mA,double* m, int width);
 void saveNn(char* fileName, struct NeuralNetwork* nnPtr);
-//void loadNn(char* fileName,struct NeuralNetwork* nnPtr);
+struct NeuralNetwork* loadNn(char* fileName);
+double* predict(char* imageFileName, char* SavefileName);
+
 #endif

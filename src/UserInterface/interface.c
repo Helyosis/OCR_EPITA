@@ -1,17 +1,38 @@
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
+#pragma GCC diagnostic ignored "-Wtype-limits"
 #include <stdio.h>
+#include <stdarg.h>
+#include <stdlib.h>
+#pragma GCC diagnostic pop
 #include <unistd.h>
 #include <string.h>
 #include <gtk/gtk.h>
 #include <math.h>
 #include <ctype.h>
-//#include "SDL/SDL.h"
+#include <SDL.h>
 #include <stdbool.h>
 #include <err.h>
+
+#define DEFINE_GLOBALS
+
 #include "../ImageProcessing/GrayScale.h"
 #include "../ImageProcessing/NoiseReduction.h"
 #include "../ImageProcessing/BlackAndWhite.h"
 #include "../ImageProcessing/HoughTransform.h"
-#include "./utilsUI.h"
+#include "utilsUI.h"
+#include "../ImageProcessing/Rotation.h"
+#include "../ImageProcessing.h"
+#include "../ImageProcessing/HomographicTransphorm.h"
+#include "../ImageProcessing/OrderPoints.h"
+#include "../ImageProcessing/BlobDetection.h"
+#include "../Verbose.h"
+#include "../Result/construct.h"
+
+int VERBOSE_LEVEL = 0;
+const char* MODE_STRING[] = {
+    FOREACH_MODE(GENERATE_STRING)
+};
 
 // GtK Items
 GtkWidget	*main_window;
@@ -29,15 +50,23 @@ GtkWidget	*greyscale;
 GtkWidget	*gaussian;
 GtkWidget	*thresholding;
 GtkWidget	*kuwahara;
-//GtkWidget	*rotation;
+GtkWidget	*rotl;
+GtkWidget	*rotr;
 GtkBuilder	*builder;
 GtkWidget	*hough;
-
+GtkWidget   *auto_pwn;
 //Toggle events
 //int GREYSCALE = 0;
 //int GAUSSIAN = 0;
 //int THRESHOLDING = 0;
 //int KUWAHARA = 0;
+
+//Angle for rotation
+int ACC_ANGLE = 0;
+//Last file 
+char *last_file = "Image/actual.png";
+
+
 int initInterface(int argc,char *argv[]){
 	gtk_init(&argc, &argv); // init GtK
 	
@@ -58,13 +87,15 @@ int initInterface(int argc,char *argv[]){
 	menu_save = GTK_WIDGET(gtk_builder_get_object(builder,"menu_save"));
 	menu_save_as = GTK_WIDGET(gtk_builder_get_object(builder, "menu_save_as"));
 	menu_quit = GTK_WIDGET(gtk_builder_get_object(builder, "menu_quit"));
-        greyscale = GTK_WIDGET(gtk_builder_get_object(builder, "greyscale"));
-        gaussian = GTK_WIDGET(gtk_builder_get_object(builder, "gaussian"));
+    greyscale = GTK_WIDGET(gtk_builder_get_object(builder, "greyscale"));
+    gaussian = GTK_WIDGET(gtk_builder_get_object(builder, "gaussian"));
 	thresholding = GTK_WIDGET(gtk_builder_get_object(builder,"Thresholding"));
 	kuwahara = GTK_WIDGET(gtk_builder_get_object(builder, "Kuwahara"));
-	hough = GTK_WIDGET(gtk_builder_get_object(builder, "Hough"));
-	//rotation = GTK_WIDGET(gtk_builder_get_object(builder, "Rotation"));	
-	gtk_widget_show(main_window);
+	hough = GTK_WIDGET(gtk_builder_get_object(builder, "hough"));
+	rotr = GTK_WIDGET(gtk_builder_get_object(builder, "rot_r"));		
+	rotl = GTK_WIDGET(gtk_builder_get_object(builder, "rot_l"));	
+    auto_pwn =  GTK_WIDGET(gtk_builder_get_object(builder, "button_exploit"));
+    gtk_widget_show(main_window);
 	
 	//Init Sudoku_img
 	sudoku_img = NULL; 
@@ -75,19 +106,34 @@ int initInterface(int argc,char *argv[]){
 int main(int argc, char **argv){
 	initInterface(argc,argv);
 }
+
 //reload img
 void reload_img(char *path){
 	int vertical = 60;
-        int horizontal = 20;
+    int horizontal = 20;
 	if(sudoku_img){
         	gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it
         	printf("[-] deleting older input\n");
         }
 
-	sudoku_img = gtk_image_new_from_file(path);
-        gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
-        gtk_widget_show(sudoku_img);
-        gtk_fixed_move (GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set hte img at the right place
+	SDL_Surface *original_image = IMG_Load(path);
+	SDL_Surface *image = SDL_ConvertSurfaceFormat(
+	original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+
+	orderedPoints points;
+	points.ul = (Point) {0, 0};
+	points.ur = (Point) {image->w, 0};
+	points.ll = (Point) {0, image->h};
+	points.lr = (Point) {image->w, image->h};
+
+	SDL_Surface *img = HomographicTransform(image, points, 516);
+	save_image(img, "Image/resized.png");
+
+    sudoku_img = gtk_image_new_from_file("Image/resized.png");
+	gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
+    gtk_widget_show(sudoku_img);
+    gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical);
+    //set hte img at the right place
 }
 
 void on_button_close(){
@@ -100,23 +146,6 @@ void on_button_close(){
 	printf("[E] They isn't img yet\n");
 
 }
-
-void on_img_chooser_file_set(GtkFileChooserButton *f){
-	
-	int vertical = 60;
-	int horizontal = 20;
-	//Debug
-	printf("[+] Working with this file as input : %s\n", gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(f)));
-	if(sudoku_img){
-		gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img); //If img already exist remove it and put the new one
-		printf("[-] deleting older input\n");
-	}
-	sudoku_img = gtk_image_new_from_file(gtk_file_chooser_get_filename( GTK_FILE_CHOOSER(f)));
-	gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
-	gtk_widget_show(sudoku_img);
-	gtk_fixed_move (GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set hte img at the right place
-}
-
 
 void on_new_activated(){
 	on_button_close();
@@ -133,38 +162,51 @@ void on_open_activated(){
 		int vertical = 60;
         	int horizontal = 20;
 		printf("[+] Working with this file as input : %s\n",gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
-		if(sudoku_img){
+		char *filename;
+        filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
+        last_file = filename; 
+        printf("[+] Last_file = %s\n",last_file);
+        if(sudoku_img){
 			gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img);
 			printf("[-] deleting older input\n");
 		}
-		sudoku_img = gtk_image_new_from_file(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
-		gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
-        	gtk_widget_show(sudoku_img);
-        	gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set the img at the right place
-		gtk_widget_destroy(dialog);
+
+
+		SDL_Surface *original_image = IMG_Load(last_file);
+		SDL_Surface *image = SDL_ConvertSurfaceFormat(original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 		
+        save_image(image, "Image/actual.png");
+        reload_img("Image/actual.png");
+        last_file = "Image/actual.png";
+        gtk_container_add(GTK_CONTAINER(fixed1), sudoku_img);
+        gtk_widget_show(sudoku_img);
+        gtk_fixed_move(GTK_FIXED(fixed1), sudoku_img, horizontal, vertical); //set the img at the right place
+		gtk_widget_destroy(dialog);
+        //last_file = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+        //puts(last_file);
 		//SDL_Surface *image = load_image(gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog)));
 		//save_image(image,"Image/gaussian.png");
-	}
+    }
 	//If choosed cancel
 	else{
 		printf("[-] deleting dialogbox\n");
 		gtk_widget_destroy(dialog);
 	}
 }
-
+void on_close(){
+     gtk_container_remove(GTK_CONTAINER(fixed1),sudoku_img);
+     printf("[-] deleting older input\n");
+     last_file = "";
+}
 void on_quit_activated(){
 	gtk_main_quit();
-}
-//Auto exploit
-void on_button_exploit_activate(){
-
 }
 
 //greyscale
 void on_greyscale_toggled(){
 	printf("[+] Greyscale\n");
-	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+	puts(last_file);
+    SDL_Surface *original_image = IMG_Load(last_file);
 	SDL_Surface *image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 	
@@ -175,11 +217,14 @@ void on_greyscale_toggled(){
 	save_image(image,"Image/greyscale.png");
 	
 	reload_img("Image/greyscale.png");
+    printf("LAST FILE");
+    last_file = "Image/greyscale.png";
+    
 }
 void on_gaussian_toggled(){
 	printf("[+] GaussianBlur\n");
         
-	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+	SDL_Surface *original_image = IMG_Load(last_file);
 	SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
         
@@ -188,14 +233,17 @@ void on_gaussian_toggled(){
         
 	//Saves tmp + actual_img
 	save_image(image,"Image/gaussian.png");
-        reload_img("Image/gaussian.png");
+    reload_img("Image/gaussian.png");
+
+    last_file = "Image/gaussian.png";
+
 }
 //Thresholding
 void on_th_toggled(){
 	printf("[+] Thresholding\n");
 
-        SDL_Surface *original_image = IMG_Load("Image/actual.png");
-        SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+    SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
         
 	//apply filter
@@ -203,13 +251,16 @@ void on_th_toggled(){
         
 	//Saves tmp + set actual_img
 	save_image(image,"Image/thresholding.png");
-        reload_img("Image/thresholding.png");
+    reload_img("Image/thresholding.png");
+    
+    last_file = "Image/thresholding.png";
+
 }
 
 void on_Kuwahara_toggled(){
         printf("[+] Kuwahara\n");
 
-        SDL_Surface *original_image = IMG_Load("Image/actual.png");
+        SDL_Surface *original_image = IMG_Load(last_file);
         SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
         original_image, SDL_PIXELFORMAT_ARGB8888, 0);
 
@@ -219,24 +270,135 @@ void on_Kuwahara_toggled(){
         //Saves tmp + set actual_img
         save_image(image,"Image/Kuwahara.png");
         reload_img("Image/Kuwahara.png");
+
+        last_file = "Image/Kuwahara.png";
+
 }
-void on_hough_toggled(){
+void on_houg_toggled(){
     printf("[+] HoughTransform\n");
-	if(1){
-        printf("BBBBBB");
-		SDL_Surface *original_image = IMG_Load("Image/thresholding.png");
-	    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
-    	original_image, SDL_PIXELFORMAT_ARGB8888, 0);
-    	//apply filter
-        DrawHoughlines(image,HoughTransform(image));
-		printf("AAAAA");
-        //Saves tmp + set actual_img
-        save_image(image,"Image/Hough.png");
-        reload_img("Image/Hough.png");
-		//fclose(file);
-	}
-	else
-		errx(1,"You need to apply thresholding first");
+    
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+
+    Apply_grayscale_filter(image);
+    GaussianBlur_inPlace(image);
+    AdaptiveThresholding_inPlace(image);
+    DrawHoughlines(image, HoughTransform(image));
+    
+    save_image(image,"Image/Hough.png");
+    reload_img("Image/Hough.png");
+    last_file = "Image/Hough.png";
+
+}
+void on_rot_l_clicked(){
+	printf("[+] Rotate Image Left\n");
+    
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+  	ACC_ANGLE--;
+	double angle = (ACC_ANGLE * 2) % 360;
+	image = Rotation_shearing(image,angle);
+	save_image(image,"Image/actualrot.png");
+	reload_img("Image/actualrot.png");
 
 }
 
+void on_rot_r_clicked(){
+	printf("[+] Rotate Image Right\n"); 
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    ACC_ANGLE++; 
+	double angle =(ACC_ANGLE* 2) % 360 ;
+	image = Rotation_shearing(image,angle);
+	save_image(image,"Image/actualrot.png");
+	reload_img("Image/actualrot.png");
+
+}
+void on_reset_rot(){
+    ACC_ANGLE = 0;    
+    reload_img(last_file);
+    	
+	SDL_Surface *original_image = IMG_Load("Image/actual.png");
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    save_image(image,"Image/actualrot.png");
+
+}
+void on_autosolve(){
+	printf("[+] AutoSolve\n"); 
+	//SDL_Surface *original_image = IMG_Load(last_file);
+    //SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        //original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    
+    t_options options = {
+        last_file,          //inputfile
+        "Image/auto.png",   //output
+		NULL,
+        0,
+        100000,
+        100,
+        8225,
+        0.25,
+        GUI
+    };
+
+    processImage(options);
+    reload_img("Image/auto.png");
+    last_file = "Image/auto.png";
+}
+void biggest_blob(){
+    
+	printf("[+] Biggest Blob\n"); 
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+	BiggestBlob_result blob;
+    blob = findBiggestBlob(image);
+	SDL_Surface *img = blob.res;
+    save_image(img,"Image/biggest_blob.png");
+    reload_img("Image/biggest_blob.png");
+    //last_file = "Image/biggest_blob.png";
+}
+void on_SmallBlob_toggled(){
+    printf("[+] Smallest Blob\n");
+
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    removeSmallBlob(image, 50, WHITE, BLACK);
+    save_image(image,"Image/SmallBlob.png");
+    reload_img("Image/SmallBlob.png");
+    last_file = "Image/SmallBlob.png";
+}
+void on_Homographic_toggled(){
+    
+    printf("[+] Homographic\n");
+
+    t_options options = {
+        last_file,          //inputfile
+        "Image/homo.png",   //output
+		NULL,
+        0,
+        100000,
+        100,
+        8225,
+        0.25,
+        GUI
+    };
+	SDL_Surface *original_image = IMG_Load(last_file);
+    SDL_Surface *image = image = SDL_ConvertSurfaceFormat(
+        original_image, SDL_PIXELFORMAT_ARGB8888, 0);
+    
+	BiggestBlob_result blob;
+    blob = findBiggestBlob(image);
+	SDL_Surface *img = blob.res;
+    orderedPoints points = findGridCorner(img, NULL, options);
+    SDL_Surface *out = HomographicTransform(image, points, 252);
+    
+    save_image(out,"Image/Homo.png");
+    reload_img("Image/Homo.png");
+    last_file = "Image/Homo.png";
+}
