@@ -31,7 +31,7 @@ SDL_Surface *Result_construct(char *grid, char *basegrid)
     int y = 10;
     for(int i = 0; i < 81; i++)
     {
-        if(grid[i] != '0')
+        if(grid[i] != '.' && grid[i] != '0')
         {
             SDL_Rect rect = {x, y, 0, 0};
             char *text = malloc(2 * sizeof(char));
