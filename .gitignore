@@ -3,7 +3,9 @@
 # Edit at https://www.toptal.com/developers/gitignore?templates=c,vs,vim,emacs,clion
 vgcore.*
 test/
-main
+**/main
+**/interface
+
 ### Images ###
 *.bmp
 ### VSCode ###
